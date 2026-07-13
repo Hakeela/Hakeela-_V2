@@ -35,4 +35,4 @@ frontend/
 
 ## Credits
 
-Designed and developed by **Elvisedem Digital Marketing Agency**.
+Developed by **Elvisedem Digital Marketing Agency**.
