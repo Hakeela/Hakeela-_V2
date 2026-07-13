@@ -1,0 +1,91 @@
+.imaobong {
+  background: #f9f9f9;
+  padding: 72px 24px;
+}
+
+.imaobong__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+/* Text column */
+.imaobong__text {
+  max-width: 560px;
+}
+
+.imaobong__title {
+  margin: 0 0 20px;
+  font-size: clamp(34px, 4.4vw, 54px);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--hak-blue);
+}
+
+.imaobong__body {
+  margin: 0 0 32px;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.7;
+  color: #6f6f6f;
+  max-width: 500px;
+}
+
+.imaobong__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  border-radius: 999px;
+  border: 1.5px solid var(--hak-blue);
+  background: transparent;
+  color: var(--hak-blue);
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.imaobong__btn:hover {
+  background: var(--hak-blue);
+  color: #ffffff;
+}
+
+/* Avatar column */
+.imaobong__avatar {
+  display: flex;
+  justify-content: center;
+}
+
+.imaobong__avatar img {
+  width: 100%;
+  max-width: 60%;
+  height: auto;
+  display: block;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .imaobong {
+    padding: 15px 24px;
+  }
+  .imaobong__inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    text-align: center;
+  }
+  .imaobong__text {
+    max-width: none;
+  }
+  .imaobong__body {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .imaobong__avatar {
+    order: -1;
+  }
+}

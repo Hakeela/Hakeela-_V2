@@ -1,0 +1,55 @@
+:root {
+  /* Brand palette (pulled from the designs) */
+  --hak-blue: #1a13d6;
+  --hak-yellow: #ffc21a;
+  --hak-dark: #1a1a1a;
+  --hak-white: #ffffff;
+
+  /* Footer-specific tones */
+  --footer-bg: #1a1a1a;
+  --footer-heading: #f2f2f2;
+  --footer-link: #9a9a9a;
+  --footer-link-hover: #ffffff;
+  --footer-muted: #8f8f8f;
+  --footer-social: #8a8a8a;
+
+  font-family: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #ffffff;
+  color: var(--hak-dark);
+}
+
+/* Headers use Montserrat; body text inherits Bricolage Grotesque */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}

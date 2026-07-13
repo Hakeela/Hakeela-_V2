@@ -1,0 +1,144 @@
+.hero {
+  position: relative;
+  background: #f4f4f4;
+  overflow: hidden;
+  padding: 100px 24px 0;
+}
+
+/* Decorative background shapes */
+.hero__shapes {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+/* Text content */
+.hero__content {
+  position: relative;
+  z-index: 1;
+  max-width: 1500px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero__title {
+  margin: 0;
+  font-size: clamp(34px, 5vw, 64px);
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--hak-blue);
+  letter-spacing: -0.5px;
+}
+
+.hero__quote {
+  color: var(--hak-blue);
+}
+
+.hero__mark {
+  background-color: var(--hak-yellow);
+  color: var(--hak-blue);
+  padding: 0.02em 0.12em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  border-radius: 2px;
+}
+
+.hero__subtitle {
+  margin: 14px 0 0;
+  font-size: clamp(20px, 2.4vw, 30px);
+  font-weight: 700;
+  color: var(--hak-blue);
+}
+
+.hero__desc {
+  margin: 24px auto 0;
+  max-width: 620px;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: #575656;
+}
+
+/* CTA */
+.hero__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 32px;
+  padding: 14px 30px;
+  background: var(--hak-blue);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 999px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-shadow: 0 8px 20px rgba(26, 19, 214, 0.25);
+}
+
+.hero__cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(26, 19, 214, 0.32);
+}
+
+/* Photo gallery */
+.hero__gallery {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 56px auto 0;
+  padding-bottom: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.hero__photo {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.hero__photo--left {
+  margin-top: -23px;
+}
+
+.hero__photo--mid {
+  transform: translateY(34px) rotate(1deg);
+  z-index: 2;
+}
+
+.hero__photo--right {
+  transform: rotate(6deg);
+}
+
+/* Responsive */
+@media (max-width: 760px) {
+  .hero {
+    padding: 48px 20px 0;
+  }
+
+  .hero__gallery {
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    padding-bottom: 56px;
+  }
+
+  .hero__photo {
+    width: 100%;
+    max-width: 420px;
+    height: 220px;
+  }
+
+  .hero__photo--left,
+  .hero__photo--right,
+  .hero__photo--mid {
+    transform: none;
+  }
+}

@@ -1,0 +1,143 @@
+.donate {
+  background: #f9f9f9;
+  padding: 48px 24px 80px;
+}
+
+.donate__panel {
+  max-width: 1450px;
+  margin: 0 auto;
+  background: #f2f3f5;
+  border-radius: 28px;
+  padding: 64px 56px;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 56px;
+  align-items: center;
+}
+
+/* Text column */
+.donate__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* .donate__badge-icon {
+  font-size: 15px;
+  line-height: 1;
+} */
+
+.donate__title {
+  margin: 24px 0 20px;
+  font-size: clamp(30px, 4vw, 48px);
+  font-weight: 700;
+  line-height: 1.1;
+  color: #141414;
+}
+
+.donate__body {
+  margin: 0 0 36px;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.7;
+  color: #6f6f6f;
+}
+
+.donate__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.donate__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 30px;
+  border-radius: 999px;
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.donate__btn--solid {
+  background: var(--hak-blue);
+  border: 1.5px solid var(--hak-blue);
+  color: #ffffff;
+}
+
+.donate__btn--solid:hover {
+  opacity: 0.9;
+}
+
+.donate__btn--outline {
+  background: transparent;
+  border: 1.5px solid var(--hak-blue);
+  color: var(--hak-blue);
+}
+
+.donate__btn--outline:hover {
+  background: var(--hak-blue);
+  color: #ffffff;
+}
+
+/* Media column */
+.donate__media {
+  display: flex;
+  justify-content: center;
+}
+
+.donate__video {
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 18px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 620px;
+  display: block;
+  transition: transform 0.2s ease;
+}
+
+.donate__video:hover {
+  transform: translateY(-3px);
+}
+
+.donate__video img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .donate {
+    padding: 15px;
+  }
+
+  .donate__panel {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 48px 28px;
+  }
+}
+
+@media (max-width: 560px) {
+  .donate__panel {
+    padding: 36px 20px;
+  }
+  .donate__body {
+    font-size: 16px;
+  }
+}
