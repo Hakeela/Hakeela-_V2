@@ -53,3 +53,170 @@ img {
   max-width: 100%;
   display: block;
 }
+
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Shared bounce animation (hover one-shot + constant loop) */
+@keyframes hak-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-11px);
+  }
+  55% {
+    transform: translateY(0);
+  }
+  75% {
+    transform: translateY(-5px);
+  }
+}
+
+/* ============================================================
+   Dark theme
+   ============================================================ */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  background: #0f1115;
+}
+
+/* Page + section backgrounds */
+:root[data-theme='dark'] body {
+  background: #0f1115;
+  color: #eef0f4;
+}
+
+:root[data-theme='dark'] .hero,
+:root[data-theme='dark'] .foundation,
+:root[data-theme='dark'] .partners,
+:root[data-theme='dark'] .impact,
+:root[data-theme='dark'] .initiatives,
+:root[data-theme='dark'] .team,
+:root[data-theme='dark'] .imaobong,
+:root[data-theme='dark'] .cta,
+:root[data-theme='dark'] .donate,
+:root[data-theme='dark'] .about,
+:root[data-theme='dark'] .blog-page {
+  background: #14171f;
+}
+
+/* Navbar */
+:root[data-theme='dark'] .navbar {
+  background: #14171f;
+}
+:root[data-theme='dark'] .navbar__link {
+  color: #d4d7de;
+}
+:root[data-theme='dark'] .navbar__submenu {
+  background: #1b1f28;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+:root[data-theme='dark'] .navbar__submenu-link {
+  color: #d4d7de;
+}
+:root[data-theme='dark'] .navbar__submenu-link:hover {
+  background: #232833;
+  color: #ffffff;
+}
+:root[data-theme='dark'] .navbar__toggle span {
+  background: #d4d7de;
+}
+
+/* Card / panel surfaces */
+:root[data-theme='dark'] .foundation-card,
+:root[data-theme='dark'] .other-card,
+:root[data-theme='dark'] .blog-card,
+:root[data-theme='dark'] .story-card,
+:root[data-theme='dark'] .about-do-card,
+:root[data-theme='dark'] .course-card,
+:root[data-theme='dark'] .donate__panel {
+  background: #1b1f28;
+}
+
+/* Inputs / badges / borders */
+:root[data-theme='dark'] .donate__badge {
+  background: #242833;
+  border-color: #2a2f3a;
+  color: #eef0f4;
+}
+:root[data-theme='dark'] .blog-sort__select {
+  background-color: #1b1f28;
+  border-color: #2a2f3a;
+  color: #eef0f4;
+}
+:root[data-theme='dark'] .blog-list__toolbar {
+  border-bottom-color: #2a2f3a;
+}
+:root[data-theme='dark'] .course-card {
+  border-color: #2a2f3a;
+}
+
+/* Blue headings/accents -> lighter indigo for contrast on dark.
+   (Panels/buttons keep the rich --hak-blue; only text accents lighten.) */
+:root[data-theme='dark'] .hero__title,
+:root[data-theme='dark'] .hero__subtitle,
+:root[data-theme='dark'] .hero__quote,
+:root[data-theme='dark'] .foundation__title,
+:root[data-theme='dark'] .foundation-card__title,
+:root[data-theme='dark'] .impact__title,
+:root[data-theme='dark'] .initiatives__title,
+:root[data-theme='dark'] .init-block__heading,
+:root[data-theme='dark'] .other-init__title,
+:root[data-theme='dark'] .other-card__title,
+:root[data-theme='dark'] .imaobong__title,
+:root[data-theme='dark'] .about-who__title,
+:root[data-theme='dark'] .about-do__title,
+:root[data-theme='dark'] .about-stories__title,
+:root[data-theme='dark'] .about-team__title,
+:root[data-theme='dark'] .about-do-card__title,
+:root[data-theme='dark'] .about-member__name,
+:root[data-theme='dark'] .blog-card__title,
+:root[data-theme='dark'] .blog-tab.is-active {
+  color: #837dff;
+}
+
+/* Dark (non-blue) headings -> light */
+:root[data-theme='dark'] .team-card__name,
+:root[data-theme='dark'] .donate__title,
+:root[data-theme='dark'] .partners__title,
+:root[data-theme='dark'] .about-do__subtitle {
+  color: #f2f3f5;
+}
+
+/* Muted body text -> lighter muted */
+:root[data-theme='dark'] .hero__desc,
+:root[data-theme='dark'] .foundation__subtitle,
+:root[data-theme='dark'] .foundation-card__body,
+:root[data-theme='dark'] .init-block__body,
+:root[data-theme='dark'] .other-card__body,
+:root[data-theme='dark'] .team-card__role,
+:root[data-theme='dark'] .imaobong__body,
+:root[data-theme='dark'] .donate__body,
+:root[data-theme='dark'] .blog-card__author,
+:root[data-theme='dark'] .blog-card__time,
+:root[data-theme='dark'] .blog-card__excerpt,
+:root[data-theme='dark'] .blog-tab,
+:root[data-theme='dark'] .about-who__body,
+:root[data-theme='dark'] .about-do__desc,
+:root[data-theme='dark'] .about-check li,
+:root[data-theme='dark'] .about-member__role,
+:root[data-theme='dark'] .story-card__body {
+  color: #a6acb8;
+}
+
+/* Outline buttons: lighten border/text so they read on dark */
+:root[data-theme='dark'] .init-btn--outline,
+:root[data-theme='dark'] .story-card__btn,
+:root[data-theme='dark'] .blog-card__btn {
+  border-color: #837dff;
+  color: #837dff;
+}
+:root[data-theme='dark'] .init-btn--outline:hover,
+:root[data-theme='dark'] .story-card__btn:hover,
+:root[data-theme='dark'] .blog-card__btn:hover {
+  background: #837dff;
+  color: #0f1115;
+}

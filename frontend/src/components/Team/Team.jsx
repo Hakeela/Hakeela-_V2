@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { Autoplay } from 'swiper/modules'
 import 'swiper/css'
 import './Team.css'
 
@@ -10,6 +11,10 @@ const team = [
   { img: '/team-comfort.png', name: 'Comfort Alphonsus', role: 'Chief Graphics Designer' },
   { img: '/team-michael.png', name: 'Nwogbaga Michael', role: 'Product Designer' },
 ]
+
+// Duplicated so Swiper has enough slides to loop seamlessly (5 members shown
+// up to 4-at-a-time would otherwise disable loop and freeze the next arrow).
+const loopTeam = [...team, ...team]
 
 function Team() {
   const swiperRef = useRef(null)
@@ -27,18 +32,27 @@ function Team() {
 
         <Swiper
           className="team__swiper"
+          modules={[Autoplay]}
           onSwiper={(swiper) => (swiperRef.current = swiper)}
+          rewind={true}
+          observer={true}
+          observeParents={true}
+          speed={800}
+          autoplay={{
+            delay: 2200,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+          }}
           slidesPerView={1}
           spaceBetween={24}
-          centerInsufficientSlides={true}
           breakpoints={{
             560: { slidesPerView: 2, spaceBetween: 24 },
             900: { slidesPerView: 3, spaceBetween: 32 },
-            1280: { slidesPerView: 5, spaceBetween: 45 },
+            1280: { slidesPerView: 4, spaceBetween: 40 },
           }}
         >
-          {team.map((member) => (
-            <SwiperSlide key={member.name}>
+          {loopTeam.map((member, i) => (
+            <SwiperSlide key={`${member.name}-${i}`}>
               <article className="team-card">
                 <div className="team-card__photo">
                   <img src={member.img} alt={member.name} />
@@ -54,7 +68,7 @@ function Team() {
           <button
             className="team__arrow"
             aria-label="Previous"
-            onClick={() => swiperRef.current?.slidePrev()}
+            onClick={() => swiperRef.current?.slidePrev(600)}
           >
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="19" y1="12" x2="5" y2="12" />
@@ -64,7 +78,7 @@ function Team() {
           <button
             className="team__arrow"
             aria-label="Next"
-            onClick={() => swiperRef.current?.slideNext()}
+            onClick={() => swiperRef.current?.slideNext(600)}
           >
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="5" y1="12" x2="19" y2="12" />

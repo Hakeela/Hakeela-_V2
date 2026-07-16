@@ -1,5 +1,6 @@
 import Hero from '../components/Hero/Hero.jsx'
 import Foundation from '../components/Foundation/Foundation.jsx'
+import Partners from '../components/Partners/Partners.jsx'
 import Impact from '../components/Impact/Impact.jsx'
 import Initiatives from '../components/Initiatives/Initiatives.jsx'
 import Team from '../components/Team/Team.jsx'
@@ -12,6 +13,7 @@ function Home() {
     <>
       <Hero />
       <Foundation />
+      <Partners />
       <Impact />
       <Initiatives />
       <Team />

@@ -61,6 +61,11 @@ function Hero() {
           src="/hero-3.png"
           alt="An instructor supporting students in a computer lab"
         />
+        <img
+          className="hero__photo-mobile"
+          src="/init-2.png"
+          alt="Learners collaborating at a computer"
+        />
       </div>
     </section>
   )

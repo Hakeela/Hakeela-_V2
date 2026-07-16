@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import ThemeToggle from '../ThemeToggle/ThemeToggle.jsx'
 import './Navbar.css'
 
 const navLinks = [
@@ -119,6 +120,8 @@ function Navbar() {
             </li>
           </ul>
         </nav>
+
+        <ThemeToggle />
 
         <a href="#" className="navbar__avatar" aria-label="Your account">
           <img src="/avatar.png" alt="Account" width="48" height="48" />

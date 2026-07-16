@@ -59,6 +59,8 @@
 .imaobong__avatar {
   display: flex;
   justify-content: center;
+  align-items: center;
+  overflow: hidden; /* keep the image within its box while it follows the cursor */
 }
 
 .imaobong__avatar img {
@@ -66,6 +68,8 @@
   max-width: 60%;
   height: auto;
   display: block;
+  transition: transform 0.18s ease-out;
+  will-change: transform;
 }
 
 /* Responsive */

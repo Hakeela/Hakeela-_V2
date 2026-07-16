@@ -69,11 +69,20 @@
   overflow: hidden;
 }
 
+.about-who__media {
+  overflow: hidden;
+}
+
 .about-who__media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.45s ease;
+}
+
+.about-who__media:hover img {
+  transform: scale(1.05);
 }
 
 .about-who__title {
@@ -241,6 +250,11 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.45s ease;
+}
+
+.story-card:hover .story-card__img img {
+  transform: scale(1.06);
 }
 
 .story-card__body {
@@ -310,6 +324,11 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.4s ease;
+}
+
+.about-member__photo:hover img {
+  transform: scale(1.1);
 }
 
 .about-member__name {

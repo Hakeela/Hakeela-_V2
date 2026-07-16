@@ -98,6 +98,11 @@
   width: 100%;
   height: auto;
   display: block;
+  transition: transform 0.45s ease;
+}
+
+.init-figure:hover img {
+  transform: scale(1.05);
 }
 
 /* ---------- Block 3: Hakpilot ---------- */
@@ -320,4 +325,25 @@
   .hakpilot__card {
     padding: 20px 18px 24px;
   }
+}
+
+/* ---------- Hover / motion ---------- */
+/* Logos bounce on hover (Our Initiatives, Hakpilot bar, Other Initiatives) */
+.init-block__logo:hover,
+.hakpilot__logo:hover,
+.other-card__logo:hover {
+  animation: hak-bounce 0.6s ease;
+}
+
+/* Avatar strip after "Where" bounces continuously */
+.hakpilot__avatars {
+  animation: hak-bounce 1.7s ease-in-out infinite;
+}
+
+/* Rocket illustration grows on hover */
+.hakpilot__hero-art img {
+  transition: transform 0.4s ease;
+}
+.hakpilot__hero-art:hover img {
+  transform: scale(1.06);
 }
