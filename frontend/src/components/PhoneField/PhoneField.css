@@ -1,0 +1,126 @@
+/* Two-column phone field: [ flag box ] [ number box ] */
+.phone2.react-tel-input {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  font-family: inherit;
+}
+
+/* ---- number input (right column) ---- */
+.phone2 .phone2__input.form-control {
+  order: 2;
+  flex: 1;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  border: 1px solid #e4e4ea;
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 14px 16px; /* flag lives in its own box, so no extra left padding */
+  font-family: inherit;
+  font-size: 15px;
+  color: #2b2b2b;
+  outline: none;
+  box-shadow: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.phone2 .phone2__input.form-control:focus {
+  border-color: var(--hak-blue);
+  box-shadow: none;
+}
+
+/* ---- flag selector (left column, its own box) ---- */
+.phone2 .phone2__flag.flag-dropdown {
+  position: relative; /* anchor the country dropdown */
+  order: 1;
+  flex: 0 0 76px;
+  width: 76px;
+  border: 1px solid #e4e4ea;
+  background: #fafafa;
+  border-radius: 10px;
+}
+.phone2 .phone2__flag.flag-dropdown.open,
+.phone2 .flag-dropdown .selected-flag,
+.phone2 .flag-dropdown .selected-flag.open,
+.phone2 .flag-dropdown .selected-flag:hover,
+.phone2 .flag-dropdown .selected-flag:focus {
+  background: transparent;
+  border-radius: 10px;
+}
+.phone2 .flag-dropdown .selected-flag {
+  width: 100%;
+  height: 100%;
+  padding-left: 16px;
+}
+.phone2 .flag-dropdown .selected-flag .arrow {
+  border-top-color: #8a8a8a;
+}
+
+/* ---- dropdown panel ---- */
+.phone2 .country-list {
+  margin: 6px 0;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(23, 23, 60, 0.14);
+  font-family: inherit;
+}
+.phone2 .country-list .search {
+  padding: 10px 10px 8px;
+}
+.phone2 .country-list .search-box {
+  width: 90%;
+  border: 1px solid #e4e4ea;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+}
+.phone2 .country-list .country {
+  padding: 9px 12px;
+  font-size: 14px;
+}
+.phone2 .country-list .country.highlight,
+.phone2 .country-list .country:hover {
+  background: #f2f2fb;
+}
+.phone2 .country-list .country .dial-code {
+  color: #8a8a8a;
+}
+
+/* ===== variant: auth (create account) ===== */
+.phone2--auth .phone2__input.form-control,
+.phone2--auth .phone2__flag.flag-dropdown {
+  border-color: #e4e4e8;
+  background: #f1f1f3;
+}
+.phone2--auth .phone2__input.form-control::placeholder {
+  color: #9a9a9a;
+}
+.phone2--auth .phone2__input.form-control:focus {
+  border-color: var(--hak-blue);
+  box-shadow: 0 0 0 3px rgba(26, 19, 214, 0.12);
+}
+
+/* auth dark theme */
+:root[data-theme='dark'] .phone2--auth .phone2__input.form-control,
+:root[data-theme='dark'] .phone2--auth .phone2__flag.flag-dropdown {
+  background: #1b1f28;
+  border-color: #2a2f3a;
+  color: #eef0f4;
+}
+:root[data-theme='dark'] .phone2--auth .phone2__input.form-control::placeholder {
+  color: #7a8090;
+}
+:root[data-theme='dark'] .phone2--auth .country-list {
+  background: #1b1f28;
+  color: #eef0f4;
+}
+:root[data-theme='dark'] .phone2--auth .country-list .country.highlight,
+:root[data-theme='dark'] .phone2--auth .country-list .country:hover {
+  background: #262b36;
+}
+:root[data-theme='dark'] .phone2--auth .country-list .search-box {
+  background: #262b36;
+  border-color: #2a2f3a;
+  color: #eef0f4;
+}

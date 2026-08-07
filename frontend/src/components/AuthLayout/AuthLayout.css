@@ -1,0 +1,408 @@
+.auth {
+  min-height: 100vh;
+  display: flex;                /* row */
+  background: var(--hak-blue) url('/auth-bg.png') center / cover no-repeat;
+}
+
+/* ---------- Left: form (col-6) ---------- */
+.auth__form-side {
+  flex: 0 0 50%;
+  max-width: 50%;
+  min-width: 0;
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 40px;
+}
+
+.auth__form-wrap {
+  width: 100%;
+  max-width: 70%;
+}
+
+.auth__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--hak-blue);
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 32px;
+  /* rendered as a <button> that navigates back in history */
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.auth__back:hover {
+  opacity: 0.8;
+}
+
+/* ---------- Right: marketing panel (col-6) ---------- */
+.auth__aside {
+  flex: 0 0 50%;
+  max-width: 50%;
+  min-width: 0;
+  /* transparent — the shared page background (.auth) shows through here */
+  background: transparent;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  padding: 48px 64px 56px;
+  overflow: hidden;
+}
+
+/* Logo sits inside the content column, right-aligned above the heading */
+.auth__logo {
+  display: block;
+  margin: 0 0 24px auto;
+  width: 80px;
+  height: auto;
+}
+
+.auth__aside-content {
+  /* auto top/bottom margins vertically centre it in the space below the logo */
+  margin: auto 0 auto auto;
+  max-width: 70%;
+  text-align: right;
+}
+
+.auth__aside-title {
+  margin: 0;
+  font-size: clamp(34px, 3.6vw, 56px);
+  font-weight: 700;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+.auth__aside-desc {
+  margin: 28px 0 0;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.auth__aside-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 32px;
+  padding: 13px 26px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #ffffff;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.auth__aside-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* ---------- Shared form primitives ---------- */
+.auth-title {
+  margin: 0;
+  font-size: clamp(30px, 3.4vw, 42px);
+  font-weight: 700;
+  color: #141414;
+}
+
+.auth-subtitle {
+  margin: 8px 0 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #6f6f6f;
+}
+
+.auth-form {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.auth-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.auth-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2b2b2b;
+}
+
+.auth-input,
+.auth-select {
+  width: 100%;
+  border: 1px solid #e4e4e8;
+  background: #f1f1f3;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-family: inherit;
+  font-size: 15px;
+  color: #2b2b2b;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-input::placeholder {
+  color: #9a9a9a;
+}
+
+.auth-input:focus,
+.auth-select:focus {
+  border-color: var(--hak-blue);
+  box-shadow: 0 0 0 3px rgba(26, 19, 214, 0.12);
+}
+
+.auth-select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  color: #6f6f6f;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%236f6f6f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='4 6 8 10 12 6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 38px;
+}
+
+/* Password input with eye toggle */
+.auth-input-wrap {
+  position: relative;
+}
+
+.auth-input-wrap .auth-input {
+  padding-right: 44px;
+}
+
+.auth-eye {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #8a8a8a;
+  display: inline-flex;
+}
+
+.auth-eye:hover {
+  color: #2b2b2b;
+}
+
+/* Buttons */
+.auth-btn {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 15px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--hak-blue);
+  color: #ffffff;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.auth-btn:hover:not(:disabled) {
+  opacity: 0.92;
+}
+
+.auth-btn:disabled {
+  background: #bcbcbc;
+  cursor: not-allowed;
+}
+
+/* Links / helper rows */
+.auth-inline-link {
+  color: var(--hak-blue);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.auth-forgot {
+  text-align: right;
+  margin: -4px 0 4px;
+}
+
+.auth-forgot a {
+  color: var(--hak-blue);
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+.auth-alt {
+  margin: 20px 0 0;
+  font-size: 15px;
+  color: #2b2b2b;
+}
+
+/* Phone input group */
+.auth-phone {
+  display: flex;
+  gap: 8px;
+}
+
+.auth-phone .auth-select {
+  width: 76px;
+  flex-shrink: 0;
+  padding-right: 26px;
+  background-position: right 8px center;
+}
+
+/* OTP field with timer */
+.auth-otp-wrap {
+  position: relative;
+}
+
+.auth-otp-wrap .auth-input {
+  padding-right: 70px;
+  letter-spacing: 6px;
+}
+
+.auth-timer {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #8a8a8a;
+}
+
+.auth-timer button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--hak-blue);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* ---------- Responsive: stack the panel on top of the form ---------- */
+@media (max-width: 900px) {
+  .auth {
+    flex-direction: column;
+  }
+  .auth__form-side,
+  .auth__aside {
+    flex: 0 0 auto;
+    max-width: 100%;
+  }
+  /* Marketing panel sits on top; content left-aligned, logo top-left */
+  .auth__aside {
+    order: -1;
+    padding: 44px 24px 40px;
+    /* mobile/tablet only: panel uses the hero background image */
+    background: var(--hak-blue) url('/hero-bg.png') center / cover no-repeat;
+  }
+  .auth__logo {
+    margin: 0 0 22px 0;
+    width: 56px;
+  }
+  .auth__aside-content {
+    margin: 0;
+    max-width: 100%;
+    text-align: left;
+  }
+  .auth__aside-title {
+    font-size: clamp(24px, 6vw, 30px);
+  }
+  .auth__aside-desc {
+    margin-top: 16px;
+    font-size: 15px;
+  }
+  .auth__aside-btn {
+    margin-top: 22px;
+  }
+  .auth__form-side {
+    padding: 36px 24px 56px;
+  }
+  .auth__form-wrap {
+    max-width: 100%;
+  }
+  /* Stack 2-col rows, but keep Gender + Phone side by side */
+  .auth-row {
+    grid-template-columns: 1fr;
+  }
+  .auth-row--keep {
+    grid-template-columns: 0.85fr 1.15fr;
+  }
+}
+
+/* ---------- Dark theme (form side only; right panel stays brand blue) ---------- */
+:root[data-theme='dark'] .auth__form-side {
+  background: #14171f;
+}
+
+:root[data-theme='dark'] .auth__back,
+:root[data-theme='dark'] .auth-forgot a,
+:root[data-theme='dark'] .auth-inline-link,
+:root[data-theme='dark'] .auth-timer button {
+  color: #837dff;
+}
+
+:root[data-theme='dark'] .auth-title {
+  color: #eef0f4;
+}
+
+:root[data-theme='dark'] .auth-subtitle,
+:root[data-theme='dark'] .auth-timer {
+  color: #a6acb8;
+}
+
+:root[data-theme='dark'] .auth-label,
+:root[data-theme='dark'] .auth-alt {
+  color: #d7dbe2;
+}
+
+:root[data-theme='dark'] .auth-input,
+:root[data-theme='dark'] .auth-select {
+  background: #1b1f28;
+  border: 1px solid #2a2f3a !important;
+  color: #eef0f4;
+}
+
+:root[data-theme='dark'] .auth-input::placeholder {
+  color: #7a8090;
+}
+
+:root[data-theme='dark'] .auth-select {
+  color: #a6acb8;
+}
+
+:root[data-theme='dark'] .auth-eye {
+  color: #8a8f9a;
+}
+
+:root[data-theme='dark'] .auth-eye:hover {
+  color: #eef0f4;
+}
+
+:root[data-theme='dark'] .auth-btn:disabled {
+  background: #3a3f4a;
+  color: #8a8f9a;
+}

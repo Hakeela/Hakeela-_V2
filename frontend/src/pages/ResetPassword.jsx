@@ -1,0 +1,125 @@
+import { useState, useEffect } from 'react'
+import AuthLayout from '../components/AuthLayout/AuthLayout.jsx'
+import PasswordInput from '../components/AuthLayout/PasswordInput.jsx'
+
+const OTP_SECONDS = 56
+
+// mask an email like example@gmail.com -> ex****e@gmail.com
+function maskEmail(email) {
+  if (!email || !email.includes('@')) return 'your email'
+  const [name, domain] = email.split('@')
+  if (name.length <= 3) return `${name[0] || ''}****@${domain}`
+  return `${name.slice(0, 2)}****${name.slice(-1)}@${domain}`
+}
+
+function ResetPassword() {
+  const [step, setStep] = useState(1)
+  const [email, setEmail] = useState('')
+  const [otp, setOtp] = useState('')
+  const [seconds, setSeconds] = useState(OTP_SECONDS)
+
+  // Countdown while on the OTP step
+  useEffect(() => {
+    if (step !== 2 || seconds <= 0) return
+    const id = setInterval(() => setSeconds((s) => s - 1), 1000)
+    return () => clearInterval(id)
+  }, [step, seconds])
+
+  const startOtpStep = (e) => {
+    e.preventDefault()
+    setSeconds(OTP_SECONDS)
+    setOtp('')
+    setStep(2)
+  }
+
+  const resend = () => {
+    setSeconds(OTP_SECONDS)
+    setOtp('')
+  }
+
+  const mmss = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
+
+  return (
+    <AuthLayout>
+      <h1 className="auth-title">Reset your password</h1>
+
+      {step === 1 && (
+        <>
+          <p className="auth-subtitle">
+            Kindly enter the email address associated with your account to reset
+            your password
+          </p>
+          <form className="auth-form" onSubmit={startOtpStep}>
+            <div className="auth-field">
+              <label className="auth-label" htmlFor="rp-email">Email</label>
+              <input
+                id="rp-email"
+                type="email"
+                className="auth-input"
+                placeholder="Enter email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <button type="submit" className="auth-btn">Send OTP code</button>
+          </form>
+        </>
+      )}
+
+      {step === 2 && (
+        <>
+          <p className="auth-subtitle">Enter the OTP sent to {maskEmail(email)}</p>
+          <form
+            className="auth-form"
+            onSubmit={(e) => {
+              e.preventDefault()
+              setStep(3)
+            }}
+          >
+            <div className="auth-field">
+              <label className="auth-label" htmlFor="rp-otp">Enter OTP</label>
+              <div className="auth-otp-wrap">
+                <input
+                  id="rp-otp"
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  className="auth-input"
+                  placeholder="Enter OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                />
+                <span className="auth-timer">
+                  {seconds > 0 ? mmss : <button type="button" onClick={resend}>Resend</button>}
+                </span>
+              </div>
+            </div>
+            <button type="submit" className="auth-btn" disabled={otp.length < 6}>
+              Verify
+            </button>
+          </form>
+        </>
+      )}
+
+      {step === 3 && (
+        <>
+          <p className="auth-subtitle">Enter your new password</p>
+          <form className="auth-form" onSubmit={(e) => e.preventDefault()}>
+            <div className="auth-field">
+              <label className="auth-label" htmlFor="rp-new">Password</label>
+              <PasswordInput id="rp-new" placeholder="Enter new password" />
+            </div>
+            <div className="auth-field">
+              <label className="auth-label" htmlFor="rp-confirm">Confirm Password</label>
+              <PasswordInput id="rp-confirm" placeholder="Re-enter new password" />
+            </div>
+            <button type="submit" className="auth-btn">Complete</button>
+          </form>
+        </>
+      )}
+    </AuthLayout>
+  )
+}
+
+export default ResetPassword

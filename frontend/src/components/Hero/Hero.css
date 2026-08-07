@@ -1,0 +1,141 @@
+.hero {
+  position: relative;
+  background: var(--hak-blue) url('/hero-bg.png') center / cover no-repeat;
+  overflow: hidden;
+  padding: 110px 24px 80px;
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1550px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 48px;
+  align-items: center;
+}
+
+/* Stack the text column so the stats sit below the CTA button */
+.hero__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hero__title {
+  margin: 0 0 22px;
+  font-size: clamp(44px, 6.4vw, 84px);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+.hero__hl {
+  position: relative;
+  white-space: nowrap;
+}
+
+/* Hand-drawn yellow swoosh under "free!" */
+.hero__hl-underline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.16em;
+  width: 100%;
+  height: 0.3em;
+  overflow: visible;
+}
+
+.hero__desc {
+  margin: 0 0 28px;
+  max-width: 460px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.hero__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 26px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--hak-blue);
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  transition: opacity 0.2s ease;
+}
+
+.hero__cta:hover {
+  opacity: 0.92;
+}
+
+/* Stats bar — frosted glass */
+.hero__stats {
+  display: inline-flex;
+  gap: 32px;
+  margin-top: 36px;
+  padding: 18px 28px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 14px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.hero__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hero__stat-value {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.hero__stat-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Media collage */
+.hero__media img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.hero__media:hover img {
+  transform: scale(1.04);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .hero__inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .hero__desc {
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero__stats {
+    gap: 20px;
+    padding: 16px 20px;
+    width: 100%;
+    justify-content: space-between;
+  }
+}

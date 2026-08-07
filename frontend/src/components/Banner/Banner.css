@@ -1,0 +1,63 @@
+.banner {
+  padding: 48px 24px;
+}
+
+.banner__panel {
+  position: relative;
+  max-width: 1450px;
+  margin: 0 auto;
+  background: var(--hak-blue);
+  border-radius: 24px;
+  overflow: hidden;
+  padding: 56px 24px 64px;
+}
+
+.banner__mountains {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+  opacity: 0.4;
+  pointer-events: none;
+  user-select: none;
+}
+
+.banner__content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.banner__title {
+  margin: 0 auto 28px;
+  max-width: 640px;
+  font-size: clamp(24px, 3.2vw, 38px);
+  font-weight: 700;
+  line-height: 1.25;
+  color: #ffffff;
+}
+
+.banner__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 26px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--hak-blue);
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  transition: opacity 0.2s ease;
+}
+
+.banner__btn:hover {
+  opacity: 0.92;
+}
+
+@media (max-width: 560px) {
+  .banner__panel {
+    padding: 44px 20px 52px;
+  }
+}
