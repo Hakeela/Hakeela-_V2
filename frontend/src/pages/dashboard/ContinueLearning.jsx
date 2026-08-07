@@ -20,6 +20,12 @@ const ProgIcon = () => (
   </svg>
 )
 const CheckIcon = () => (<svg {...sp}><circle cx="12" cy="12" r="9" /><polyline points="8 12 11 15 16 9" /></svg>)
+const LockIcon = () => (
+  <svg {...sp}>
+    <rect x="5" y="11" width="14" height="9" rx="2" />
+    <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+  </svg>
+)
 const BangBangIcon = () => (
   <svg {...sp}>
     <line x1="9" y1="5" x2="9" y2="13" />
@@ -30,11 +36,14 @@ const BangBangIcon = () => (
 )
 
 const statusIcon = (status) =>
-  status === 'Completed' ? <CheckIcon /> : status === 'Not Started' ? <BangBangIcon /> : <ProgIcon />
+  status === 'Completed' ? <CheckIcon /> :
+  status === 'Locked' ? <LockIcon /> :
+  status === 'Not Started' ? <BangBangIcon /> : <ProgIcon />
 
-// completed = green; In Progress / Not Started are progress reports = blue
+// completed = green; locked = gray; In Progress / Not Started = blue
 const statusClass = (status) =>
-  status === 'Completed' ? 'cl-meta--green' : 'cl-meta--blue'
+  status === 'Completed' ? 'cl-meta--green' :
+  status === 'Locked' ? 'cl-meta--gray' : 'cl-meta--blue'
 
 const modules = [
   {
@@ -51,7 +60,7 @@ const modules = [
     ],
   },
   { id: 2, name: 'Module 2: Python for Data Science', lessons: '6 lessons', time: '3h 45m', status: 'In Progress', items: [] },
-  { id: 3, name: 'Module 3: Data Visualization', lessons: '5 lessons', time: '2h 20m', status: 'Not Started', items: [] },
+  { id: 3, name: 'Module 3: Data Visualization', lessons: '5 lessons', time: '2h 20m', status: 'Locked', items: [] },
 ]
 
 function ContinueLearning() {
@@ -86,11 +95,13 @@ function ContinueLearning() {
 
         {modules.map((m) => {
           const completed = m.status === 'Completed'
+          const locked = m.status === 'Locked'
+          const badgeKind = completed ? 'done' : locked ? 'lock' : 'num'
           return (
-            <div className="cl-mod" key={m.id}>
+            <div className={`cl-mod ${locked ? 'is-locked' : ''}`} key={m.id}>
               <button className="cl-mod__head" onClick={() => setOpen(open === m.id ? 0 : m.id)}>
-                <span className={`cl-mod__badge cl-mod__badge--${completed ? 'done' : 'num'}`}>
-                  {completed ? <CheckIcon /> : m.id}
+                <span className={`cl-mod__badge cl-mod__badge--${badgeKind}`}>
+                  {completed ? <CheckIcon /> : locked ? <LockIcon /> : m.id}
                 </span>
                 <span className="cl-mod__name">{m.name}</span>
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#9a9a9a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: open === m.id ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }}><polyline points="6 9 12 15 18 9" /></svg>

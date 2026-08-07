@@ -444,6 +444,10 @@
 .cl-meta--yellow { color: #e0a400; }
 .cl-meta--blue { color: var(--hak-blue); }
 .cl-meta--green { color: #1e9e5a; }
+.cl-meta--gray { color: #9a9a9a; }
+
+/* Locked module: mute the title (meta greys via .cl-meta--gray) */
+.cl-mod.is-locked .cl-mod__name { color: #9a9a9a; }
 .cl__progress {
   margin: 20px 0 28px;
 }
@@ -814,20 +818,45 @@
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
   .quick { grid-template-columns: 1fr; }
 }
-/* Course-detail module status: 2-up grid (col-6 / col-6), status drops to its
-   own full-width line (col-12), everything aligned to the left. */
+/* Course-detail module status: single line, spread evenly across the card. */
 @media (max-width: 900px) {
   .cl-mod__meta {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px 18px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
     margin-left: 0;
+    font-size: 12px;
   }
   .cl-mod__meta > span {
-    justify-content: flex-start;
+    gap: 5px;
   }
-  .cl-mod__meta > span:nth-child(3) {
-    grid-column: 1 / -1;
+
+  /* Top course header: stack title, meta row, then full-width button */
+  .cl__head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+  }
+  .cl__meta {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px 10px;
+    font-size: 13px;
+  }
+  .cl__meta > .dash-btn {
+    flex: 1 0 100%;
+    width: 100%;
+  }
+
+  /* Course cards: keep the three meta items on one spread line */
+  .course-meta {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12px;
+  }
+  .course-meta span {
+    gap: 5px;
   }
 }
 @media (max-width: 820px) {
@@ -838,5 +867,21 @@
   .quick-card__thumb { width: 100%; aspect-ratio: 16/9; }
 }
 @media (max-width: 560px) {
-  .stat-grid { grid-template-columns: 1fr; }
+  /* Keep stats as a 2×2 grid on mobile (matches the Figma mobile design) */
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .stat-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+  .stat-card__value {
+    font-size: 24px;
+  }
+  .stat-card__label {
+    font-size: 13px;
+  }
 }

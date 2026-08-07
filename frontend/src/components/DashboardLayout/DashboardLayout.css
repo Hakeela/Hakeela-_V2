@@ -185,12 +185,16 @@
   flex-shrink: 0;
 }
 
-/* Mobile menu bar + backdrop: hidden on desktop, shown ≤900px */
+/* Mobile menu bar + backdrop + search: hidden on desktop, shown ≤900px */
 .dash-mobilebar {
   display: none;
 }
 
 .dash-backdrop {
+  display: none;
+}
+
+.dash-searchbar-mobile {
   display: none;
 }
 
@@ -341,11 +345,17 @@
   }
   .dash-mobilebar__toggle {
     display: inline-flex;
+    align-items: center;
     padding: 4px;
     background: none;
     border: none;
     color: #1a1a1a;
     cursor: pointer;
+  }
+  .dash-mobilebar__toggle img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
   }
   .dash-mobilebar__logo {
     height: 30px;
@@ -359,14 +369,45 @@
   .dash-header__title {
     display: none;
   }
+  /* Header search moves to its own full-width bar below the header */
   .dash-search {
     display: none;
   }
-  /* Remove the user profile image / welcome block on mobile */
-  .dash-welcome,
-  .dash-avatar {
+  /* Remove the "Welcome, Victor" text but keep the avatar (Frame 146) */
+  .dash-welcome {
     display: none;
   }
+  .dash-header__actions {
+    gap: 16px;
+  }
+  .dash-avatar {
+    width: 38px;
+    height: 38px;
+  }
+
+  /* Full-width search bar directly under the header */
+  .dash-searchbar-mobile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 16px 18px 0;
+    padding: 12px 18px;
+    background: #ffffff;
+    border: 1px solid #e4e4ea;
+    border-radius: 999px;
+    color: #9a9a9a;
+  }
+  .dash-searchbar-mobile input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: none;
+    font-family: inherit;
+    font-size: 15px;
+    color: #2b2b2b;
+  }
+
   .dash-content {
     padding: 20px;
   }

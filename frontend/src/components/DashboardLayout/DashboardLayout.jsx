@@ -207,11 +207,7 @@ function DashboardLayout() {
               aria-expanded={mobileOpen}
               onClick={() => setMobileOpen(true)}
             >
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
+              <img src="/menu-toggle.png" alt="" />
             </button>
             <img className="dash-mobilebar__logo" src="/logo-full-blue.png" alt="Hakeela" />
           </div>
@@ -260,9 +256,27 @@ function DashboardLayout() {
               <span>Welcome, Victor</span>
             </div>
 
-            <img className="dash-avatar" src="/dash-avatar.png" alt="Account" />
+            <img className="dash-avatar" src="/avatar-146.png" alt="Account" />
           </div>
         </header>
+
+        {/* Mobile / tablet only: full-width search below the header */}
+        <div className="dash-searchbar-mobile">
+          <svg
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="text" placeholder="Search" aria-label="Search" />
+        </div>
 
         <main className="dash-content">
           <Outlet />
