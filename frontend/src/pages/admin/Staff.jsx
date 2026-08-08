@@ -48,13 +48,75 @@ function InviteModal({ open, onClose, onInvite }) {
   );
 }
 
+function RoleModal({ member, onClose, onSave }) {
+  const [role, setRole] = useState(member?.role || "Staff");
+  if (!member) return null;
+  return (
+    <Modal
+      open={!!member}
+      title="Change role"
+      subtitle={`${member.name} — ${member.email}`}
+      onClose={onClose}
+      footer={
+        <>
+          <button className="dash-btn dash-btn--outline" onClick={onClose}>Cancel</button>
+          <button className="dash-btn dash-btn--solid" onClick={() => onSave(member.id, role)}>Save role</button>
+        </>
+      }
+    >
+      <div className="adm-field">
+        <label>Role</label>
+        <select value={role} onChange={(e) => setRole(e.target.value)}>
+          <option>Staff</option><option>Admin</option>
+        </select>
+        <p style={{ fontSize: 13, color: "#8a8a8a", marginTop: 8 }}>
+          Admins can access every area, including Payments and Staff &amp; Roles. Staff are limited to day-to-day operations.
+        </p>
+      </div>
+    </Modal>
+  );
+}
+
+function RemoveModal({ member, onClose, onConfirm }) {
+  if (!member) return null;
+  return (
+    <Modal
+      open={!!member}
+      title="Remove team member"
+      onClose={onClose}
+      width={440}
+      footer={
+        <>
+          <button className="dash-btn dash-btn--outline" onClick={onClose}>Cancel</button>
+          <button className="adm-btn-sm adm-btn-sm--danger" style={{ padding: "12px 20px" }} onClick={() => onConfirm(member.id)}>Remove {member.name.split(" ")[0]}</button>
+        </>
+      }
+    >
+      <p style={{ fontSize: 14, color: "#4a4a4a", margin: 0 }}>
+        Are you sure you want to remove <b>{member.name}</b> ({member.email})? They will immediately lose access to the portal. This can&apos;t be undone.
+      </p>
+    </Modal>
+  );
+}
+
 function Staff() {
   const [rows, setRows] = useState(seed);
   const [inviting, setInviting] = useState(false);
+  const [roleFor, setRoleFor] = useState(null);
+  const [removeFor, setRemoveFor] = useState(null);
 
   const invite = (form) => {
     setRows((r) => [...r, { id: `ST-${String(r.length + 1).padStart(2, "0")}`, name: form.name, email: form.email, role: form.role, status: "Invited" }]);
     setInviting(false);
+  };
+
+  const changeRole = (id, role) => {
+    setRows((r) => r.map((s) => (s.id === id ? { ...s, role } : s)));
+    setRoleFor(null);
+  };
+  const removeMember = (id) => {
+    setRows((r) => r.filter((s) => s.id !== id));
+    setRemoveFor(null);
   };
 
   const columns = [
@@ -74,10 +136,10 @@ function Staff() {
     { key: "status", header: "Status", render: (s) => <span className={`adm-badge ${s.status === "Active" ? "adm-badge--green" : "adm-badge--yellow"}`}>{s.status}</span> },
     {
       key: "actions", header: "Actions", sortable: false,
-      render: () => (
+      render: (s) => (
         <div className="adm-rowactions">
-          <button className="adm-btn-sm">Change role</button>
-          <button className="adm-btn-sm adm-btn-sm--danger">Remove</button>
+          <button className="adm-btn-sm" onClick={() => setRoleFor(s)}>Change role</button>
+          <button className="adm-btn-sm adm-btn-sm--danger" onClick={() => setRemoveFor(s)}>Remove</button>
         </div>
       ),
     },
@@ -127,6 +189,8 @@ function Staff() {
       </div>
 
       <InviteModal open={inviting} onClose={() => setInviting(false)} onInvite={invite} />
+      <RoleModal member={roleFor} onClose={() => setRoleFor(null)} onSave={changeRole} />
+      <RemoveModal member={removeFor} onClose={() => setRemoveFor(null)} onConfirm={removeMember} />
     </div>
   );
 }

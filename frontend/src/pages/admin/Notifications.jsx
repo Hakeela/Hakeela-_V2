@@ -19,6 +19,7 @@ function Notifications() {
 
   const markAllRead = () => setItems((it) => it.map((n) => ({ ...n, read: true })));
   const toggleRead = (id) => setItems((it) => it.map((n) => (n.id === id ? { ...n, read: !n.read } : n)));
+  const remove = (id) => setItems((it) => it.filter((n) => n.id !== id));
 
   return (
     <div className="dashpg">
@@ -53,9 +54,14 @@ function Notifications() {
                   <p className="adm-note__text">{n.body}</p>
                   <span className="adm-note__time">{n.time}</span>
                 </div>
-                <button className="adm-btn-sm adm-btn-sm--ghost" onClick={() => toggleRead(n.id)}>
-                  {n.read ? "Mark unread" : "Mark read"}
-                </button>
+                <div className="adm-note__actions">
+                  <button className="adm-btn-sm adm-btn-sm--ghost" onClick={() => toggleRead(n.id)}>
+                    {n.read ? "Mark unread" : "Mark read"}
+                  </button>
+                  <button className="ce-trash" data-tip="Delete" aria-label="Delete notification" onClick={() => remove(n.id)}>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>
+                  </button>
+                </div>
               </div>
             );
           })}

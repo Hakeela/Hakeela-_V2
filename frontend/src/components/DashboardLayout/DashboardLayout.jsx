@@ -118,6 +118,17 @@ const nav = [
       </svg>
     ),
   },
+  {
+    to: "/dashboard/help",
+    label: "Help",
+    icon: (
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M9.5 9a2.5 2.5 0 0 1 4.5 1.5c0 1.5-2 2-2 3" />
+        <line x1="12" y1="17" x2="12" y2="17" />
+      </svg>
+    ),
+  },
 ];
 
 const titleMap = {
@@ -127,6 +138,7 @@ const titleMap = {
   "/dashboard/certificate": "Certificate",
   "/dashboard/portfolio": "Portfolio",
   "/dashboard/notifications": "Notifications",
+  "/dashboard/help": "Help",
   "/dashboard/profile": "Settings",
 };
 

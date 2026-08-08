@@ -206,6 +206,16 @@ export const enrollTrend = [
   { m: "May", v: 78 }, { m: "Jun", v: 96 }, { m: "Jul", v: 88 }, { m: "Aug", v: 120 },
 ];
 
+// On-site quiz submission (tests are taken on the platform, not uploaded).
+// `correct` is pre-filled from the quiz definition (so it auto-grades) but a
+// grader can change it on the grade page; `chosen` is the learner's answer.
+export const sampleSubmission = [
+  { id: "sq1", question: "Which of these is primarily a programming language used in data science?", options: ["Tableau", "Python", "Excel", "Power BI"], correct: "Python", chosen: "Python" },
+  { id: "sq2", question: "R is mostly used for statistical analysis and visualization.", options: ["True", "False"], correct: "True", chosen: "False" },
+  { id: "sq3", question: "Which library is used for data manipulation in Python?", options: ["NumPy", "Pandas", "React", "Django"], correct: "Pandas", chosen: "Pandas" },
+  { id: "sq4", question: "A histogram is best used to show the distribution of a single numeric variable.", options: ["True", "False"], correct: "True", chosen: "True" },
+];
+
 export const naira = (n) => "₦" + n.toLocaleString("en-NG");
 
 export const initials = (name) => (name || "").split(" ").map((n) => n[0]).join("").slice(0, 2);

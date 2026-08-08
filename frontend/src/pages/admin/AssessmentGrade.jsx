@@ -1,17 +1,22 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { assessments, initials } from "./adminData.js";
+import { assessments, sampleSubmission, initials } from "./adminData.js";
 
 function AssessmentGrade() {
   const { id } = useParams();
   const navigate = useNavigate();
   const sub = assessments.find((a) => a.id === id);
-  const [score, setScore] = useState("");
+
+  // grader-editable correct answers, pre-filled from the quiz definition (auto-graded)
+  const [correct, setCorrect] = useState(() => Object.fromEntries(sampleSubmission.map((q) => [q.id, q.correct])));
   const [feedback, setFeedback] = useState("");
 
   if (!sub) {
     return <div className="dashpg"><p>Submission not found. <button className="adm-link" onClick={() => navigate("/admin/assessments")}>Back</button></p></div>;
   }
+
+  const correctCount = sampleSubmission.filter((q) => q.chosen === correct[q.id]).length;
+  const score = Math.round((correctCount / sampleSubmission.length) * 100);
 
   return (
     <div className="dashpg">
@@ -22,17 +27,49 @@ function AssessmentGrade() {
           <h2 className="adm-page-head__title">Grade submission</h2>
           <p className="adm-page-head__sub">{sub.type} · {sub.course} · {sub.module}</p>
         </div>
+        <span className="adm-badge adm-badge--yellow">Auto-graded · editable</span>
       </div>
 
       <div className="adm-two-col">
-        {/* Submitted work */}
+        {/* On-site answers with editable correct answer */}
         <div className="dash-card">
           <div className="adm-card-head">
-            <h3>Submitted work</h3>
-            <span className="adm-badge adm-badge--yellow">Needs grading</span>
+            <h3>Answers</h3>
           </div>
+          <p style={{ fontSize: 13, color: "#8a8a8a", marginTop: -8, marginBottom: 16 }}>
+            The quiz was taken on the platform. Correct answers are pre-selected — click an option to change which one counts as correct and the score updates automatically.
+          </p>
 
-          <div className="adm-user" style={{ marginBottom: 18 }}>
+          {sampleSubmission.map((q, i) => (
+            <div className="adm-grade-q" key={q.id}>
+              <div className="adm-grade-q__title">{i + 1}. {q.question}</div>
+              {q.options.map((opt) => {
+                const isCorrect = correct[q.id] === opt;
+                const isChosen = q.chosen === opt;
+                return (
+                  <button
+                    type="button"
+                    key={opt}
+                    className={`adm-grade-opt ${isCorrect ? "is-correct" : ""} ${isChosen ? "is-chosen" : ""}`}
+                    onClick={() => setCorrect((c) => ({ ...c, [q.id]: opt }))}
+                  >
+                    <span className="adm-grade-opt__mark">{isCorrect ? "✓" : ""}</span>
+                    <span className="adm-grade-opt__text">{opt}</span>
+                    {isChosen && <span className="adm-grade-opt__tag">learner&apos;s answer</span>}
+                  </button>
+                );
+              })}
+              <div className={`adm-grade-q__verdict ${q.chosen === correct[q.id] ? "ok" : "bad"}`}>
+                {q.chosen === correct[q.id] ? "Correct" : "Incorrect"}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Grade panel */}
+        <div className="dash-card">
+          <div className="adm-card-head"><h3>Result</h3></div>
+          <div className="adm-user" style={{ marginBottom: 16 }}>
             <span className="adm-user__ph">{initials(sub.name)}</span>
             <div>
               <div className="adm-user__name">{sub.name}</div>
@@ -40,38 +77,19 @@ function AssessmentGrade() {
             </div>
           </div>
 
-          <p style={{ fontSize: 14, color: "#4a4a4a", lineHeight: 1.7 }}>
-            For this {sub.type.toLowerCase()}, the learner submitted their work covering {sub.module} of {sub.course}.
-            Review the attached file and the notes below before assigning a score.
-          </p>
-
-          <div className="ce-file__drop" style={{ marginTop: 14, cursor: "default" }}>
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            {sub.name.split(" ")[0].toLowerCase()}-{sub.type.toLowerCase()}-submission.pdf
-            <button className="adm-btn-sm" style={{ marginLeft: "auto" }}>Download</button>
+          <div className="stat-card" style={{ marginBottom: 16 }}>
+            <div>
+              <div className="stat-card__value">{score}%</div>
+              <div className="stat-card__label">{correctCount} of {sampleSubmission.length} correct</div>
+            </div>
           </div>
 
-          <div style={{ marginTop: 16 }}>
-            <p style={{ fontWeight: 600, fontSize: 14, marginBottom: 6 }}>Learner note</p>
-            <p style={{ fontSize: 14, color: "#6a6a6a" }}>
-              &ldquo;I focused on cleaning the dataset and building the summary charts. Ran out of time on the final section.&rdquo;
-            </p>
-          </div>
-        </div>
-
-        {/* Grade panel */}
-        <div className="dash-card">
-          <div className="adm-card-head"><h3>Grade</h3></div>
           <div className="adm-field" style={{ marginBottom: 16 }}>
-            <label>Score (%)</label>
-            <input type="number" min="0" max="100" value={score} onChange={(e) => setScore(e.target.value)} placeholder="0 – 100" />
-          </div>
-          <div className="adm-field" style={{ marginBottom: 16 }}>
-            <label>Feedback for the learner</label>
-            <textarea value={feedback} onChange={(e) => setFeedback(e.target.value)} placeholder="Explain the score and give guidance…" />
+            <label>Feedback for the learner (optional)</label>
+            <textarea value={feedback} onChange={(e) => setFeedback(e.target.value)} placeholder="Add any comments…" />
           </div>
           <div className="adm-rowactions">
-            <button className="dash-btn dash-btn--outline" onClick={() => navigate("/admin/assessments")}>Save draft</button>
+            <button className="dash-btn dash-btn--outline" onClick={() => navigate("/admin/assessments")}>Cancel</button>
             <button className="dash-btn dash-btn--solid" onClick={() => navigate("/admin/assessments")}>Publish grade</button>
           </div>
         </div>

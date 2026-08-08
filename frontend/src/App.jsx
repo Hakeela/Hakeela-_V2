@@ -14,6 +14,7 @@ import CourseInfo from './pages/dashboard/CourseInfo.jsx'
 import Portfolio from './pages/dashboard/Portfolio.jsx'
 import Profile from './pages/dashboard/Profile.jsx'
 import StudentNotifications from './pages/dashboard/Notifications.jsx'
+import Help from './pages/dashboard/Help.jsx'
 
 // Admin / staff portal
 import { AdminRoleProvider } from './context/AdminRoleContext.jsx'
@@ -55,6 +56,7 @@ function App() {
           <Route path="/dashboard/certificate" element={<Certificate />} />
           <Route path="/dashboard/portfolio" element={<Portfolio />} />
           <Route path="/dashboard/notifications" element={<StudentNotifications />} />
+          <Route path="/dashboard/help" element={<Help />} />
           <Route path="/dashboard/profile" element={<Profile />} />
         </Route>
 
