@@ -124,6 +124,26 @@
   color: #6f6f6f;
 }
 
+/* Inline auth messages */
+.auth-note,
+.auth-error {
+  margin: 14px 0 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.auth-note {
+  background: #eef0ff;
+  color: #3b34c9;
+  border: 1px solid #d9d7f7;
+}
+.auth-error {
+  background: #fdecec;
+  color: #c22f2f;
+  border: 1px solid #f3caca;
+}
+
 .auth-form {
   margin-top: 32px;
   display: flex;

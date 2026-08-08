@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.jsx";
 import "./DashboardLayout.css";
 
 const nav = [
@@ -145,8 +146,16 @@ const titleMap = {
 function DashboardLayout() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { profile, signOut } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const firstName = (profile?.full_name || "there").split(" ")[0];
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/login", { replace: true });
+  };
 
   // Close the mobile drawer whenever the route changes
   useEffect(() => {
@@ -198,7 +207,7 @@ function DashboardLayout() {
           ))}
         </nav>
 
-        <button className="dash-logout" onClick={() => navigate("/login")} title="Logout">
+        <button className="dash-logout" onClick={handleLogout} title="Logout">
           <svg
             viewBox="0 0 24 24"
             width="20"
@@ -274,7 +283,7 @@ function DashboardLayout() {
 
             <div className="dash-welcome">
               <img src="/user-photo.png" alt="" />
-              <span>Welcome, Victor</span>
+              <span>Welcome, {firstName}</span>
             </div>
 
             <img className="dash-avatar" src="/avatar-146.png" alt="Account" />

@@ -5,6 +5,7 @@ import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
 import ResetPassword from './pages/ResetPassword.jsx'
 import DashboardLayout from './components/DashboardLayout/DashboardLayout.jsx'
+import RequireAuth from './components/RequireAuth.jsx'
 import Dashboard from './pages/dashboard/Dashboard.jsx'
 import Courses from './pages/dashboard/Courses.jsx'
 import ContinueLearning from './pages/dashboard/ContinueLearning.jsx'
@@ -46,8 +47,8 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* Dashboard (student portal) */}
-        <Route element={<DashboardLayout />}>
+        {/* Dashboard (student portal) — requires a signed-in learner */}
+        <Route element={<RequireAuth><DashboardLayout /></RequireAuth>}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/courses" element={<Courses />} />
           <Route path="/dashboard/courses/:id" element={<ContinueLearning />} />
