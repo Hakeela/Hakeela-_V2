@@ -212,7 +212,7 @@ function AdminLayout() {
           ))}
         </nav>
 
-        <button className="dash-logout" onClick={() => navigate("/login")} title="Logout">
+        <button className="dash-logout" onClick={() => navigate("/admin/login")} title="Logout">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
             <polyline points="16 17 21 12 16 7" />

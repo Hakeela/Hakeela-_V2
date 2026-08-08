@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Outlet } from 'react-router-dom'
 import CursorFollower from './components/CursorFollower/CursorFollower.jsx'
 import Home from './pages/Home.jsx'
 import Login from './pages/Login.jsx'
@@ -30,6 +30,7 @@ import Notifications from './pages/admin/Notifications.jsx'
 import Staff from './pages/admin/Staff.jsx'
 import Payments from './pages/admin/Payments.jsx'
 import Settings from './pages/admin/Settings.jsx'
+import AdminLogin from './pages/admin/AdminLogin.jsx'
 
 function App() {
   return (
@@ -57,11 +58,14 @@ function App() {
         <Route
           element={
             <AdminRoleProvider>
-              <AdminLayout />
+              <Outlet />
             </AdminRoleProvider>
           }
         >
-          <Route path="/admin" element={<Overview />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+
+          <Route element={<AdminLayout />}>
+            <Route path="/admin" element={<Overview />} />
           <Route path="/admin/learners" element={<Learners />} />
           <Route path="/admin/learners/:id" element={<LearnerProfile />} />
           <Route path="/admin/courses" element={<AdminCourses />} />
@@ -73,9 +77,10 @@ function App() {
           <Route path="/admin/notifications" element={<Notifications />} />
           <Route path="/admin/settings" element={<Settings />} />
 
-          {/* Admin-only */}
-          <Route path="/admin/staff" element={<RequireAdmin><Staff /></RequireAdmin>} />
-          <Route path="/admin/payments" element={<RequireAdmin><Payments /></RequireAdmin>} />
+            {/* Admin-only */}
+            <Route path="/admin/staff" element={<RequireAdmin><Staff /></RequireAdmin>} />
+            <Route path="/admin/payments" element={<RequireAdmin><Payments /></RequireAdmin>} />
+          </Route>
         </Route>
       </Routes>
     </>

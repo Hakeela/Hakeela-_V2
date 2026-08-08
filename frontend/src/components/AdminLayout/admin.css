@@ -81,6 +81,17 @@
   color: #fff;
 }
 
+/* Role toggle on the login page (wider, fills the field) */
+.adm-roleswitch--login {
+  width: 100%;
+  gap: 6px;
+}
+.adm-roleswitch--login .adm-roleswitch__btn {
+  flex: 1;
+  padding: 12px 14px;
+  font-size: 15px;
+}
+
 /* ---------- Page header ---------- */
 .adm-page-head {
   display: flex;
