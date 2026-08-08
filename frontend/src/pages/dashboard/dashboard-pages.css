@@ -813,6 +813,62 @@
   color: var(--hak-blue);
 }
 
+/* ============ Student notifications ============ */
+.snote-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+.snote-head__title { margin: 0; font-size: 26px; font-weight: 800; color: var(--hak-blue); }
+.snote-head__sub { margin: 4px 0 0; color: #8a8a8a; font-size: 14px; }
+.snote-list { display: flex; flex-direction: column; gap: 12px; }
+.snote {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: #fff;
+  border: 1px solid #ececf0;
+  border-radius: 14px;
+  padding: 16px 18px;
+}
+.snote.is-unread { border-color: #d9d7f7; background: #f7f8ff; }
+.snote__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.snote--blue { background: #eceafd; color: var(--hak-blue); }
+.snote--green { background: #e4f6ec; color: #1e9e5a; }
+.snote--yellow { background: #fff4d6; color: #b6870c; }
+.snote--gray { background: #f0f0f4; color: #6f6f6f; }
+.snote__body { flex: 1; min-width: 0; cursor: pointer; }
+.snote__title { font-weight: 700; color: #1a1a1a; font-size: 15px; }
+.snote__text { margin: 4px 0 2px; font-size: 14px; color: #6a6a6a; }
+.snote__time { font-size: 12px; color: #9a9a9a; }
+.snote__del {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #f0e0e0;
+  background: #fff;
+  color: #c46a6a;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.snote__del:hover { background: #fdecec; color: #d63a3a; border-color: #f3caca; }
+.snote-empty { color: #9a9a9a; text-align: center; padding: 40px 0; }
+
 /* ============ Responsive ============ */
 @media (max-width: 1100px) {
   .stat-grid { grid-template-columns: repeat(2, 1fr); }

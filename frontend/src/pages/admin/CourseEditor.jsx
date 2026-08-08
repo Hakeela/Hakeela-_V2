@@ -1,35 +1,65 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { courses, courseCategories, sampleCurriculum } from "./adminData.js";
 
-let _id = 1000;
+let _id = 2000;
 const uid = () => `x${++_id}`;
 
-function FileField({ label, hint, accept, value, onChange }) {
+const TrashIcon = () => (
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /><path d="M10 11v6M14 11v6" /><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+  </svg>
+);
+const UploadIcon = () => (
+  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+);
+
+/** Upload field with live preview + remove (image or video). value: {name,url}|null */
+function UploadField({ label, kind, accept, value, onChange, onRemove }) {
   return (
-    <label className="ce-file">
+    <div>
       <span className="ce-file__label">{label}</span>
-      <span className="ce-file__drop">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <span>{value ? value : hint}</span>
-      </span>
-      <input type="file" accept={accept} onChange={(e) => onChange(e.target.files[0]?.name || "")} hidden />
-    </label>
+      {value ? (
+        <div className="ce-upload__preview">
+          {value.url && kind === "image" && <img src={value.url} alt="preview" />}
+          {value.url && kind === "video" && <video src={value.url} controls />}
+          {!value.url && (
+            <div style={{ padding: 18, color: "#c9c9d4", display: "flex", alignItems: "center", gap: 10, fontSize: 14 }}>
+              <UploadIcon /> {value.name} <span style={{ fontSize: 12 }}>· preview appears after re-upload</span>
+            </div>
+          )}
+          <button type="button" className="ce-upload__remove" onClick={onRemove}>
+            <TrashIcon /> Remove
+          </button>
+        </div>
+      ) : (
+        <label className="ce-file__drop">
+          <UploadIcon />
+          <span>Click to upload {kind}</span>
+          <input
+            type="file"
+            accept={accept}
+            hidden
+            onChange={(e) => {
+              const f = e.target.files[0];
+              if (f) onChange({ name: f.name, url: URL.createObjectURL(f), type: f.type });
+            }}
+          />
+        </label>
+      )}
+    </div>
   );
 }
 
-function Collapse({ open, title, badge, onToggle, onDelete, children }) {
+function ModuleHead({ open, name, count, onToggle, onDelete }) {
   return (
-    <div className={`ce-item ${open ? "is-open" : ""}`}>
-      <div className="ce-item__head">
-        <button type="button" className="ce-item__toggle" onClick={onToggle}>
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: open ? "rotate(90deg)" : "none", transition: "transform .15s" }}><polyline points="9 6 15 12 9 18"/></svg>
-          <span className="ce-item__title">{title}</span>
-          {badge != null && <span className="ce-item__badge">{badge}</span>}
-        </button>
-        <button type="button" className="adm-btn-sm adm-btn-sm--danger" onClick={onDelete}>Delete</button>
-      </div>
-      {open && <div className="ce-item__body">{children}</div>}
+    <div className="ce-item__head">
+      <button type="button" className="ce-item__toggle" onClick={onToggle}>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: open ? "rotate(90deg)" : "none", transition: "transform .15s" }}><polyline points="9 6 15 12 9 18"/></svg>
+        <span className="ce-item__title">{name}</span>
+        <span className="ce-item__badge">{count} lessons</span>
+      </button>
+      <button type="button" className="adm-btn-sm adm-btn-sm--danger" onClick={onDelete}>Delete module</button>
     </div>
   );
 }
@@ -45,46 +75,51 @@ function CourseEditor() {
     price: existing?.price ?? 5000,
     status: existing?.status || "Draft",
     description: "",
-    thumbnail: "",
+    thumbnail: null,
   });
 
-  const [modules, setModules] = useState(() =>
-    existing ? sampleCurriculum.modules.map((m) => ({ ...m, _open: false })) : []
-  );
-  const [tests, setTests] = useState(() =>
-    existing ? sampleCurriculum.tests.map((t) => ({ ...t, _open: false })) : []
-  );
-  const [assignments, setAssignments] = useState(() =>
-    existing ? sampleCurriculum.assignments.map((a) => ({ ...a, _open: false })) : []
-  );
+  const [modules, setModules] = useState(() => {
+    if (!existing) return [];
+    return sampleCurriculum.modules.map((m, mi) => ({
+      id: m.id,
+      name: m.name,
+      _open: mi === 0,
+      lessons: m.lessons.map((l, li) => ({
+        id: l.id,
+        title: l.title,
+        duration: l.duration,
+        video: l.video ? { name: l.video, url: "" } : null,
+        transcript: l.transcript || "",
+        tests: mi === 0 && li === 0 ? sampleCurriculum.tests.map((t) => ({ ...t, questions: t.questions.map((q) => ({ ...q })) })) : [],
+        assignments: mi === 0 && li === 0 ? sampleCurriculum.assignments.map((a) => ({ ...a })) : [],
+      })),
+    }));
+  });
 
   const set = (k, v) => setDetails((d) => ({ ...d, [k]: v }));
 
-  // ---- modules & lessons ----
-  const addModule = () => setModules((m) => [...m, { id: uid(), name: `Module ${m.length + 1}`, lessons: [], _open: true }]);
+  // ---- nested state patchers ----
+  const patchModule = (mid, patch) => setModules((ms) => ms.map((m) => (m.id === mid ? { ...m, ...patch } : m)));
+  const patchLessons = (mid, fn) => setModules((ms) => ms.map((m) => (m.id === mid ? { ...m, lessons: fn(m.lessons) } : m)));
+  const patchLesson = (mid, lid, patch) => patchLessons(mid, (ls) => ls.map((l) => (l.id === lid ? { ...l, ...patch } : l)));
+  const patchTests = (mid, lid, fn) => patchLessons(mid, (ls) => ls.map((l) => (l.id === lid ? { ...l, tests: fn(l.tests) } : l)));
+  const patchAssignments = (mid, lid, fn) => patchLessons(mid, (ls) => ls.map((l) => (l.id === lid ? { ...l, assignments: fn(l.assignments) } : l)));
+  const patchQuestions = (mid, lid, tid, fn) => patchTests(mid, lid, (ts) => ts.map((t) => (t.id === tid ? { ...t, questions: fn(t.questions) } : t)));
+
+  const addModule = () => setModules((m) => [...m, { id: uid(), name: `Module ${m.length + 1}`, _open: true, lessons: [] }]);
   const delModule = (mid) => setModules((m) => m.filter((x) => x.id !== mid));
-  const toggleModule = (mid) => setModules((m) => m.map((x) => (x.id === mid ? { ...x, _open: !x._open } : x)));
-  const patchModule = (mid, patch) => setModules((m) => m.map((x) => (x.id === mid ? { ...x, ...patch } : x)));
-  const addLesson = (mid) => patchModuleLessons(mid, (ls) => [...ls, { id: uid(), title: "New lesson", duration: "", video: "", transcript: "" }]);
-  const delLesson = (mid, lid) => patchModuleLessons(mid, (ls) => ls.filter((l) => l.id !== lid));
-  const patchLesson = (mid, lid, patch) => patchModuleLessons(mid, (ls) => ls.map((l) => (l.id === lid ? { ...l, ...patch } : l)));
-  const patchModuleLessons = (mid, fn) => setModules((m) => m.map((x) => (x.id === mid ? { ...x, lessons: fn(x.lessons) } : x)));
+  const toggleModule = (mid) => setModules((ms) => ms.map((m) => (m.id === mid ? { ...m, _open: !m._open } : m)));
 
-  // ---- tests & questions ----
-  const addTest = () => setTests((t) => [...t, { id: uid(), title: "New test", questions: [], _open: true }]);
-  const delTest = (tid) => setTests((t) => t.filter((x) => x.id !== tid));
-  const toggleTest = (tid) => setTests((t) => t.map((x) => (x.id === tid ? { ...x, _open: !x._open } : x)));
-  const patchTest = (tid, patch) => setTests((t) => t.map((x) => (x.id === tid ? { ...x, ...patch } : x)));
-  const addQuestion = (tid) => patchTestQs(tid, (qs) => [...qs, { id: uid(), question: "", options: "", answer: "" }]);
-  const delQuestion = (tid, qid) => patchTestQs(tid, (qs) => qs.filter((q) => q.id !== qid));
-  const patchQuestion = (tid, qid, patch) => patchTestQs(tid, (qs) => qs.map((q) => (q.id === qid ? { ...q, ...patch } : q)));
-  const patchTestQs = (tid, fn) => setTests((t) => t.map((x) => (x.id === tid ? { ...x, questions: fn(x.questions) } : x)));
+  const addLesson = (mid) => patchLessons(mid, (ls) => [...ls, { id: uid(), title: "New lesson", duration: "", video: null, transcript: "", tests: [], assignments: [] }]);
+  const delLesson = (mid, lid) => patchLessons(mid, (ls) => ls.filter((l) => l.id !== lid));
 
-  // ---- assignments ----
-  const addAssignment = () => setAssignments((a) => [...a, { id: uid(), title: "New assignment", description: "", due: "", _open: true }]);
-  const delAssignment = (aid) => setAssignments((a) => a.filter((x) => x.id !== aid));
-  const toggleAssignment = (aid) => setAssignments((a) => a.map((x) => (x.id === aid ? { ...x, _open: !x._open } : x)));
-  const patchAssignment = (aid, patch) => setAssignments((a) => a.map((x) => (x.id === aid ? { ...x, ...patch } : x)));
+  const addTest = (mid, lid) => patchTests(mid, lid, (ts) => [...ts, { id: uid(), title: "New test", questions: [] }]);
+  const delTest = (mid, lid, tid) => patchTests(mid, lid, (ts) => ts.filter((t) => t.id !== tid));
+  const addQuestion = (mid, lid, tid) => patchQuestions(mid, lid, tid, (qs) => [...qs, { id: uid(), question: "", options: "", answer: "" }]);
+  const delQuestion = (mid, lid, tid, qid) => patchQuestions(mid, lid, tid, (qs) => qs.filter((q) => q.id !== qid));
+
+  const addAssignment = (mid, lid) => patchAssignments(mid, lid, (as) => [...as, { id: uid(), title: "New assignment", description: "", due: "" }]);
+  const delAssignment = (mid, lid, aid) => patchAssignments(mid, lid, (as) => as.filter((a) => a.id !== aid));
 
   const deleteCourse = () => {
     if (window.confirm("Delete this entire course? All modules, lessons, tests and assignments will be removed.")) {
@@ -132,7 +167,7 @@ function CourseEditor() {
             </select>
           </div>
           <div className="adm-field">
-            <FileField label="Thumbnail" hint="Upload cover image" accept="image/*" value={details.thumbnail} onChange={(v) => set("thumbnail", v)} />
+            <UploadField label="Thumbnail" kind="image" accept="image/*" value={details.thumbnail} onChange={(v) => set("thumbnail", v)} onRemove={() => set("thumbnail", null)} />
           </div>
           <div className="adm-field adm-field--full">
             <label>Description</label>
@@ -144,117 +179,136 @@ function CourseEditor() {
       {/* Curriculum */}
       <div className="dash-card ce-section">
         <div className="adm-card-head">
-          <h3>Curriculum — modules &amp; lessons</h3>
+          <h3>Curriculum — modules, lessons, tests &amp; assignments</h3>
           <button className="adm-btn-sm adm-btn-sm--primary" onClick={addModule}>+ Add module</button>
         </div>
         {modules.length === 0 && <p className="ce-empty">No modules yet. Add your first module.</p>}
+
         {modules.map((m) => (
-          <Collapse key={m.id} open={m._open} title={m.name} badge={`${m.lessons.length} lessons`} onToggle={() => toggleModule(m.id)} onDelete={() => delModule(m.id)}>
-            <div className="adm-field" style={{ marginBottom: 14 }}>
-              <label>Module name</label>
-              <input value={m.name} onChange={(e) => patchModule(m.id, { name: e.target.value })} />
-            </div>
-            <div className="ce-sub-head">
-              <span>Lessons</span>
-              <button className="adm-btn-sm" onClick={() => addLesson(m.id)}>+ Add lesson</button>
-            </div>
-            {m.lessons.map((l) => (
-              <div className="ce-lesson" key={l.id}>
-                <div className="adm-form-grid">
-                  <div className="adm-field">
-                    <label>Lesson title</label>
-                    <input value={l.title} onChange={(e) => patchLesson(m.id, l.id, { title: e.target.value })} />
-                  </div>
-                  <div className="adm-field">
-                    <label>Duration</label>
-                    <input value={l.duration} onChange={(e) => patchLesson(m.id, l.id, { duration: e.target.value })} placeholder="e.g. 25 min" />
-                  </div>
-                  <div className="adm-field">
-                    <FileField label="Lesson video" hint="Upload video" accept="video/*" value={l.video} onChange={(v) => patchLesson(m.id, l.id, { video: v })} />
-                  </div>
-                  <div className="adm-field">
-                    <label>&nbsp;</label>
-                    <button className="adm-btn-sm adm-btn-sm--danger" onClick={() => delLesson(m.id, l.id)}>Delete lesson</button>
-                  </div>
-                  <div className="adm-field adm-field--full">
-                    <label>Transcript</label>
-                    <textarea value={l.transcript} onChange={(e) => patchLesson(m.id, l.id, { transcript: e.target.value })} placeholder="Lesson transcript / notes" />
-                  </div>
+          <div className={`ce-item ${m._open ? "is-open" : ""}`} key={m.id}>
+            <ModuleHead open={m._open} name={m.name} count={m.lessons.length} onToggle={() => toggleModule(m.id)} onDelete={() => delModule(m.id)} />
+            {m._open && (
+              <div className="ce-item__body">
+                <div className="adm-field" style={{ marginBottom: 14 }}>
+                  <label>Module name</label>
+                  <input value={m.name} onChange={(e) => patchModule(m.id, { name: e.target.value })} />
                 </div>
-              </div>
-            ))}
-            {m.lessons.length === 0 && <p className="ce-empty">No lessons in this module yet.</p>}
-          </Collapse>
-        ))}
-      </div>
 
-      {/* Tests */}
-      <div className="dash-card ce-section">
-        <div className="adm-card-head">
-          <h3>Tests &amp; quizzes</h3>
-          <button className="adm-btn-sm adm-btn-sm--primary" onClick={addTest}>+ Add test</button>
-        </div>
-        {tests.length === 0 && <p className="ce-empty">No tests yet.</p>}
-        {tests.map((t) => (
-          <Collapse key={t.id} open={t._open} title={t.title} badge={`${t.questions.length} questions`} onToggle={() => toggleTest(t.id)} onDelete={() => delTest(t.id)}>
-            <div className="adm-field" style={{ marginBottom: 14 }}>
-              <label>Test title</label>
-              <input value={t.title} onChange={(e) => patchTest(t.id, { title: e.target.value })} />
-            </div>
-            <div className="ce-sub-head">
-              <span>Questions</span>
-              <button className="adm-btn-sm" onClick={() => addQuestion(t.id)}>+ Add question</button>
-            </div>
-            {t.questions.map((qn, i) => (
-              <div className="ce-lesson" key={qn.id}>
-                <div className="adm-form-grid">
-                  <div className="adm-field adm-field--full">
-                    <label>Question {i + 1}</label>
-                    <input value={qn.question} onChange={(e) => patchQuestion(t.id, qn.id, { question: e.target.value })} placeholder="Enter the question" />
-                  </div>
-                  <div className="adm-field">
-                    <label>Options (comma separated)</label>
-                    <input value={qn.options} onChange={(e) => patchQuestion(t.id, qn.id, { options: e.target.value })} placeholder="A, B, C, D" />
-                  </div>
-                  <div className="adm-field">
-                    <label>Correct answer</label>
-                    <input value={qn.answer} onChange={(e) => patchQuestion(t.id, qn.id, { answer: e.target.value })} />
-                  </div>
-                  <div className="adm-field adm-field--full">
-                    <button className="adm-btn-sm adm-btn-sm--danger" onClick={() => delQuestion(t.id, qn.id)}>Delete question</button>
-                  </div>
+                <div className="ce-sub-head">
+                  <span>Lessons</span>
+                  <button className="adm-btn-sm" onClick={() => addLesson(m.id)}>+ Add lesson</button>
                 </div>
-              </div>
-            ))}
-            {t.questions.length === 0 && <p className="ce-empty">No questions yet.</p>}
-          </Collapse>
-        ))}
-      </div>
 
-      {/* Assignments */}
-      <div className="dash-card ce-section">
-        <div className="adm-card-head">
-          <h3>Assignments</h3>
-          <button className="adm-btn-sm adm-btn-sm--primary" onClick={addAssignment}>+ Add assignment</button>
-        </div>
-        {assignments.length === 0 && <p className="ce-empty">No assignments yet.</p>}
-        {assignments.map((a) => (
-          <Collapse key={a.id} open={a._open} title={a.title} onToggle={() => toggleAssignment(a.id)} onDelete={() => delAssignment(a.id)}>
-            <div className="adm-form-grid">
-              <div className="adm-field">
-                <label>Assignment title</label>
-                <input value={a.title} onChange={(e) => patchAssignment(a.id, { title: e.target.value })} />
+                {m.lessons.map((l) => (
+                  <div className="ce-lesson" key={l.id}>
+                    <div className="adm-form-grid">
+                      <div className="adm-field">
+                        <label>Lesson title</label>
+                        <input value={l.title} onChange={(e) => patchLesson(m.id, l.id, { title: e.target.value })} />
+                      </div>
+                      <div className="adm-field">
+                        <label>Duration</label>
+                        <input value={l.duration} onChange={(e) => patchLesson(m.id, l.id, { duration: e.target.value })} placeholder="e.g. 25 min" />
+                      </div>
+                      <div className="adm-field adm-field--full">
+                        <UploadField
+                          label="Lesson video"
+                          kind="video"
+                          accept="video/*"
+                          value={l.video}
+                          onChange={(v) => patchLesson(m.id, l.id, { video: v })}
+                          onRemove={() => patchLesson(m.id, l.id, { video: null })}
+                        />
+                      </div>
+                      <div className="adm-field adm-field--full">
+                        <label>Transcript</label>
+                        <textarea value={l.transcript} onChange={(e) => patchLesson(m.id, l.id, { transcript: e.target.value })} placeholder="Lesson transcript / notes" />
+                      </div>
+                    </div>
+
+                    {/* Lesson delete — under the transcript, trash icon + tooltip */}
+                    <div className="ce-lesson__foot">
+                      <button className="ce-trash" data-tip="Delete lesson" aria-label="Delete lesson" onClick={() => delLesson(m.id, l.id)}>
+                        <TrashIcon />
+                      </button>
+                    </div>
+
+                    {/* Tests under the lesson */}
+                    <div className="ce-subblock">
+                      <div className="ce-subblock__head">
+                        <span>Tests &amp; quizzes</span>
+                        <button className="adm-btn-sm" onClick={() => addTest(m.id, l.id)}>+ Add test</button>
+                      </div>
+                      {l.tests.length === 0 && <p className="ce-empty" style={{ margin: 0 }}>No tests for this lesson.</p>}
+                      {l.tests.map((t) => (
+                        <div className="ce-mini" key={t.id}>
+                          <div className="adm-form-grid">
+                            <div className="adm-field adm-field--full">
+                              <label>Test title</label>
+                              <input value={t.title} onChange={(e) => patchTests(m.id, l.id, (ts) => ts.map((x) => (x.id === t.id ? { ...x, title: e.target.value } : x)))} />
+                            </div>
+                          </div>
+                          <div className="ce-sub-head" style={{ margin: "10px 0 8px" }}>
+                            <span>Questions</span>
+                            <button className="adm-btn-sm" onClick={() => addQuestion(m.id, l.id, t.id)}>+ Add question</button>
+                          </div>
+                          {t.questions.map((qn, i) => (
+                            <div className="adm-form-grid" key={qn.id} style={{ marginBottom: 8 }}>
+                              <div className="adm-field adm-field--full">
+                                <label>Question {i + 1}</label>
+                                <input value={qn.question} onChange={(e) => patchQuestions(m.id, l.id, t.id, (qs) => qs.map((x) => (x.id === qn.id ? { ...x, question: e.target.value } : x)))} placeholder="Enter the question" />
+                              </div>
+                              <div className="adm-field">
+                                <label>Options (comma separated)</label>
+                                <input value={qn.options} onChange={(e) => patchQuestions(m.id, l.id, t.id, (qs) => qs.map((x) => (x.id === qn.id ? { ...x, options: e.target.value } : x)))} placeholder="A, B, C, D" />
+                              </div>
+                              <div className="adm-field">
+                                <label>Correct answer</label>
+                                <div style={{ display: "flex", gap: 8 }}>
+                                  <input style={{ flex: 1 }} value={qn.answer} onChange={(e) => patchQuestions(m.id, l.id, t.id, (qs) => qs.map((x) => (x.id === qn.id ? { ...x, answer: e.target.value } : x)))} />
+                                  <button className="ce-trash" data-tip="Delete question" aria-label="Delete question" onClick={() => delQuestion(m.id, l.id, t.id, qn.id)}><TrashIcon /></button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                          <button className="adm-btn-sm adm-btn-sm--danger" onClick={() => delTest(m.id, l.id, t.id)}>Delete test</button>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Assignments under the lesson */}
+                    <div className="ce-subblock">
+                      <div className="ce-subblock__head">
+                        <span>Assignments</span>
+                        <button className="adm-btn-sm" onClick={() => addAssignment(m.id, l.id)}>+ Add assignment</button>
+                      </div>
+                      {l.assignments.length === 0 && <p className="ce-empty" style={{ margin: 0 }}>No assignments for this lesson.</p>}
+                      {l.assignments.map((a) => (
+                        <div className="ce-mini" key={a.id}>
+                          <div className="adm-form-grid">
+                            <div className="adm-field">
+                              <label>Assignment title</label>
+                              <input value={a.title} onChange={(e) => patchAssignments(m.id, l.id, (as) => as.map((x) => (x.id === a.id ? { ...x, title: e.target.value } : x)))} />
+                            </div>
+                            <div className="adm-field">
+                              <label>Due</label>
+                              <input value={a.due} onChange={(e) => patchAssignments(m.id, l.id, (as) => as.map((x) => (x.id === a.id ? { ...x, due: e.target.value } : x)))} placeholder="e.g. 2 weeks" />
+                            </div>
+                            <div className="adm-field adm-field--full">
+                              <label>Instructions</label>
+                              <textarea value={a.description} onChange={(e) => patchAssignments(m.id, l.id, (as) => as.map((x) => (x.id === a.id ? { ...x, description: e.target.value } : x)))} placeholder="Describe what learners must submit" />
+                            </div>
+                          </div>
+                          <button className="adm-btn-sm adm-btn-sm--danger" onClick={() => delAssignment(m.id, l.id, a.id)}>Delete assignment</button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                {m.lessons.length === 0 && <p className="ce-empty">No lessons in this module yet.</p>}
               </div>
-              <div className="adm-field">
-                <label>Due</label>
-                <input value={a.due} onChange={(e) => patchAssignment(a.id, { due: e.target.value })} placeholder="e.g. 2 weeks" />
-              </div>
-              <div className="adm-field adm-field--full">
-                <label>Instructions</label>
-                <textarea value={a.description} onChange={(e) => patchAssignment(a.id, { description: e.target.value })} placeholder="Describe what learners must submit" />
-              </div>
-            </div>
-          </Collapse>
+            )}
+          </div>
         ))}
       </div>
 

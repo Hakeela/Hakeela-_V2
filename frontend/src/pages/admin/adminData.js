@@ -49,6 +49,36 @@ export const learners = [
     phone: "+44 7700 900321", status: "Suspended", joined: "Dec 2025",
     courses: [{ title: "Everyone a Changemaker", progress: 0, status: "Not Started", score: null }],
   },
+  {
+    id: "L-1048", name: "Ngozi Eze", email: "ngozi.eze@gmail.com", gender: "Female",
+    phone: "+234 803 220 9911", status: "Active", joined: "Apr 2026",
+    courses: [{ title: "Product Design", progress: 55, status: "In Progress", score: 81 }],
+  },
+  {
+    id: "L-1049", name: "Ibrahim Sani", email: "ibrahim.sani@gmail.com", gender: "Male",
+    phone: "+234 706 771 3320", status: "Active", joined: "Mar 2026",
+    courses: [{ title: "Web Development", progress: 33, status: "In Progress", score: null }],
+  },
+  {
+    id: "L-1050", name: "Blessing Udo", email: "blessing.udo@yahoo.com", gender: "Female",
+    phone: "+233 20 559 8842", status: "Active", joined: "May 2026",
+    courses: [{ title: "Data Analysis", progress: 90, status: "In Progress", score: 95 }],
+  },
+  {
+    id: "L-1051", name: "Samuel Ade", email: "samuel.ade@gmail.com", gender: "Male",
+    phone: "+234 815 003 2277", status: "Graduated", joined: "Aug 2025",
+    courses: [{ title: "Product Design", progress: 100, status: "Completed", score: 90 }],
+  },
+  {
+    id: "L-1052", name: "Fatima Yusuf", email: "fatima.yusuf@gmail.com", gender: "Female",
+    phone: "+254 733 118 664", status: "Active", joined: "Jun 2026",
+    courses: [{ title: "Excel for Beginners", progress: 20, status: "In Progress", score: null }],
+  },
+  {
+    id: "L-1053", name: "Kwame Mensah", email: "kwame.mensah@gmail.com", gender: "Male",
+    phone: "+233 24 990 1123", status: "Active", joined: "Jul 2026",
+    courses: [{ title: "Web Development", progress: 48, status: "In Progress", score: 70 }],
+  },
 ];
 
 export const genderSplit = [
@@ -99,6 +129,9 @@ export const enrollments = [
   { id: "AP-3303", name: "Ibrahim Sani", program: "Web Development", date: "Aug 4, 2026", status: "Approved" },
   { id: "AP-3304", name: "Ngozi Eze", program: "Product Design", date: "Aug 4, 2026", status: "Pending" },
   { id: "AP-3305", name: "Peter Obi", program: "Everyone a Changemaker", date: "Aug 3, 2026", status: "Rejected" },
+  { id: "AP-3306", name: "Blessing Udo", program: "Data Analysis", date: "Aug 3, 2026", status: "Approved" },
+  { id: "AP-3307", name: "Kwame Mensah", program: "Web Development", date: "Aug 2, 2026", status: "Pending" },
+  { id: "AP-3308", name: "Fatima Yusuf", program: "Excel for Beginners", date: "Aug 2, 2026", status: "Approved" },
 ];
 
 export const assessments = [
@@ -106,6 +139,9 @@ export const assessments = [
   { id: "SB-902", name: "Maxe Emmanuel", course: "Product Design", module: "Module 2", type: "Assignment", score: null, status: "Needs grading" },
   { id: "SB-903", name: "Aisha Bello", course: "Web Development", module: "Module 5", type: "Project", score: null, status: "Needs grading" },
   { id: "SB-904", name: "Grace Musa", course: "Excel for Beginners", module: "Module 2", type: "Quiz", score: 74, status: "Auto-graded" },
+  { id: "SB-905", name: "Ngozi Eze", course: "Product Design", module: "Module 3", type: "Assignment", score: null, status: "Needs grading" },
+  { id: "SB-906", name: "Blessing Udo", course: "Data Analysis", module: "Module 4", type: "Quiz", score: 95, status: "Auto-graded" },
+  { id: "SB-907", name: "Ibrahim Sani", course: "Web Development", module: "Module 2", type: "Project", score: null, status: "Needs grading" },
 ];
 
 export const certificates = [
@@ -113,6 +149,8 @@ export const certificates = [
   { id: "CT-552", name: "Victor Eyo", course: "Data Analysis", payment: "Unpaid", status: "Awaiting payment" },
   { id: "CT-553", name: "Samuel Ade", course: "Product Design", payment: "Paid", status: "Issued" },
   { id: "CT-554", name: "Grace Musa", course: "Excel for Beginners", payment: "Waived", status: "Ready to issue" },
+  { id: "CT-555", name: "Blessing Udo", course: "Data Analysis", payment: "Paid", status: "Ready to issue" },
+  { id: "CT-556", name: "Kwame Mensah", course: "Web Development", payment: "Unpaid", status: "Awaiting payment" },
 ];
 
 // --- Staff (only two roles: Admin, Staff) --------------------------------
@@ -138,6 +176,11 @@ export const transactions = [
   { id: "TXN-88212", name: "Victor Eyo", item: "Program — Data Analysis", method: "Transfer", amount: 5000, date: "Aug 4, 2026", status: "Success" },
   { id: "TXN-88211", name: "Ngozi Eze", item: "Program — Product Design", method: "Card", amount: 5000, date: "Aug 4, 2026", status: "Pending" },
   { id: "TXN-88210", name: "Peter Obi", item: "Certificate — Leadership", method: "Card", amount: 5000, date: "Aug 3, 2026", status: "Failed" },
+  { id: "TXN-88209", name: "Blessing Udo", item: "Certificate — Data Analysis", method: "Transfer", amount: 5000, date: "Aug 2, 2026", status: "Success" },
+  { id: "TXN-88208", name: "Samuel Ade", item: "Program — Product Design", method: "Card", amount: 5000, date: "Aug 2, 2026", status: "Success" },
+  { id: "TXN-88207", name: "Ibrahim Sani", item: "Program — Web Development", method: "Card", amount: 5000, date: "Aug 1, 2026", status: "Success" },
+  { id: "TXN-88206", name: "Kwame Mensah", item: "Program — Web Development", method: "Transfer", amount: 5000, date: "Jul 31, 2026", status: "Pending" },
+  { id: "TXN-88205", name: "Fatima Yusuf", item: "Program — Excel", method: "Card", amount: 0, date: "Jul 31, 2026", status: "Success" },
 ];
 
 // --- Notifications --------------------------------------------------------

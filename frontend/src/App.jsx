@@ -13,6 +13,7 @@ import Catalog from './pages/dashboard/Catalog.jsx'
 import CourseInfo from './pages/dashboard/CourseInfo.jsx'
 import Portfolio from './pages/dashboard/Portfolio.jsx'
 import Profile from './pages/dashboard/Profile.jsx'
+import StudentNotifications from './pages/dashboard/Notifications.jsx'
 
 // Admin / staff portal
 import { AdminRoleProvider } from './context/AdminRoleContext.jsx'
@@ -27,6 +28,8 @@ import Enrollments from './pages/admin/Enrollments.jsx'
 import Assessments from './pages/admin/Assessments.jsx'
 import AdminCertificates from './pages/admin/AdminCertificates.jsx'
 import Notifications from './pages/admin/Notifications.jsx'
+import AssessmentGrade from './pages/admin/AssessmentGrade.jsx'
+import AssessmentReview from './pages/admin/AssessmentReview.jsx'
 import Staff from './pages/admin/Staff.jsx'
 import Payments from './pages/admin/Payments.jsx'
 import Settings from './pages/admin/Settings.jsx'
@@ -51,6 +54,7 @@ function App() {
           <Route path="/dashboard/enroll/:id" element={<CourseInfo />} />
           <Route path="/dashboard/certificate" element={<Certificate />} />
           <Route path="/dashboard/portfolio" element={<Portfolio />} />
+          <Route path="/dashboard/notifications" element={<StudentNotifications />} />
           <Route path="/dashboard/profile" element={<Profile />} />
         </Route>
 
@@ -73,6 +77,8 @@ function App() {
           <Route path="/admin/courses/:id/edit" element={<CourseEditor />} />
           <Route path="/admin/enrollments" element={<Enrollments />} />
           <Route path="/admin/assessments" element={<Assessments />} />
+          <Route path="/admin/assessments/:id/grade" element={<AssessmentGrade />} />
+          <Route path="/admin/assessments/:id/review" element={<AssessmentReview />} />
           <Route path="/admin/certificates" element={<AdminCertificates />} />
           <Route path="/admin/notifications" element={<Notifications />} />
           <Route path="/admin/settings" element={<Settings />} />

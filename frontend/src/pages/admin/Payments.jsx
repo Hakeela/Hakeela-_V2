@@ -1,3 +1,5 @@
+import { useState } from "react";
+import DataTable from "../../components/AdminUI/DataTable.jsx";
 import { transactions, naira } from "./adminData.js";
 
 const badge = { Success: "adm-badge--green", Pending: "adm-badge--yellow", Failed: "adm-badge--red" };
@@ -10,6 +12,19 @@ const stats = [
 ];
 
 function Payments() {
+  const [status, setStatus] = useState("All");
+  const view = transactions.filter((t) => status === "All" || t.status === status);
+
+  const columns = [
+    { key: "id", header: "Reference", render: (t) => <span className="adm-user__sub" style={{ fontFamily: "monospace" }}>{t.id}</span> },
+    { key: "name", header: "Payer", render: (t) => <span className="adm-user__name">{t.name}</span> },
+    { key: "item", header: "Item" },
+    { key: "method", header: "Method" },
+    { key: "amount", header: "Amount", render: (t) => naira(t.amount) },
+    { key: "date", header: "Date" },
+    { key: "status", header: "Status", render: (t) => <span className={`adm-badge ${badge[t.status]}`}>{t.status}</span> },
+  ];
+
   return (
     <div className="dashpg">
       <div className="adm-page-head">
@@ -34,31 +49,19 @@ function Payments() {
         ))}
       </div>
 
-      <div className="adm-table-wrap">
-        <div className="adm-card-head" style={{ padding: "18px 20px 0" }}>
-          <h3>Recent transactions</h3>
-        </div>
-        <div className="adm-table-scroll">
-          <table className="adm-table">
-            <thead>
-              <tr><th>Reference</th><th>Payer</th><th>Item</th><th>Method</th><th>Amount</th><th>Date</th><th>Status</th></tr>
-            </thead>
-            <tbody>
-              {transactions.map((t) => (
-                <tr key={t.id}>
-                  <td className="adm-user__sub" style={{ fontFamily: "monospace" }}>{t.id}</td>
-                  <td className="adm-user__name">{t.name}</td>
-                  <td>{t.item}</td>
-                  <td>{t.method}</td>
-                  <td>{naira(t.amount)}</td>
-                  <td>{t.date}</td>
-                  <td><span className={`adm-badge ${badge[t.status]}`}>{t.status}</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <DataTable
+        columns={columns}
+        rows={view}
+        searchKeys={["id", "name", "item"]}
+        searchPlaceholder="Search transactions"
+        initialSort={{ key: "date", dir: "desc" }}
+        minWidth={760}
+        filters={
+          <select className="adm-select" value={status} onChange={(e) => setStatus(e.target.value)}>
+            {["All", "Success", "Pending", "Failed"].map((s) => <option key={s} value={s}>{s === "All" ? "All statuses" : s}</option>)}
+          </select>
+        }
+      />
     </div>
   );
 }

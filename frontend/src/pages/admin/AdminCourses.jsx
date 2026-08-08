@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DataTable from "../../components/AdminUI/DataTable.jsx";
 import { courses as seed, courseCategories, naira } from "./adminData.js";
 
 function AdminCourses() {
@@ -7,7 +8,6 @@ function AdminCourses() {
   const [rows, setRows] = useState(seed);
   const [cat, setCat] = useState("All");
 
-  const cats = ["All", ...courseCategories];
   const view = rows.filter((c) => cat === "All" || c.category === cat);
 
   const remove = (id) => {
@@ -15,6 +15,25 @@ function AdminCourses() {
       setRows((r) => r.filter((c) => c.id !== id));
     }
   };
+
+  const columns = [
+    { key: "title", header: "Course", render: (c) => <span className="adm-user__name">{c.title}</span> },
+    { key: "category", header: "Category" },
+    { key: "modules", header: "Modules", align: "center" },
+    { key: "lessons", header: "Lessons", align: "center" },
+    { key: "students", header: "Students", align: "center" },
+    { key: "price", header: "Price", render: (c) => (c.price === 0 ? "Free" : naira(c.price)) },
+    { key: "status", header: "Status", render: (c) => <span className={`adm-badge ${c.status === "Published" ? "adm-badge--green" : "adm-badge--gray"}`}>{c.status}</span> },
+    {
+      key: "actions", header: "Actions", sortable: false,
+      render: (c) => (
+        <div className="adm-rowactions">
+          <button className="adm-btn-sm adm-btn-sm--primary" onClick={() => navigate(`/admin/courses/${c.id}/edit`)}>Edit</button>
+          <button className="adm-btn-sm adm-btn-sm--danger" onClick={() => remove(c.id)}>Delete</button>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="dashpg">
@@ -26,43 +45,19 @@ function AdminCourses() {
         <button className="dash-btn dash-btn--solid" onClick={() => navigate("/admin/courses/new")}>+ New Course</button>
       </div>
 
-      <div className="adm-toolbar">
-        {cats.map((c) => (
-          <button key={c} className={`adm-btn-sm ${cat === c ? "adm-btn-sm--primary" : ""}`} onClick={() => setCat(c)}>{c}</button>
-        ))}
-      </div>
-
-      <div className="adm-table-wrap">
-        <div className="adm-table-scroll">
-          <table className="adm-table">
-            <thead>
-              <tr><th>Course</th><th>Category</th><th>Modules</th><th>Lessons</th><th>Students</th><th>Price</th><th>Status</th><th>Actions</th></tr>
-            </thead>
-            <tbody>
-              {view.map((c) => (
-                <tr key={c.id}>
-                  <td className="adm-user__name">{c.title}</td>
-                  <td>{c.category}</td>
-                  <td>{c.modules}</td>
-                  <td>{c.lessons}</td>
-                  <td>{c.students}</td>
-                  <td>{c.price === 0 ? "Free" : naira(c.price)}</td>
-                  <td><span className={`adm-badge ${c.status === "Published" ? "adm-badge--green" : "adm-badge--gray"}`}>{c.status}</span></td>
-                  <td>
-                    <div className="adm-rowactions">
-                      <button className="adm-btn-sm adm-btn-sm--primary" onClick={() => navigate(`/admin/courses/${c.id}/edit`)}>Edit</button>
-                      <button className="adm-btn-sm adm-btn-sm--danger" onClick={() => remove(c.id)}>Delete</button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {view.length === 0 && (
-                <tr><td colSpan={8} style={{ textAlign: "center", color: "#9a9a9a", padding: 32 }}>No courses in this category.</td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <DataTable
+        columns={columns}
+        rows={view}
+        searchKeys={["title", "category"]}
+        searchPlaceholder="Search courses"
+        initialSort={{ key: "title", dir: "asc" }}
+        filters={
+          <select className="adm-select" value={cat} onChange={(e) => setCat(e.target.value)}>
+            <option value="All">All categories</option>
+            {courseCategories.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+        }
+      />
     </div>
   );
 }

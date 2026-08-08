@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router-dom";
+import DataTable from "../../components/AdminUI/DataTable.jsx";
 import { learners, countryFromPhone, initials } from "./adminData.js";
 
 const statusBadge = {
@@ -67,33 +68,27 @@ function LearnerProfile() {
       </div>
 
       {/* Learning history */}
-      <div className="dash-card">
-        <div className="adm-card-head"><h3>Learning history</h3></div>
-        <div className="adm-table-scroll">
-          <table className="adm-table">
-            <thead>
-              <tr><th>Course</th><th>Progress</th><th>Status</th><th>Score</th></tr>
-            </thead>
-            <tbody>
-              {learner.courses.map((x) => (
-                <tr key={x.title}>
-                  <td className="adm-user__name">{x.title}</td>
-                  <td style={{ minWidth: 160 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <div className="dash-bar" style={{ maxWidth: 110 }}><i style={{ width: `${x.progress}%` }} /></div>
-                      <span style={{ fontSize: 13, color: "#8a8a8a" }}>{x.progress}%</span>
-                    </div>
-                  </td>
-                  <td>
-                    <span className={`adm-badge ${x.status === "Completed" ? "adm-badge--green" : x.status === "Not Started" ? "adm-badge--gray" : "adm-badge--blue"}`}>{x.status}</span>
-                  </td>
-                  <td>{x.score == null ? "—" : `${x.score}%`}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <h3 className="dash-section-title" style={{ margin: "8px 0 16px", fontSize: 18, color: "#1a1a1a" }}>Learning history</h3>
+      <DataTable
+        columns={[
+          { key: "title", header: "Course", render: (x) => <span className="adm-user__name">{x.title}</span> },
+          {
+            key: "progress", header: "Progress", render: (x) => (
+              <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 150 }}>
+                <div className="dash-bar" style={{ maxWidth: 110 }}><i style={{ width: `${x.progress}%` }} /></div>
+                <span style={{ fontSize: 13, color: "#8a8a8a" }}>{x.progress}%</span>
+              </div>
+            ),
+          },
+          { key: "status", header: "Status", render: (x) => <span className={`adm-badge ${x.status === "Completed" ? "adm-badge--green" : x.status === "Not Started" ? "adm-badge--gray" : "adm-badge--blue"}`}>{x.status}</span> },
+          { key: "score", header: "Score", sortAccessor: (x) => x.score ?? -1, render: (x) => (x.score == null ? "—" : `${x.score}%`) },
+        ]}
+        rows={learner.courses}
+        searchKeys={["title", "status"]}
+        searchPlaceholder="Search courses"
+        pageSize={8}
+        minWidth={480}
+      />
     </div>
   );
 }
