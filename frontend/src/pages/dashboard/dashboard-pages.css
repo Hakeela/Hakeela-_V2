@@ -861,7 +861,8 @@
 }
 @media (max-width: 820px) {
   .course-grid { grid-template-columns: 1fr; }
-  .dwb { flex-direction: column; text-align: center; }
+  .dwb { flex-direction: column; padding: 35px;} 
+  /* text-align: center; */
   .dwb__art { max-width: 60%; }
   .quick-card--resume { flex-direction: column; }
   .quick-card__thumb { width: 100%; aspect-ratio: 16/9; }

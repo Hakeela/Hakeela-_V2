@@ -14,6 +14,23 @@ import CourseInfo from './pages/dashboard/CourseInfo.jsx'
 import Portfolio from './pages/dashboard/Portfolio.jsx'
 import Profile from './pages/dashboard/Profile.jsx'
 
+// Admin / staff portal
+import { AdminRoleProvider } from './context/AdminRoleContext.jsx'
+import AdminLayout from './components/AdminLayout/AdminLayout.jsx'
+import RequireAdmin from './pages/admin/RequireAdmin.jsx'
+import Overview from './pages/admin/Overview.jsx'
+import Learners from './pages/admin/Learners.jsx'
+import LearnerProfile from './pages/admin/LearnerProfile.jsx'
+import AdminCourses from './pages/admin/AdminCourses.jsx'
+import CourseEditor from './pages/admin/CourseEditor.jsx'
+import Enrollments from './pages/admin/Enrollments.jsx'
+import Assessments from './pages/admin/Assessments.jsx'
+import AdminCertificates from './pages/admin/AdminCertificates.jsx'
+import Notifications from './pages/admin/Notifications.jsx'
+import Staff from './pages/admin/Staff.jsx'
+import Payments from './pages/admin/Payments.jsx'
+import Settings from './pages/admin/Settings.jsx'
+
 function App() {
   return (
     <>
@@ -34,6 +51,31 @@ function App() {
           <Route path="/dashboard/certificate" element={<Certificate />} />
           <Route path="/dashboard/portfolio" element={<Portfolio />} />
           <Route path="/dashboard/profile" element={<Profile />} />
+        </Route>
+
+        {/* Admin & staff portal (shared, role-gated) */}
+        <Route
+          element={
+            <AdminRoleProvider>
+              <AdminLayout />
+            </AdminRoleProvider>
+          }
+        >
+          <Route path="/admin" element={<Overview />} />
+          <Route path="/admin/learners" element={<Learners />} />
+          <Route path="/admin/learners/:id" element={<LearnerProfile />} />
+          <Route path="/admin/courses" element={<AdminCourses />} />
+          <Route path="/admin/courses/new" element={<CourseEditor />} />
+          <Route path="/admin/courses/:id/edit" element={<CourseEditor />} />
+          <Route path="/admin/enrollments" element={<Enrollments />} />
+          <Route path="/admin/assessments" element={<Assessments />} />
+          <Route path="/admin/certificates" element={<AdminCertificates />} />
+          <Route path="/admin/notifications" element={<Notifications />} />
+          <Route path="/admin/settings" element={<Settings />} />
+
+          {/* Admin-only */}
+          <Route path="/admin/staff" element={<RequireAdmin><Staff /></RequireAdmin>} />
+          <Route path="/admin/payments" element={<RequireAdmin><Payments /></RequireAdmin>} />
         </Route>
       </Routes>
     </>
