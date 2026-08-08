@@ -1,22 +1,35 @@
 import { useState } from "react";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { submitHelpMessage } from "../../lib/data.js";
 import "./dashboard-pages.css";
 
 const MAX = 1500;
 
-// Prefilled from the signed-in learner (read-only)
-const account = { name: "Victor Eyo", email: "victor.eyo@gmail.com" };
-
 function Help() {
+  const { user, profile } = useAuth();
+  // Prefilled from the signed-in learner (read-only)
+  const account = {
+    name: profile?.full_name || user?.email?.split("@")[0] || "",
+    email: user?.email || "",
+  };
+
   const [message, setMessage] = useState("");
   const [sent, setSent] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
 
   const count = message.length;
   const over = count > MAX;
-  const canSubmit = message.trim().length > 0 && !over;
+  const canSubmit = message.trim().length > 0 && !over && !busy;
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     if (!canSubmit) return;
+    setError("");
+    setBusy(true);
+    const { error } = await submitHelpMessage(user?.id, { name: account.name, email: account.email, message });
+    setBusy(false);
+    if (error) return setError(error);
     setSent(true);
     setMessage("");
     setTimeout(() => setSent(false), 4000);
@@ -33,6 +46,7 @@ function Help() {
 
       <div className="dash-card help-card">
         {sent && <div className="help-success">Thanks! Your message has been sent. We&apos;ll reply to {account.email}.</div>}
+        {error && <div className="help-warning" style={{ marginBottom: 16 }}>{error}</div>}
 
         <form className="help-form" onSubmit={submit}>
           <div className="settings-field">
@@ -66,7 +80,7 @@ function Help() {
           </div>
 
           <button type="submit" className="dash-btn dash-btn--solid" disabled={!canSubmit}>
-            Send message
+            {busy ? "Sending…" : "Send message"}
           </button>
         </form>
       </div>

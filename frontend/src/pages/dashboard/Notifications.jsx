@@ -1,13 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { getMyNotifications, setNotificationRead, deleteNotification } from "../../lib/data.js";
 import "./dashboard-pages.css";
-
-const seed = [
-  { id: "n1", type: "Lesson", title: "New lesson available", body: "“Data Visualization Basics” was added to your Data Analysis course.", time: "20 min ago", read: false },
-  { id: "n2", type: "Grade", title: "Assignment graded", body: "You scored 92% on your Module 1 project. Well done!", time: "2 hours ago", read: false },
-  { id: "n3", type: "Certificate", title: "Certificate ready", body: "Pay for your certificate to unlock the download.", time: "Yesterday", read: true },
-  { id: "n4", type: "Enrollment", title: "Enrollment approved", body: "You’ve been enrolled into Cohort 4 of Data Analysis.", time: "2 days ago", read: true },
-  { id: "n5", type: "Reminder", title: "Keep your streak going", body: "You’re 3 lessons away from finishing Module 2.", time: "3 days ago", read: true },
-];
 
 const typeColor = {
   Lesson: "snote--blue",
@@ -26,12 +20,35 @@ const icons = {
 };
 
 function Notifications() {
-  const [items, setItems] = useState(seed);
+  const { user } = useAuth();
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const unread = items.filter((n) => !n.read).length;
 
-  const markAllRead = () => setItems((it) => it.map((n) => ({ ...n, read: true })));
-  const toggleRead = (id) => setItems((it) => it.map((n) => (n.id === id ? { ...n, read: !n.read } : n)));
-  const remove = (id) => setItems((it) => it.filter((n) => n.id !== id));
+  useEffect(() => {
+    let active = true;
+    getMyNotifications(user?.id)
+      .then((rows) => active && setItems(rows))
+      .catch(() => active && setItems([]))
+      .finally(() => active && setLoading(false));
+    return () => { active = false; };
+  }, [user?.id]);
+
+  const markAllRead = () => {
+    setItems((it) => it.map((n) => ({ ...n, read: true })));
+    items.filter((n) => !n.read).forEach((n) => setNotificationRead(n.id, true));
+  };
+  const toggleRead = (id) => {
+    const next = !items.find((n) => n.id === id)?.read;
+    setItems((it) => it.map((n) => (n.id === id ? { ...n, read: next } : n)));
+    setNotificationRead(id, next);
+  };
+  const remove = (id) => {
+    setItems((it) => it.filter((n) => n.id !== id));
+    deleteNotification(id);
+  };
+
+  if (loading) return <div className="dashpg"><p className="snote-empty">Loading…</p></div>;
 
   return (
     <div className="dashpg">

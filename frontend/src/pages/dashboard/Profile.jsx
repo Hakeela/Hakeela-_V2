@@ -1,11 +1,46 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import PhoneField from '../../components/PhoneField/PhoneField.jsx'
+import { useAuth } from '../../context/AuthContext.jsx'
+import { updateProfile } from '../../lib/data.js'
 import './dashboard-pages.css'
 
 function Profile() {
-  const [showPw, setShowPw] = useState(false)
-  const [showPw2, setShowPw2] = useState(false)
+  const { user, profile, updatePassword } = useAuth()
+  const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
+  const [pw, setPw] = useState('')
+  const [pw2, setPw2] = useState('')
+  const [savingInfo, setSavingInfo] = useState(false)
+  const [savingPw, setSavingPw] = useState(false)
+  const [msg, setMsg] = useState('')
+
+  useEffect(() => {
+    if (profile) {
+      setFullName(profile.full_name || '')
+      setPhone(profile.phone || '')
+    }
+  }, [profile])
+
+  const flash = (t) => { setMsg(t); setTimeout(() => setMsg(''), 3500) }
+
+  const saveInfo = async (e) => {
+    e.preventDefault()
+    setSavingInfo(true)
+    const { error } = await updateProfile(user?.id, { full_name: fullName, phone })
+    setSavingInfo(false)
+    flash(error ? `Error: ${error}` : 'Account information updated.')
+  }
+
+  const savePassword = async (e) => {
+    e.preventDefault()
+    if (pw.length < 6) return flash('Password must be at least 6 characters.')
+    if (pw !== pw2) return flash('Passwords do not match.')
+    setSavingPw(true)
+    const { error } = await updatePassword(pw)
+    setSavingPw(false)
+    if (!error) { setPw(''); setPw2('') }
+    flash(error ? `Error: ${error}` : 'Password updated.')
+  }
 
   return (
     <div className="dashpg">
@@ -18,19 +53,21 @@ function Profile() {
             </span>
           </div>
           <div>
-            <h2 className="settings-user__name">Maxe Emmanuel</h2>
+            <h2 className="settings-user__name">{fullName || user?.email?.split('@')[0] || 'Your account'}</h2>
             <p className="settings-user__role">Student</p>
           </div>
         </div>
 
+        {msg && <div className="help-success" style={{ marginBottom: 18 }}>{msg}</div>}
+
         {/* Account */}
-        <div className="settings-sec">
+        <form className="settings-sec" onSubmit={saveInfo}>
           <h3 className="settings-sec__title">Account Information</h3>
           <p className="settings-sec__hint">Edit your personal account information.</p>
 
           <div className="settings-field">
             <label>Full Name</label>
-            <input className="settings-input" placeholder="Enter your full name" />
+            <input className="settings-input" placeholder="Enter your full name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
           </div>
           <div className="settings-field">
             <label>Phone Number</label>
@@ -38,28 +75,28 @@ function Profile() {
           </div>
           <div className="settings-field">
             <label>Email</label>
-            <input className="settings-input" type="email" placeholder="Enter email" />
+            <input className="settings-input" type="email" value={user?.email || ''} readOnly aria-readonly="true" />
           </div>
-          <button className="dash-btn dash-btn--solid">Update</button>
-        </div>
+          <button className="dash-btn dash-btn--solid" disabled={savingInfo}>{savingInfo ? 'Saving…' : 'Update'}</button>
+        </form>
 
         <hr className="settings-divider" />
 
         {/* Security */}
-        <div className="settings-sec">
+        <form className="settings-sec" onSubmit={savePassword}>
           <h3 className="settings-sec__title">Security Information</h3>
           <p className="settings-sec__hint">Edit your security account information.</p>
 
           <div className="settings-field">
             <label>Password</label>
-            <input className="settings-input" type={showPw ? 'text' : 'password'} placeholder="Enter password" onFocus={() => setShowPw(false)} />
+            <input className="settings-input" type="password" placeholder="Enter new password" value={pw} onChange={(e) => setPw(e.target.value)} />
           </div>
           <div className="settings-field">
             <label>Confirm Password</label>
-            <input className="settings-input" type={showPw2 ? 'text' : 'password'} placeholder="Re-enter password" />
+            <input className="settings-input" type="password" placeholder="Re-enter password" value={pw2} onChange={(e) => setPw2(e.target.value)} />
           </div>
-          <button className="dash-btn dash-btn--solid">Update</button>
-        </div>
+          <button className="dash-btn dash-btn--solid" disabled={savingPw}>{savingPw ? 'Saving…' : 'Update'}</button>
+        </form>
       </div>
     </div>
   )

@@ -1,37 +1,32 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
+import { getCatalog } from '../../lib/data.js'
 import './dashboard-pages.css'
 
-const courses = [
-  { id: 'data-analysis', img: '/course-1.png', title: 'Data Analysis', desc: 'Unlock the power of data to make smart, informed decisions. This course equips you with analytical tools and techniques to interpret, visualize, and communicate data effectively.' },
-  { id: 'product-design', img: '/course-2.png', title: 'Product Design', desc: 'Learn how to create user-centered products that solve real problems. This hands-on course walks you through the design thinking process, UI/UX principles, and the tools top designers use.' },
-  { id: 'web-development', img: '/course-3.png', title: 'Web Development', desc: 'Start from the basics and grow into a full-stack web developer. This course takes you from writing your first line of code to deploying real-world applications.' },
+// category -> section presentation
+const SECTIONS = [
+  { category: 'Courses', title: 'Courses', subtitle: 'Select from our wide range of courses and get started!', wide: false },
+  { category: 'Special Needs & Tech', title: 'Special Need and Tech Courses', subtitle: 'Kindly note these courses are available anytime, any day, anywhere for our learners with special needs', wide: true },
+  { category: 'Leadership', title: 'Leadership Courses', subtitle: 'In partnership with Ashoka Africa, We are Family Foundation, among others to provide Leadership courses for our learners.', wide: true },
 ]
 
-const specialNeed = [
-  { id: 'intro-computer', img: '/gain-1.png', title: 'Introduction to Computer', desc: 'Begin your tech career by understanding Computer essentials' },
-  { id: 'excel', img: '/gain-2.png', title: 'Excel for Beginners', desc: 'Welcome to a world of charts & tables.' },
-]
-
-const leadership = [
-  { id: 'changemaker', img: '/gain-2.png', title: 'Everyone a Changemaker', desc: 'Unlock skills, knowledge and insight on how to lead a change in your community.' },
-  { id: 'peace-building', img: '/hero-collage.png', title: 'Peace building and development', desc: 'Unlock knowledge and skills to drive peace in your community.' },
-]
+const naira = (n) => (n === 0 ? 'Free' : '₦' + Number(n).toLocaleString('en-NG'))
 
 function Arrow({ dir, onClick }) {
   return (
     <button className="cat-arrow" aria-label={dir === 'next' ? 'Next' : 'Previous'} onClick={onClick}>
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        {dir === 'next' ? <><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></> : <><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></>}
+        {dir === 'next' ? <><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></> : <><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></>}
       </svg>
     </button>
   )
 }
 
-function CourseRow({ title, subtitle, items, perView, wide }) {
+function CourseRow({ title, subtitle, items, wide }) {
   const ref = useRef(null)
+  if (!items || items.length === 0) return null
   return (
     <section className="cat-section">
       <h3 className="dash-section-title">{title}</h3>
@@ -42,26 +37,18 @@ function CourseRow({ title, subtitle, items, perView, wide }) {
         onSwiper={(s) => (ref.current = s)}
         slidesPerView={1}
         spaceBetween={24}
-        breakpoints={
-          wide
-            ? { 760: { slidesPerView: 2 } }
-            : { 640: { slidesPerView: 2 }, 1080: { slidesPerView: 3 } }
-        }
+        breakpoints={wide ? { 760: { slidesPerView: 2 } } : { 640: { slidesPerView: 2 }, 1080: { slidesPerView: 3 } }}
       >
         {items.map((c) => (
           <SwiperSlide key={c.id}>
             <article className={`cat-card ${wide ? 'cat-card--wide' : ''}`}>
-              <div className="cat-card__media">
-                <img src={c.img} alt="" />
-              </div>
+              <div className="cat-card__media"><img src={c.thumbnail_url || '/gain-1.png'} alt="" /></div>
               <div className="cat-card__body">
                 <h4 className="cat-card__title">{c.title}</h4>
-                <p className="cat-card__desc">{c.desc}</p>
+                <p className="cat-card__desc">{c.description}</p>
                 <div className="cat-card__foot">
-                  <span className="cat-card__price">₦5,000</span>
-                  <Link to={`/dashboard/enroll/${c.id}`} className="dash-btn dash-btn--outline cat-card__enroll">
-                    Enroll
-                  </Link>
+                  <span className="cat-card__price">{naira(c.price)}</span>
+                  <Link to={`/dashboard/enroll/${c.id}`} className="dash-btn dash-btn--outline cat-card__enroll">Enroll</Link>
                 </div>
               </div>
             </article>
@@ -78,6 +65,18 @@ function CourseRow({ title, subtitle, items, perView, wide }) {
 }
 
 function Catalog() {
+  const [byCategory, setByCategory] = useState({})
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let active = true
+    getCatalog()
+      .then((g) => active && setByCategory(g))
+      .catch(() => active && setByCategory({}))
+      .finally(() => active && setLoading(false))
+    return () => { active = false }
+  }, [])
+
   return (
     <div className="dashpg">
       <div className="cat-intro">
@@ -85,10 +84,7 @@ function Catalog() {
           <path d="M4 13 Q55 1 106 13" stroke="var(--hak-yellow)" strokeWidth="4" strokeLinecap="round" />
         </svg>
         <h2 className="cat-intro__title">Select the program you want to join</h2>
-        <p className="cat-intro__lead">
-          If you already started an application, please make sure you finish it
-          before the deadline!
-        </p>
+        <p className="cat-intro__lead">If you already started an application, please make sure you finish it before the deadline!</p>
         <p className="cat-intro__note">Please note</p>
         <ul className="cat-intro__list">
           <li>You can only enroll in one program at a time</li>
@@ -97,24 +93,13 @@ function Catalog() {
         </ul>
       </div>
 
-      <CourseRow
-        title="Courses"
-        subtitle="Select from our wide range of courses and get started!"
-        items={courses}
-        perView={3}
-      />
-      <CourseRow
-        title="Special Need and Tech Courses"
-        subtitle="Kindly note these courses are available anytime, any day, anywhere for our learners with special needs"
-        items={specialNeed}
-        wide
-      />
-      <CourseRow
-        title="Leadership Courses"
-        subtitle="In partnership with Ashoka Africa, We are Family Foundation, among others to provide Leadership courses for our learners."
-        items={leadership}
-        wide
-      />
+      {loading ? (
+        <p style={{ color: '#8a8a8a' }}>Loading courses…</p>
+      ) : (
+        SECTIONS.map((s) => (
+          <CourseRow key={s.category} title={s.title} subtitle={s.subtitle} items={byCategory[s.category]} wide={s.wide} />
+        ))
+      )}
     </div>
   )
 }

@@ -1,7 +1,22 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { getMyCourses } from "../../lib/data.js";
 import "./dashboard-pages.css";
 
 function Dashboard() {
+  const { user, profile } = useAuth();
+  const firstName = (profile?.full_name || user?.email?.split("@")[0] || "there").split(" ")[0];
+  const [resume, setResume] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    getMyCourses(user?.id)
+      .then((cs) => { if (active) setResume(cs.find((c) => c.progress < 100) || cs[0] || null); })
+      .catch(() => active && setResume(null));
+    return () => { active = false; };
+  }, [user?.id]);
+
   return (
     <div className="dashpg">
       {/* Welcome banner */}
@@ -14,7 +29,7 @@ function Dashboard() {
         />
         <div className="dwb__text">
           <h2 className="dwb__title">
-            Welcome back, Victor! You&apos;re on a roll! 👍
+            Welcome back, {firstName}! You&apos;re on a roll! 👍
           </h2>
           <p className="dwb__desc">
             Your consistency is paying off and you&apos;re making tremendous
@@ -30,23 +45,23 @@ function Dashboard() {
         {/* Resume course */}
         <article className="quick-card quick-card--resume">
           <div className="quick-card__thumb">
-            <img src="/gain-1.png" alt="" />
+            <img src={resume?.thumbnail_url || "/gain-1.png"} alt="" />
           </div>
           <div className="quick-card__body">
             <span className="quick-card__eyebrow">Resume Course</span>
-            <h4 className="quick-card__title">Data Analysis</h4>
-            <p className="quick-card__sub">Introduction to Data analytics</p>
+            <h4 className="quick-card__title">{resume?.title || "No active course"}</h4>
+            <p className="quick-card__sub">{resume?.description || "Enroll in a course to get started."}</p>
             <div className="quick-card__progress">
-              <span>13 of 20 lessons</span>
+              <span>{resume ? `${resume.progress}% complete` : "—"}</span>
               <div className="dash-bar">
-                <i style={{ width: "65%" }} />
+                <i style={{ width: `${resume?.progress || 0}%` }} />
               </div>
             </div>
             <Link
-              to="/dashboard/courses/data-analysis"
+              to={resume ? `/dashboard/courses/${resume.id}` : "/dashboard/enroll"}
               className="dash-btn dash-btn--outline"
             >
-              Continue
+              {resume ? "Continue" : "Browse courses"}
             </Link>
           </div>
         </article>
