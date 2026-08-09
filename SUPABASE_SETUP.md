@@ -50,6 +50,18 @@ variables, then redeploy.
 > RLS policies from step 2. Do **not** put the `service_role` secret key in the
 > frontend.
 
+## 5b. Deploy the frontend on Vercel
+Supabase hosts the backend; the React app is hosted on Vercel.
+1. Vercel → **Add New → Project**, import the `Hakeela-_V2` repo, branch `hakPortal`.
+2. **Root Directory: `frontend`** (the app lives there, not the repo root).
+   Framework preset auto-detects **Vite**.
+3. **Environment Variables:** add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
+   (same values as `.env.local`).
+4. Deploy. `frontend/vercel.json` adds an SPA rewrite so deep links like
+   `/dashboard` and `/admin/learners` resolve to the app instead of 404ing.
+5. Put the resulting Vercel URL into Supabase → Auth → **URL Configuration →
+   Site URL** so auth email links redirect correctly.
+
 ## 6. Make yourself an admin
 After you sign up once, run this in the SQL Editor (use your email):
 ```sql
