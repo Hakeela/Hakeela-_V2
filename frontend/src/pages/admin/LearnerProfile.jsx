@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import DataTable from "../../components/AdminUI/DataTable.jsx";
 import Modal from "../../components/AdminUI/Modal.jsx";
 import { useAdminRole } from "../../context/AdminRoleContext.jsx";
-import { learners, countryFromPhone, initials } from "./adminData.js";
+import { getLearner, updateLearner, deleteLearner, sendLearnerPasswordReset } from "../../lib/admin.js";
+import { countryFromPhone, initials } from "./adminData.js";
 
 const statusBadge = {
   Active: "adm-badge--green", Graduated: "adm-badge--blue",
@@ -116,15 +117,25 @@ function LearnerProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAdmin } = useAdminRole();
-  const base = learners.find((l) => l.id === id);
 
-  const [learner, setLearner] = useState(base);
+  const [learner, setLearner] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [editOpen, setEditOpen] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [toast, setToast] = useState("");
 
-  if (!base) {
+  useEffect(() => {
+    let active = true;
+    getLearner(id)
+      .then((l) => active && setLearner(l || null))
+      .catch(() => active && setLearner(null))
+      .finally(() => active && setLoading(false));
+    return () => { active = false; };
+  }, [id]);
+
+  if (loading) return <div className="dashpg"><p style={{ color: "#8a8a8a" }}>Loading…</p></div>;
+  if (!learner) {
     return (
       <div className="dashpg">
         <p>Learner not found. <Link className="adm-link" to="/admin/learners">Back to learners</Link></p>
@@ -219,19 +230,32 @@ function LearnerProfile() {
         open={editOpen}
         learner={learner}
         onClose={() => setEditOpen(false)}
-        onSave={(form) => { setLearner((l) => ({ ...l, ...form })); setEditOpen(false); flash("Learner details updated."); }}
+        onSave={async (form) => {
+          setLearner((l) => ({ ...l, ...form }));
+          setEditOpen(false);
+          await updateLearner(learner.id, form);
+          flash("Learner details updated.");
+        }}
       />
       <ResetModal
         open={resetOpen}
         learner={learner}
         onClose={() => setResetOpen(false)}
-        onDone={() => { setResetOpen(false); flash("Password reset sent."); }}
+        onDone={async () => {
+          setResetOpen(false);
+          await sendLearnerPasswordReset(learner.email);
+          flash("Password reset link sent.");
+        }}
       />
       <DeleteModal
         open={deleteOpen}
         learner={learner}
         onClose={() => setDeleteOpen(false)}
-        onConfirm={() => { setDeleteOpen(false); navigate("/admin/learners"); }}
+        onConfirm={async () => {
+          setDeleteOpen(false);
+          await deleteLearner(learner.id);
+          navigate("/admin/learners");
+        }}
       />
     </div>
   );

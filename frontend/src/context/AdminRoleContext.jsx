@@ -1,31 +1,31 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { useAuth } from "./AuthContext.jsx";
 
 /**
- * Admin & staff share one portal. The logged-in user has a role:
- *   - "admin" : full access
- *   - "staff" : operational access; admin-only areas are hidden
- *
- * There is no backend yet, so the role is kept in localStorage and can be
- * switched from the header ("View as") to preview what staff can see.
+ * Admin & staff share one portal. In real (Supabase) mode the role comes from
+ * the signed-in user's profile (`profiles.role`). In demo mode (no Supabase
+ * keys) it falls back to a local "View as" switcher so the UI is explorable.
  */
 const AdminRoleContext = createContext(null);
-
 const STORAGE_KEY = "hakadmin_role";
 
 export function AdminRoleProvider({ children }) {
-  const [role, setRole] = useState(() => {
+  const { profile, demo } = useAuth();
+
+  const [demoRole, setDemoRole] = useState(() => {
     if (typeof window === "undefined") return "admin";
     return window.localStorage.getItem(STORAGE_KEY) || "admin";
   });
-
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, role);
-  }, [role]);
+    if (demo) window.localStorage.setItem(STORAGE_KEY, demoRole);
+  }, [demo, demoRole]);
 
+  const role = demo ? demoRole : profile?.role || "student";
   const isAdmin = role === "admin";
+  const setRole = demo ? setDemoRole : () => {};
 
   return (
-    <AdminRoleContext.Provider value={{ role, setRole, isAdmin }}>
+    <AdminRoleContext.Provider value={{ role, setRole, isAdmin, demo }}>
       {children}
     </AdminRoleContext.Provider>
   );

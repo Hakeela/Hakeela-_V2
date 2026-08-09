@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAdminRole } from "../../context/AdminRoleContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 import "../DashboardLayout/DashboardLayout.css";
 import "../../pages/dashboard/dashboard-pages.css";
 import "./admin.css";
@@ -151,7 +152,8 @@ const titleMap = {
 function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { role, setRole, isAdmin } = useAdminRole();
+  const { role, setRole, isAdmin, demo } = useAdminRole();
+  const { user, profile, signOut } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -212,7 +214,7 @@ function AdminLayout() {
           ))}
         </nav>
 
-        <button className="dash-logout" onClick={() => navigate("/admin/login")} title="Logout">
+        <button className="dash-logout" onClick={async () => { await signOut(); navigate("/admin/login"); }} title="Logout">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
             <polyline points="16 17 21 12 16 7" />
@@ -248,22 +250,24 @@ function AdminLayout() {
           </div>
 
           <div className="dash-header__actions">
-            {/* Role preview switcher (stands in for real auth roles) */}
-            <div className="adm-roleswitch" role="group" aria-label="View portal as">
-              <span className="adm-roleswitch__label">View as</span>
-              <button
-                className={`adm-roleswitch__btn ${role === "admin" ? "is-on" : ""}`}
-                onClick={() => setRole("admin")}
-              >
-                Admin
-              </button>
-              <button
-                className={`adm-roleswitch__btn ${role === "staff" ? "is-on" : ""}`}
-                onClick={() => setRole("staff")}
-              >
-                Staff
-              </button>
-            </div>
+            {/* Role preview switcher — only in demo mode (no Supabase keys) */}
+            {demo && (
+              <div className="adm-roleswitch" role="group" aria-label="View portal as">
+                <span className="adm-roleswitch__label">View as</span>
+                <button
+                  className={`adm-roleswitch__btn ${role === "admin" ? "is-on" : ""}`}
+                  onClick={() => setRole("admin")}
+                >
+                  Admin
+                </button>
+                <button
+                  className={`adm-roleswitch__btn ${role === "staff" ? "is-on" : ""}`}
+                  onClick={() => setRole("staff")}
+                >
+                  Staff
+                </button>
+              </div>
+            )}
 
             <button className="dash-iconbtn" aria-label="Notifications" onClick={() => navigate("/admin/notifications")}>
               <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
@@ -275,7 +279,7 @@ function AdminLayout() {
             <button className="dash-welcome adm-account" onClick={() => navigate("/admin/settings")}>
               <img src="/avatar-146.png" alt="" />
               <span className="adm-account__meta">
-                <span className="adm-account__name">Imaobong A.</span>
+                <span className="adm-account__name">{profile?.full_name || user?.email?.split("@")[0] || "Account"}</span>
                 <span className="adm-account__role">{isAdmin ? "Administrator" : "Staff"}</span>
               </span>
             </button>

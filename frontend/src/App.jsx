@@ -21,6 +21,7 @@ import Help from './pages/dashboard/Help.jsx'
 import { AdminRoleProvider } from './context/AdminRoleContext.jsx'
 import AdminLayout from './components/AdminLayout/AdminLayout.jsx'
 import RequireAdmin from './pages/admin/RequireAdmin.jsx'
+import RequireStaff from './pages/admin/RequireStaff.jsx'
 import Overview from './pages/admin/Overview.jsx'
 import Learners from './pages/admin/Learners.jsx'
 import LearnerProfile from './pages/admin/LearnerProfile.jsx'
@@ -71,7 +72,7 @@ function App() {
         >
           <Route path="/admin/login" element={<AdminLogin />} />
 
-          <Route element={<AdminLayout />}>
+          <Route element={<RequireStaff><AdminLayout /></RequireStaff>}>
             <Route path="/admin" element={<Overview />} />
           <Route path="/admin/learners" element={<Learners />} />
           <Route path="/admin/learners/:id" element={<LearnerProfile />} />

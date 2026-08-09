@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DataTable from "../../components/AdminUI/DataTable.jsx";
 import Modal from "../../components/AdminUI/Modal.jsx";
-import { staff as seed, permissionAreas, rolePermissions, initials } from "./adminData.js";
+import { getStaff, changeStaffRole, removeStaff } from "../../lib/admin.js";
+import { permissionAreas, rolePermissions, initials } from "./adminData.js";
 
 const roleBadge = { Admin: "adm-badge--blue", Staff: "adm-badge--gray" };
 const Tick = () => <span className="adm-tick">✓</span>;
@@ -100,23 +101,33 @@ function RemoveModal({ member, onClose, onConfirm }) {
 }
 
 function Staff() {
-  const [rows, setRows] = useState(seed);
+  const [rows, setRows] = useState([]);
   const [inviting, setInviting] = useState(false);
   const [roleFor, setRoleFor] = useState(null);
   const [removeFor, setRemoveFor] = useState(null);
 
+  useEffect(() => {
+    let active = true;
+    getStaff().then((r) => active && setRows(r)).catch(() => active && setRows([]));
+    return () => { active = false; };
+  }, []);
+
   const invite = (form) => {
-    setRows((r) => [...r, { id: `ST-${String(r.length + 1).padStart(2, "0")}`, name: form.name, email: form.email, role: form.role, status: "Invited" }]);
+    // Note: creating a real auth user needs a service-role Edge Function; this
+    // adds the row locally so the flow is demonstrable.
+    setRows((r) => [...r, { id: `pending-${r.length + 1}`, name: form.name, email: form.email, role: form.role, status: "Invited" }]);
     setInviting(false);
   };
 
-  const changeRole = (id, role) => {
+  const changeRole = async (id, role) => {
     setRows((r) => r.map((s) => (s.id === id ? { ...s, role } : s)));
     setRoleFor(null);
+    await changeStaffRole(id, role);
   };
-  const removeMember = (id) => {
+  const removeMember = async (id) => {
     setRows((r) => r.filter((s) => s.id !== id));
     setRemoveFor(null);
+    await removeStaff(id);
   };
 
   const columns = [

@@ -1,18 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DataTable from "../../components/AdminUI/DataTable.jsx";
-import { courses as seed, courseCategories, naira } from "./adminData.js";
+import { getCourses, deleteCourse } from "../../lib/admin.js";
+import { courseCategories, naira } from "./adminData.js";
 
 function AdminCourses() {
   const navigate = useNavigate();
-  const [rows, setRows] = useState(seed);
+  const [rows, setRows] = useState([]);
   const [cat, setCat] = useState("All");
+
+  useEffect(() => {
+    let active = true;
+    getCourses().then((r) => active && setRows(r)).catch(() => active && setRows([]));
+    return () => { active = false; };
+  }, []);
 
   const view = rows.filter((c) => cat === "All" || c.category === cat);
 
   const remove = (id) => {
     if (window.confirm("Delete this course? This removes all its modules, lessons, tests and assignments.")) {
       setRows((r) => r.filter((c) => c.id !== id));
+      deleteCourse(id);
     }
   };
 
@@ -20,7 +28,7 @@ function AdminCourses() {
     { key: "title", header: "Course", render: (c) => <span className="adm-user__name">{c.title}</span> },
     { key: "category", header: "Category" },
     { key: "modules", header: "Modules", align: "center" },
-    { key: "lessons", header: "Lessons", align: "center" },
+    { key: "lessons", header: "Lessons", align: "center", render: (c) => c.lessons ?? "—" },
     { key: "students", header: "Students", align: "center" },
     { key: "price", header: "Price", render: (c) => (c.price === 0 ? "Free" : naira(c.price)) },
     { key: "status", header: "Status", render: (c) => <span className={`adm-badge ${c.status === "Published" ? "adm-badge--green" : "adm-badge--gray"}`}>{c.status}</span> },

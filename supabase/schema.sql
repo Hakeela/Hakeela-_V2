@@ -8,6 +8,7 @@
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   full_name text,
+  email text,
   role text not null default 'student' check (role in ('student','staff','admin')),
   gender text,
   phone text,
@@ -20,6 +21,12 @@ create table if not exists public.profiles (
   created_at timestamptz not null default now()
 );
 
+-- If the table already existed without these columns, add them (safe to re-run):
+alter table public.profiles add column if not exists email text;
+-- Backfill email for existing rows from auth.users:
+update public.profiles p set email = u.email
+  from auth.users u where u.id = p.id and p.email is null;
+
 -- Create a profile automatically when a new auth user signs up
 create or replace function public.handle_new_user()
 returns trigger
@@ -28,9 +35,10 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.profiles (id, full_name, gender, phone, how_heard, low_income, disability)
+  insert into public.profiles (id, email, full_name, gender, phone, how_heard, low_income, disability)
   values (
     new.id,
+    new.email,
     new.raw_user_meta_data->>'full_name',
     new.raw_user_meta_data->>'gender',
     new.raw_user_meta_data->>'phone',

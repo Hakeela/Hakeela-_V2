@@ -1,13 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminRole } from "../../context/AdminRoleContext.jsx";
 import DataTable from "../../components/AdminUI/DataTable.jsx";
-import { learners, countryFromPhone, initials } from "./adminData.js";
+import { getLearners, setLearnerStatus } from "../../lib/admin.js";
+import { countryFromPhone, initials } from "./adminData.js";
 
 function Learners() {
   const { isAdmin } = useAdminRole();
   const navigate = useNavigate();
   const [gender, setGender] = useState("All");
+  const [learners, setLearners] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    getLearners()
+      .then((rows) => active && setLearners(rows))
+      .catch(() => active && setLearners([]))
+      .finally(() => active && setLoading(false));
+    return () => { active = false; };
+  }, []);
+
+  const toggleStatus = async (l) => {
+    const next = l.status === "Suspended" ? "active" : "suspended";
+    setLearners((rows) => rows.map((r) => (r.id === l.id ? { ...r, status: next === "active" ? "Active" : "Suspended" } : r)));
+    await setLearnerStatus(l.id, next);
+  };
 
   const rows = learners
     .map((l) => ({ ...l, country: countryFromPhone(l.phone).country, flag: countryFromPhone(l.phone).flag }))
@@ -32,7 +50,10 @@ function Learners() {
         <div className="adm-rowactions">
           <button className="adm-btn-sm adm-btn-sm--primary" onClick={() => navigate(`/admin/learners/${l.id}`)}>View</button>
           {isAdmin && (
-            <button className={`adm-btn-sm ${l.status === "Suspended" ? "" : "adm-btn-sm--danger"}`}>
+            <button
+              className={`adm-btn-sm ${l.status === "Suspended" ? "" : "adm-btn-sm--danger"}`}
+              onClick={() => toggleStatus(l)}
+            >
               {l.status === "Suspended" ? "Reinstate" : "Suspend"}
             </button>
           )}
@@ -46,7 +67,7 @@ function Learners() {
       <div className="adm-page-head">
         <div>
           <h2 className="adm-page-head__title">Learners</h2>
-          <p className="adm-page-head__sub">{learners.length} enrolled learners.</p>
+          <p className="adm-page-head__sub">{loading ? "Loading…" : `${learners.length} enrolled learners.`}</p>
         </div>
         <button className="dash-btn dash-btn--solid">Export CSV</button>
       </div>

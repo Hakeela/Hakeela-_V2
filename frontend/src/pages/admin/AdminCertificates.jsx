@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DataTable from "../../components/AdminUI/DataTable.jsx";
 import Modal from "../../components/AdminUI/Modal.jsx";
-import { certificates as seed, initials } from "./adminData.js";
+import { getCertificates, issueCertificate } from "../../lib/admin.js";
+import { initials } from "./adminData.js";
 
 const payBadge = { Paid: "adm-badge--green", Unpaid: "adm-badge--red", Waived: "adm-badge--blue" };
 const statusBadge = {
@@ -71,12 +72,19 @@ function IssueModal({ cert, onClose, onIssue }) {
 }
 
 function AdminCertificates() {
-  const [rows, setRows] = useState(seed);
+  const [rows, setRows] = useState([]);
   const [issuing, setIssuing] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    getCertificates().then((r) => active && setRows(r)).catch(() => active && setRows([]));
+    return () => { active = false; };
+  }, []);
 
   const doIssue = (id, payment) => {
     setRows((r) => r.map((c) => (c.id === id ? { ...c, status: "Issued", payment } : c)));
     setIssuing(null);
+    issueCertificate(id, payment);
   };
 
   const columns = [

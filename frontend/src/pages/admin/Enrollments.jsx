@@ -1,14 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DataTable from "../../components/AdminUI/DataTable.jsx";
-import { enrollments as seed, initials } from "./adminData.js";
+import { getEnrollments, setEnrollmentStatus } from "../../lib/admin.js";
+import { initials } from "./adminData.js";
 
 const badge = { Pending: "adm-badge--yellow", Approved: "adm-badge--green", Rejected: "adm-badge--red" };
 
 function Enrollments() {
-  const [rows, setRows] = useState(seed);
+  const [rows, setRows] = useState([]);
   const [status, setStatus] = useState("All");
 
-  const setStatusFor = (id, s) => setRows((r) => r.map((e) => (e.id === id ? { ...e, status: s } : e)));
+  useEffect(() => {
+    let active = true;
+    getEnrollments().then((r) => active && setRows(r)).catch(() => active && setRows([]));
+    return () => { active = false; };
+  }, []);
+
+  const setStatusFor = (id, s) => {
+    setRows((r) => r.map((e) => (e.id === id ? { ...e, status: s } : e)));
+    setEnrollmentStatus(id, s);
+  };
   const view = rows.filter((e) => status === "All" || e.status === status);
 
   const columns = [
