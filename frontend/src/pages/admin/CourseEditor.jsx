@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { isSupabaseConfigured } from "../../lib/supabase.js";
+import { getCourseForEdit, saveCourse, deleteCourse } from "../../lib/admin.js";
 import { courses, courseCategories, sampleCurriculum } from "./adminData.js";
 
 let _id = 2000;
@@ -42,7 +44,7 @@ function UploadField({ label, kind, accept, value, onChange, onRemove }) {
             hidden
             onChange={(e) => {
               const f = e.target.files[0];
-              if (f) onChange({ name: f.name, url: URL.createObjectURL(f), type: f.type });
+              if (f) onChange({ name: f.name, url: URL.createObjectURL(f), type: f.type, file: f });
             }}
           />
         </label>
@@ -67,19 +69,26 @@ function ModuleHead({ open, name, count, onToggle, onDelete }) {
 function CourseEditor() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const existing = id && id !== "new" ? courses.find((c) => c.id === id) : null;
+  const isEdit = id && id !== "new";
+  // Demo mode uses the mock course + sample curriculum; real mode fetches below.
+  const demoExisting = !isSupabaseConfigured && isEdit ? courses.find((c) => c.id === id) : null;
+
+  const [courseId, setCourseId] = useState(null);
+  const [loading, setLoading] = useState(isEdit && isSupabaseConfigured);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
 
   const [details, setDetails] = useState({
-    title: existing?.title || "",
-    category: existing?.category || courseCategories[0],
-    price: existing?.price ?? 5000,
-    status: existing?.status || "Draft",
+    title: demoExisting?.title || "",
+    category: demoExisting?.category || courseCategories[0],
+    price: demoExisting?.price ?? 5000,
+    status: demoExisting?.status || "Draft",
     description: "",
     thumbnail: null,
   });
 
   const [modules, setModules] = useState(() => {
-    if (!existing) return [];
+    if (!demoExisting) return [];
     return sampleCurriculum.modules.map((m, mi) => ({
       id: m.id,
       name: m.name,
@@ -95,6 +104,22 @@ function CourseEditor() {
       })),
     }));
   });
+
+  // Real mode: load the existing course from Supabase
+  useEffect(() => {
+    if (!isEdit || !isSupabaseConfigured) return;
+    let active = true;
+    getCourseForEdit(id)
+      .then((c) => {
+        if (!active || !c) return;
+        setCourseId(c.courseId);
+        setDetails(c.details);
+        setModules(c.modules);
+      })
+      .catch((e) => active && setError(e.message || "Failed to load course"))
+      .finally(() => active && setLoading(false));
+    return () => { active = false; };
+  }, [id, isEdit]);
 
   const set = (k, v) => setDetails((d) => ({ ...d, [k]: v }));
 
@@ -121,11 +146,24 @@ function CourseEditor() {
   const addAssignment = (mid, lid) => patchAssignments(mid, lid, (as) => [...as, { id: uid(), title: "New assignment", description: "", due: "" }]);
   const delAssignment = (mid, lid, aid) => patchAssignments(mid, lid, (as) => as.filter((a) => a.id !== aid));
 
-  const deleteCourse = () => {
+  const handleDelete = async () => {
     if (window.confirm("Delete this entire course? All modules, lessons, tests and assignments will be removed.")) {
+      if (courseId) await deleteCourse(courseId);
       navigate("/admin/courses");
     }
   };
+
+  const handleSave = async () => {
+    if (!details.title.trim()) return setError("Please enter a course title.");
+    setError("");
+    setBusy(true);
+    const { error } = await saveCourse(courseId, details, modules);
+    setBusy(false);
+    if (error) return setError(error);
+    navigate("/admin/courses");
+  };
+
+  if (loading) return <div className="dashpg"><p style={{ color: "#8a8a8a" }}>Loading course…</p></div>;
 
   return (
     <div className="dashpg">
@@ -133,14 +171,16 @@ function CourseEditor() {
 
       <div className="adm-page-head">
         <div>
-          <h2 className="adm-page-head__title">{existing ? "Edit course" : "New course"}</h2>
-          <p className="adm-page-head__sub">{existing ? existing.title : "Set up a new course, its curriculum and assessments."}</p>
+          <h2 className="adm-page-head__title">{isEdit ? "Edit course" : "New course"}</h2>
+          <p className="adm-page-head__sub">{isEdit ? details.title : "Set up a new course, its curriculum and assessments."}</p>
         </div>
         <div className="adm-rowactions">
           <button className="dash-btn dash-btn--outline" onClick={() => navigate("/admin/courses")}>Cancel</button>
-          <button className="dash-btn dash-btn--solid" onClick={() => navigate("/admin/courses")}>Save course</button>
+          <button className="dash-btn dash-btn--solid" onClick={handleSave} disabled={busy}>{busy ? "Saving…" : "Save course"}</button>
         </div>
       </div>
+
+      {error && <div className="help-warning" style={{ marginBottom: 16 }}>{error}</div>}
 
       {/* Details */}
       <div className="dash-card ce-section">
@@ -313,13 +353,13 @@ function CourseEditor() {
       </div>
 
       {/* Danger zone */}
-      {existing && (
+      {isEdit && (
         <div className="dash-card ce-danger">
           <div>
             <h3>Delete course</h3>
             <p>Permanently remove this course and all of its modules, lessons, tests and assignments.</p>
           </div>
-          <button className="adm-btn-sm adm-btn-sm--danger" onClick={deleteCourse}>Delete course</button>
+          <button className="adm-btn-sm adm-btn-sm--danger" onClick={handleDelete}>Delete course</button>
         </div>
       )}
     </div>

@@ -162,6 +162,110 @@ export async function deleteCourse(id) {
   await supabase.from("courses").delete().eq("id", id);
 }
 
+// ---- Course editor: load / save (with media upload) ----
+const slugify = (s) =>
+  (s || "course").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+async function uploadMedia(folder, file) {
+  const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const path = `${folder}/${Date.now().toString(36)}-${safe}`;
+  const { error } = await supabase.storage.from("course-media").upload(path, file, { upsert: false });
+  if (error) return null;
+  return supabase.storage.from("course-media").getPublicUrl(path).data.publicUrl;
+}
+
+export async function getCourseForEdit(id) {
+  if (!isSupabaseConfigured) return null; // demo: editor uses its own sample seed
+  const { data, error } = await supabase
+    .from("courses")
+    .select("id, title, description, category, price, status, thumbnail_url, modules(id, title, position, lessons(id, title, duration, video_url, transcript, position, assessments(id, title, type, questions)))")
+    .eq("id", id)
+    .single();
+  if (error) throw error;
+  const modules = (data.modules || [])
+    .sort((a, b) => a.position - b.position)
+    .map((m, mi) => ({
+      id: m.id, name: m.title, _open: mi === 0,
+      lessons: (m.lessons || []).sort((a, b) => a.position - b.position).map((l) => ({
+        id: l.id, title: l.title, duration: l.duration || "", transcript: l.transcript || "",
+        video: l.video_url ? { name: "current video", url: l.video_url, file: null } : null,
+        tests: (l.assessments || []).filter((a) => a.type === "quiz").map((a) => ({
+          id: a.id, title: a.title, questions: Array.isArray(a.questions) ? a.questions : [],
+        })),
+        assignments: (l.assessments || []).filter((a) => a.type === "assignment").map((a) => ({
+          id: a.id, title: a.title, description: a.questions?.description || "", due: a.questions?.due || "",
+        })),
+      })),
+    }));
+  return {
+    courseId: data.id,
+    details: {
+      title: data.title || "", category: data.category || "Courses", price: data.price ?? 0,
+      status: data.status === "published" ? "Published" : "Draft", description: data.description || "",
+      thumbnail: data.thumbnail_url ? { name: "current", url: data.thumbnail_url, file: null } : null,
+    },
+    modules,
+  };
+}
+
+/**
+ * Persists the whole course. The course row is upserted (its id is preserved so
+ * enrollments/certificates stay intact); the curriculum subtree (modules ->
+ * lessons -> assessments) is replaced. NOTE: replacing the subtree resets
+ * lesson_progress/submissions for this course — fine pre-launch; swap for a
+ * diff-based sync before real learner data accumulates.
+ */
+export async function saveCourse(courseId, details, modules) {
+  if (!isSupabaseConfigured) return { id: courseId || "demo", error: null };
+
+  let thumbnail_url = details.thumbnail && !details.thumbnail.file ? details.thumbnail.url : null;
+  if (details.thumbnail?.file) thumbnail_url = await uploadMedia("thumbnails", details.thumbnail.file);
+
+  const payload = {
+    title: details.title, description: details.description, category: details.category,
+    price: Number(details.price) || 0,
+    status: String(details.status).toLowerCase() === "published" ? "published" : "draft",
+    thumbnail_url,
+  };
+
+  let cid = courseId;
+  if (cid) {
+    const { error } = await supabase.from("courses").update(payload).eq("id", cid);
+    if (error) return { error: error.message };
+  } else {
+    payload.slug = `${slugify(details.title)}-${Date.now().toString(36)}`;
+    const { data, error } = await supabase.from("courses").insert(payload).select("id").single();
+    if (error) return { error: error.message };
+    cid = data.id;
+  }
+
+  // Replace curriculum subtree
+  await supabase.from("modules").delete().eq("course_id", cid);
+  for (let mi = 0; mi < modules.length; mi++) {
+    const m = modules[mi];
+    const { data: mod, error: me } = await supabase.from("modules")
+      .insert({ course_id: cid, title: m.name, position: mi }).select("id").single();
+    if (me) return { error: me.message };
+    for (let li = 0; li < (m.lessons || []).length; li++) {
+      const l = m.lessons[li];
+      let video_url = l.video && !l.video.file ? l.video.url : null;
+      if (l.video?.file) video_url = await uploadMedia("videos", l.video.file);
+      const { data: les, error: le } = await supabase.from("lessons")
+        .insert({ module_id: mod.id, title: l.title, duration: l.duration, video_url, transcript: l.transcript, position: li })
+        .select("id").single();
+      if (le) return { error: le.message };
+      const rows = [];
+      (l.tests || []).forEach((t) => rows.push({ lesson_id: les.id, title: t.title, type: "quiz", questions: t.questions || [] }));
+      (l.assignments || []).forEach((a) => rows.push({ lesson_id: les.id, title: a.title, type: "assignment", questions: { description: a.description, due: a.due } }));
+      if (rows.length) {
+        const { error: ae } = await supabase.from("assessments").insert(rows);
+        if (ae) return { error: ae.message };
+      }
+    }
+  }
+  return { id: cid, error: null };
+}
+
 // ---------------- Overview ----------------
 export async function getOverview() {
   if (!isSupabaseConfigured) {
