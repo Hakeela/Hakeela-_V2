@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminRole } from "../../context/AdminRoleContext.jsx";
 import DataTable from "../../components/AdminUI/DataTable.jsx";
-import { getLearners, setLearnerStatus } from "../../lib/admin.js";
+import { getLearners, setLearnerStatus, deleteUserAccount } from "../../lib/admin.js";
 import { countryFromPhone, initials } from "./adminData.js";
 
 function Learners() {
@@ -25,6 +25,12 @@ function Learners() {
     const next = l.status === "Suspended" ? "active" : "suspended";
     setLearners((rows) => rows.map((r) => (r.id === l.id ? { ...r, status: next === "active" ? "Active" : "Suspended" } : r)));
     await setLearnerStatus(l.id, next);
+  };
+
+  const removeLearner = async (l) => {
+    if (!window.confirm(`Permanently delete ${l.name}'s account? This cannot be undone.`)) return;
+    setLearners((rows) => rows.filter((r) => r.id !== l.id));
+    await deleteUserAccount(l.id);
   };
 
   const rows = learners
@@ -50,12 +56,15 @@ function Learners() {
         <div className="adm-rowactions">
           <button className="adm-btn-sm adm-btn-sm--primary" onClick={() => navigate(`/admin/learners/${l.id}`)}>View</button>
           {isAdmin && (
-            <button
-              className={`adm-btn-sm ${l.status === "Suspended" ? "" : "adm-btn-sm--danger"}`}
-              onClick={() => toggleStatus(l)}
-            >
-              {l.status === "Suspended" ? "Reinstate" : "Suspend"}
-            </button>
+            <>
+              <button
+                className={`adm-btn-sm ${l.status === "Suspended" ? "" : "adm-btn-sm--danger"}`}
+                onClick={() => toggleStatus(l)}
+              >
+                {l.status === "Suspended" ? "Reinstate" : "Suspend"}
+              </button>
+              <button className="adm-btn-sm adm-btn-sm--danger" onClick={() => removeLearner(l)}>Delete</button>
+            </>
           )}
         </div>
       ),

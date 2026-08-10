@@ -266,6 +266,90 @@ export async function saveCourse(courseId, details, modules) {
   return { id: cid, error: null };
 }
 
+// ---------------- Assessments / submissions ----------------
+const parseOptions = (opts) =>
+  (Array.isArray(opts) ? opts : String(opts || "").split(",")).map((o) => o.trim()).filter(Boolean);
+
+export async function getSubmissions() {
+  if (!isSupabaseConfigured) return mock.assessments;
+  const { data, error } = await supabase
+    .from("submissions")
+    .select("id, score, status, created_at, profile:profiles(full_name), assessment:assessments(type, lesson:lessons(module:modules(title, course:courses(title))))")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data || []).map((s) => ({
+    id: s.id,
+    name: s.profile?.full_name || "—",
+    course: s.assessment?.lesson?.module?.course?.title || "—",
+    module: s.assessment?.lesson?.module?.title || "—",
+    type: cap(s.assessment?.type || "quiz"),
+    score: s.score,
+    status: s.status === "graded" ? "Graded" : "Needs grading",
+  }));
+}
+
+export async function getSubmission(id) {
+  if (!isSupabaseConfigured) {
+    const sub = mock.assessments.find((a) => a.id === id) || mock.assessments[0];
+    const questions = mock.sampleSubmission.map((q) => ({
+      question: q.question, options: parseOptions(q.options), correct: q.correct, chosen: q.chosen,
+    }));
+    const auto = Math.round((questions.filter((q) => q.chosen === q.correct).length / questions.length) * 100);
+    return { ...sub, status: sub.status, score: sub.score ?? auto, autoScore: auto, feedback: "", questions };
+  }
+  const { data: s, error } = await supabase
+    .from("submissions")
+    .select("id, score, status, answers, feedback, profile:profiles(full_name), assessment:assessments(title, type, questions, lesson:lessons(module:modules(title, course:courses(title))))")
+    .eq("id", id)
+    .single();
+  if (error) throw error;
+  const qs = Array.isArray(s.assessment?.questions) ? s.assessment.questions : [];
+  const answers = s.answers || {};
+  const questions = qs.map((q, i) => ({
+    question: q.question, options: parseOptions(q.options), correct: q.answer,
+    chosen: answers[i] ?? answers[String(i)] ?? null,
+  }));
+  const auto = questions.length ? Math.round((questions.filter((q) => q.chosen === q.correct).length / questions.length) * 100) : 0;
+  return {
+    id: s.id, name: s.profile?.full_name || "—",
+    course: s.assessment?.lesson?.module?.course?.title || "—",
+    module: s.assessment?.lesson?.module?.title || "—",
+    type: cap(s.assessment?.type || "quiz"),
+    status: s.status === "graded" ? "Graded" : "Needs grading",
+    score: s.score ?? auto, autoScore: auto, feedback: s.feedback || "", questions,
+  };
+}
+
+export async function gradeSubmission(id, score, feedback) {
+  if (!isSupabaseConfigured) return { error: null };
+  const { error } = await supabase
+    .from("submissions")
+    .update({ score: Number(score), feedback, status: "graded" })
+    .eq("id", id);
+  return { error: error?.message || null };
+}
+
+// ---------------- Staff invites / user deletion (Edge Function) ----------------
+export async function inviteStaff({ name, email, role }) {
+  if (!isSupabaseConfigured) return { ok: true };
+  const { data, error } = await supabase.functions.invoke("admin-users", {
+    body: { action: "invite", email, role, full_name: name },
+  });
+  if (error) return { error: error.message };
+  if (data?.error) return { error: data.error };
+  return { ok: true };
+}
+
+export async function deleteUserAccount(userId) {
+  if (!isSupabaseConfigured) return { ok: true };
+  const { data, error } = await supabase.functions.invoke("admin-users", {
+    body: { action: "delete", userId },
+  });
+  if (error) return { error: error.message };
+  if (data?.error) return { error: data.error };
+  return { ok: true };
+}
+
 // ---------------- Overview ----------------
 export async function getOverview() {
   if (!isSupabaseConfigured) {

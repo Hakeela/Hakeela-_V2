@@ -1,17 +1,27 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { assessments, sampleSubmission, initials } from "./adminData.js";
+import { getSubmission } from "../../lib/admin.js";
+import { initials } from "./adminData.js";
 
 function AssessmentReview() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const sub = assessments.find((a) => a.id === id);
+  const [sub, setSub] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!sub) {
-    return <div className="dashpg"><p>Submission not found. <button className="adm-link" onClick={() => navigate("/admin/assessments")}>Back</button></p></div>;
-  }
+  useEffect(() => {
+    let active = true;
+    getSubmission(id)
+      .then((s) => active && setSub(s))
+      .catch(() => active && setSub(null))
+      .finally(() => active && setLoading(false));
+    return () => { active = false; };
+  }, [id]);
 
-  const correctCount = sampleSubmission.filter((x) => x.chosen === x.correct).length;
-  const score = sub.score != null ? sub.score : Math.round((correctCount / sampleSubmission.length) * 100);
+  if (loading) return <div className="dashpg"><p style={{ color: "#8a8a8a" }}>Loading…</p></div>;
+  if (!sub) return <div className="dashpg"><p>Submission not found. <button className="adm-link" onClick={() => navigate("/admin/assessments")}>Back</button></p></div>;
+
+  const correctCount = sub.questions.filter((q) => q.chosen === q.correct).length;
 
   return (
     <div className="dashpg">
@@ -23,7 +33,7 @@ function AssessmentReview() {
           <p className="adm-page-head__sub">{sub.type} · {sub.course} · {sub.module}</p>
         </div>
         <div className="adm-rowactions">
-          <span className="adm-badge adm-badge--green">Auto-graded</span>
+          <span className="adm-badge adm-badge--green">{sub.status}</span>
           <button className="dash-btn dash-btn--outline" onClick={() => navigate(`/admin/assessments/${sub.id}/grade`)}>Edit grade</button>
         </div>
       </div>
@@ -31,8 +41,9 @@ function AssessmentReview() {
       <div className="adm-two-col">
         <div className="dash-card">
           <div className="adm-card-head"><h3>Answers</h3></div>
-          {sampleSubmission.map((item, i) => (
-            <div className="adm-qrow" key={item.id}>
+          {sub.questions.length === 0 && <p className="ce-empty">No auto-gradable answers for this submission.</p>}
+          {sub.questions.map((item, i) => (
+            <div className="adm-qrow" key={i}>
               <div style={{ fontWeight: 600, color: "#1a1a1a", fontSize: 14 }}>{i + 1}. {item.question}</div>
               {item.options.map((opt) => {
                 const isCorrect = opt === item.correct;
@@ -48,6 +59,12 @@ function AssessmentReview() {
               })}
             </div>
           ))}
+          {sub.feedback && (
+            <div style={{ marginTop: 16 }}>
+              <p style={{ fontWeight: 600, fontSize: 14, marginBottom: 4 }}>Feedback</p>
+              <p style={{ fontSize: 14, color: "#6a6a6a" }}>{sub.feedback}</p>
+            </div>
+          )}
         </div>
 
         <div className="dash-card">
@@ -58,11 +75,11 @@ function AssessmentReview() {
           </div>
           <div className="stat-card" style={{ marginBottom: 12 }}>
             <div>
-              <div className="stat-card__value">{score}%</div>
+              <div className="stat-card__value">{sub.score}%</div>
               <div className="stat-card__label">Final score</div>
             </div>
           </div>
-          <p style={{ fontSize: 14, color: "#6a6a6a" }}>{correctCount} of {sampleSubmission.length} answered correctly. Auto-graded on submission.</p>
+          <p style={{ fontSize: 14, color: "#6a6a6a" }}>{correctCount} of {sub.questions.length} answered correctly.</p>
         </div>
       </div>
     </div>

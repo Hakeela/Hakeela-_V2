@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
 import DataTable from "../../components/AdminUI/DataTable.jsx";
 import Modal from "../../components/AdminUI/Modal.jsx";
-import { getStaff, changeStaffRole, removeStaff } from "../../lib/admin.js";
+import { getStaff, changeStaffRole, removeStaff, inviteStaff } from "../../lib/admin.js";
 import { permissionAreas, rolePermissions, initials } from "./adminData.js";
 
 const roleBadge = { Admin: "adm-badge--blue", Staff: "adm-badge--gray" };
 const Tick = () => <span className="adm-tick">✓</span>;
 const Cross = () => <span className="adm-cross">—</span>;
 
-function InviteModal({ open, onClose, onInvite }) {
+function InviteModal({ open, onClose, onInvite, error }) {
   const [form, setForm] = useState({ name: "", email: "", role: "Staff" });
+  const [sending, setSending] = useState(false);
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
-  const submit = () => {
+  const submit = async () => {
     if (!form.name || !form.email) return;
-    onInvite(form);
-    setForm({ name: "", email: "", role: "Staff" });
+    setSending(true);
+    await onInvite(form);
+    setSending(false);
   };
   return (
     <Modal
@@ -25,10 +27,11 @@ function InviteModal({ open, onClose, onInvite }) {
       footer={
         <>
           <button className="dash-btn dash-btn--outline" onClick={onClose}>Cancel</button>
-          <button className="dash-btn dash-btn--solid" onClick={submit}>Send invite</button>
+          <button className="dash-btn dash-btn--solid" onClick={submit} disabled={sending}>{sending ? "Sending…" : "Send invite"}</button>
         </>
       }
     >
+      {error && <div className="help-warning" style={{ marginBottom: 14 }}>{error}</div>}
       <div className="adm-form-grid">
         <div className="adm-field adm-field--full">
           <label>Full name</label>
@@ -112,9 +115,12 @@ function Staff() {
     return () => { active = false; };
   }, []);
 
-  const invite = (form) => {
-    // Note: creating a real auth user needs a service-role Edge Function; this
-    // adds the row locally so the flow is demonstrable.
+  const [inviteError, setInviteError] = useState("");
+
+  const invite = async (form) => {
+    setInviteError("");
+    const { error } = await inviteStaff(form); // sends a real invite via the admin-users Edge Function
+    if (error) return setInviteError(error);
     setRows((r) => [...r, { id: `pending-${r.length + 1}`, name: form.name, email: form.email, role: form.role, status: "Invited" }]);
     setInviting(false);
   };
@@ -199,7 +205,7 @@ function Staff() {
         </div>
       </div>
 
-      <InviteModal open={inviting} onClose={() => setInviting(false)} onInvite={invite} />
+      <InviteModal open={inviting} onClose={() => { setInviting(false); setInviteError(""); }} onInvite={invite} error={inviteError} />
       <RoleModal member={roleFor} onClose={() => setRoleFor(null)} onSave={changeRole} />
       <RemoveModal member={removeFor} onClose={() => setRemoveFor(null)} onConfirm={removeMember} />
     </div>

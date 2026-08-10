@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DataTable from "../../components/AdminUI/DataTable.jsx";
-import { assessments, initials } from "./adminData.js";
+import { getSubmissions } from "../../lib/admin.js";
+import { initials } from "./adminData.js";
 
-const badge = { "Auto-graded": "adm-badge--green", "Needs grading": "adm-badge--yellow" };
+const badge = { "Auto-graded": "adm-badge--green", Graded: "adm-badge--green", "Needs grading": "adm-badge--yellow" };
 
 function Assessments() {
   const navigate = useNavigate();
   const [status, setStatus] = useState("All");
+  const [assessments, setAssessments] = useState([]);
+
+  useEffect(() => {
+    let active = true;
+    getSubmissions().then((r) => active && setAssessments(r)).catch(() => active && setAssessments([]));
+    return () => { active = false; };
+  }, []);
 
   const needsGrading = assessments.filter((a) => a.status === "Needs grading").length;
   const view = assessments.filter((a) => status === "All" || a.status === status);
@@ -55,7 +63,7 @@ function Assessments() {
         initialSort={{ key: "status", dir: "asc" }}
         filters={
           <select className="adm-select" value={status} onChange={(e) => setStatus(e.target.value)}>
-            {["All", "Needs grading", "Auto-graded"].map((s) => <option key={s} value={s}>{s === "All" ? "All statuses" : s}</option>)}
+            {["All", "Needs grading", "Graded"].map((s) => <option key={s} value={s}>{s === "All" ? "All statuses" : s}</option>)}
           </select>
         }
       />

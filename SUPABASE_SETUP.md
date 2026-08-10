@@ -72,6 +72,26 @@ it deploys as a **preview** deployment (the `main` branch stays production).
 - Put that preview URL into Supabase → Auth → **URL Configuration** (Site URL /
   Redirect URLs) so auth email links resolve.
 
+## 5c. Deploy the admin-users Edge Function (staff invites + user deletion)
+Inviting staff and deleting user accounts need the **service role**, so they run
+in an Edge Function (not the browser). The function verifies the caller is an
+admin before doing anything.
+
+```bash
+# one-time
+npm install -g supabase        # or: npx supabase ...
+supabase login
+supabase link --project-ref <your-project-ref>
+
+# deploy (run from the repo root, where the supabase/ folder lives)
+supabase functions deploy admin-users
+```
+`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are injected automatically — no
+secrets to set. Once deployed:
+- **Staff → Invite** sends a real invite email and promotes the new user to the
+  chosen role.
+- **Learners → Delete** permanently removes the account.
+
 ## 6. Make yourself an admin
 After you sign up once, run this in the SQL Editor (use your email):
 ```sql
