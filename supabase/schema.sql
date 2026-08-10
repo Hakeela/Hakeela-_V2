@@ -298,9 +298,43 @@ create trigger trg_notify_certificate after update on public.certificates
   for each row execute procedure public.notify_certificate_issued();
 
 -- ============================================================
--- STORAGE (create these buckets in Dashboard → Storage):
---   - "avatars"       (public)   profile photos
---   - "course-media"  (public)   thumbnails + lesson videos
---   - "certificates"  (private)  issued certificate files
--- Then add storage policies as needed. Left to the dashboard UI for now.
+-- STORAGE
+-- First create the buckets in Dashboard → Storage (both PUBLIC):
+--   - "avatars"       profile photos
+--   - "course-media"  thumbnails, lesson videos, and issued certificate files
+-- Then the policies below make uploads work. (storage.objects has RLS on by default.)
 -- ============================================================
+
+-- AVATARS: public read; a signed-in user may manage files only in their own
+-- folder (uploadAvatar writes to `${uid}/...`).
+drop policy if exists "avatars_read" on storage.objects;
+create policy "avatars_read" on storage.objects for select using (bucket_id = 'avatars');
+
+drop policy if exists "avatars_insert" on storage.objects;
+create policy "avatars_insert" on storage.objects for insert to authenticated
+  with check (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+
+drop policy if exists "avatars_update" on storage.objects;
+create policy "avatars_update" on storage.objects for update to authenticated
+  using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+
+drop policy if exists "avatars_delete" on storage.objects;
+create policy "avatars_delete" on storage.objects for delete to authenticated
+  using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+
+-- COURSE-MEDIA: public read; only staff/admin may upload/manage (course
+-- thumbnails, lesson videos, and issued certificate files).
+drop policy if exists "course_media_read" on storage.objects;
+create policy "course_media_read" on storage.objects for select using (bucket_id = 'course-media');
+
+drop policy if exists "course_media_insert" on storage.objects;
+create policy "course_media_insert" on storage.objects for insert to authenticated
+  with check (bucket_id = 'course-media' and public.is_staff_or_admin());
+
+drop policy if exists "course_media_update" on storage.objects;
+create policy "course_media_update" on storage.objects for update to authenticated
+  using (bucket_id = 'course-media' and public.is_staff_or_admin());
+
+drop policy if exists "course_media_delete" on storage.objects;
+create policy "course_media_delete" on storage.objects for delete to authenticated
+  using (bucket_id = 'course-media' and public.is_staff_or_admin());

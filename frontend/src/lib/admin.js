@@ -363,6 +363,7 @@ export async function getOverview() {
     return {
       learners: 1204, courses: 6, pending: 18,
       genderSplit: mock.genderSplit, pendingList: pending,
+      trend: mock.enrollTrend, activity: mock.activity,
     };
   }
   const [learners, courses, pending, students] = await Promise.all([
@@ -384,11 +385,38 @@ export async function getOverview() {
     .from("enrollments").select("id, created_at, profile:profiles(full_name), course:courses(title)")
     .eq("status", "pending").order("created_at", { ascending: false }).limit(5);
 
+  // Enrollment trend — bucket the last 6 calendar months
+  const { data: allEnr } = await supabase.from("enrollments").select("created_at");
+  const now = new Date();
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ key: `${d.getFullYear()}-${d.getMonth()}`, m: d.toLocaleDateString("en-US", { month: "short" }), v: 0 });
+  }
+  (allEnr || []).forEach((e) => {
+    const d = new Date(e.created_at);
+    const b = months.find((x) => x.key === `${d.getFullYear()}-${d.getMonth()}`);
+    if (b) b.v++;
+  });
+  const trend = months.map(({ m, v }) => ({ m, v }));
+
+  // Recent activity — latest enrollments
+  const { data: recent } = await supabase
+    .from("enrollments").select("created_at, profile:profiles(full_name), course:courses(title)")
+    .order("created_at", { ascending: false }).limit(6);
+  const activity = (recent || []).map((e) => ({
+    who: e.profile?.full_name || "Someone",
+    what: `enrolled in ${e.course?.title || "a course"}`,
+    time: dayDate(e.created_at),
+  }));
+
   return {
     learners: learners.count || 0,
     courses: courses.count || 0,
     pending: pending.count || 0,
     genderSplit: genderSplit.length ? genderSplit : mock.genderSplit,
     pendingList: (pend || []).map((e) => ({ id: e.id, name: e.profile?.full_name || "—", program: e.course?.title || "—", date: dayDate(e.created_at), status: "Pending" })),
+    trend,
+    activity,
   };
 }

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAdminRole } from "../../context/AdminRoleContext.jsx";
 import { getOverview } from "../../lib/admin.js";
-import { enrollTrend, activity, naira, initials } from "./adminData.js";
+import { naira, initials } from "./adminData.js";
 
 const icons = {
   learners: <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 21c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><path d="M17 8.5a3 3 0 0 0 0-1M18 21c0-2.6-1-4.3-2.7-5.2"/></svg>,
@@ -43,13 +43,16 @@ function GenderPie({ genderSplit }) {
 function Overview() {
   const { isAdmin } = useAdminRole();
   const [data, setData] = useState(null);
-  const max = Math.max(...enrollTrend.map((d) => d.v));
 
   useEffect(() => {
     let active = true;
     getOverview().then((d) => active && setData(d)).catch(() => active && setData(null));
     return () => { active = false; };
   }, []);
+
+  const trend = data?.trend || [];
+  const activity = data?.activity || [];
+  const max = Math.max(1, ...trend.map((d) => d.v));
 
   const kpis = [
     { value: data ? data.learners.toLocaleString() : "…", label: "Total Learners", bg: "#eceafd", color: "#1a13d6", icon: icons.learners },
@@ -86,12 +89,13 @@ function Overview() {
         <div className="dash-card">
           <div className="adm-card-head"><h3>Enrollments trend</h3></div>
           <div className="adm-chart">
-            {enrollTrend.map((d) => (
-              <div className="adm-chart__col" key={d.m}>
+            {trend.map((d, i) => (
+              <div className="adm-chart__col" key={`${d.m}-${i}`}>
                 <div className="adm-chart__bar" style={{ height: `${(d.v / max) * 100}%` }} title={`${d.v} enrollments`} />
                 <span className="adm-chart__x">{d.m}</span>
               </div>
             ))}
+            {trend.length === 0 && <p className="ce-empty" style={{ margin: "auto" }}>No enrollment data yet.</p>}
           </div>
         </div>
 

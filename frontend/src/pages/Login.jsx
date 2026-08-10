@@ -53,6 +53,10 @@ function Login() {
         Don&rsquo;t have an account?{' '}
         <Link to="/signup" className="auth-inline-link">Create an Account</Link>
       </p>
+      <p className="auth-alt">
+        Admin or staff?{' '}
+        <Link to="/admin/login" className="auth-inline-link">Login as admin</Link>
+      </p>
     </AuthLayout>
   )
 }

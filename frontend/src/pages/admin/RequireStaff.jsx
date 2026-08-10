@@ -11,16 +11,16 @@ function RequireStaff({ children }) {
 
   if (demo) return children;
 
-  if (loading) {
-    return (
-      <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", color: "#8a8a8a" }}>
-        Loading…
-      </div>
-    );
-  }
+  const spinner = (
+    <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", color: "#8a8a8a" }}>Loading…</div>
+  );
 
+  if (loading) return spinner;
   if (!isAuthenticated) return <Navigate to="/admin/login" replace />;
-  if (!["staff", "admin"].includes(profile?.role)) return <Navigate to="/dashboard" replace />;
+  // Wait for the profile (role) to load before deciding — avoids bouncing a
+  // freshly-logged-in admin to /dashboard before their role arrives.
+  if (!profile) return spinner;
+  if (!["staff", "admin"].includes(profile.role)) return <Navigate to="/dashboard" replace />;
 
   return children;
 }
