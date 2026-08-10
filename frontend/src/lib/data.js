@@ -66,6 +66,19 @@ const groupByCategory = (list) => {
   return g;
 };
 
+// ---------------- categories ----------------
+export const DEFAULT_CATEGORIES = ["Courses", "Special Needs & Tech", "Leadership"];
+
+/** Live category list: the defaults plus any category already used by a course. */
+export async function getCategories() {
+  if (!isSupabaseConfigured) return DEFAULT_CATEGORIES;
+  const { data, error } = await supabase.from("courses").select("category");
+  if (error) return DEFAULT_CATEGORIES;
+  const set = new Set(DEFAULT_CATEGORIES);
+  (data || []).forEach((c) => c.category && set.add(c.category));
+  return [...set];
+}
+
 // ---------------- catalog / courses ----------------
 export async function getCatalog() {
   if (!isSupabaseConfigured) return groupByCategory(MOCK_CATALOG);

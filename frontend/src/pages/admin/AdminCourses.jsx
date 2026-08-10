@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DataTable from "../../components/AdminUI/DataTable.jsx";
 import { getCourses, deleteCourse } from "../../lib/admin.js";
-import { courseCategories, naira } from "./adminData.js";
+import { naira } from "./adminData.js";
 
 function AdminCourses() {
   const navigate = useNavigate();
@@ -62,7 +62,7 @@ function AdminCourses() {
         filters={
           <select className="adm-select" value={cat} onChange={(e) => setCat(e.target.value)}>
             <option value="All">All categories</option>
-            {courseCategories.map((c) => <option key={c} value={c}>{c}</option>)}
+            {[...new Set(rows.map((c) => c.category).filter(Boolean))].map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         }
       />

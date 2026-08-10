@@ -5,12 +5,13 @@ import 'swiper/css'
 import { getCatalog } from '../../lib/data.js'
 import './dashboard-pages.css'
 
-// category -> section presentation
-const SECTIONS = [
-  { category: 'Courses', title: 'Courses', subtitle: 'Select from our wide range of courses and get started!', wide: false },
-  { category: 'Special Needs & Tech', title: 'Special Need and Tech Courses', subtitle: 'Kindly note these courses are available anytime, any day, anywhere for our learners with special needs', wide: true },
-  { category: 'Leadership', title: 'Leadership Courses', subtitle: 'In partnership with Ashoka Africa, We are Family Foundation, among others to provide Leadership courses for our learners.', wide: true },
-]
+// Presentation for the well-known categories; anything else gets a generic section.
+const SECTION_META = {
+  'Courses': { title: 'Courses', subtitle: 'Select from our wide range of courses and get started!', wide: false },
+  'Special Needs & Tech': { title: 'Special Need and Tech Courses', subtitle: 'Kindly note these courses are available anytime, any day, anywhere for our learners with special needs', wide: true },
+  'Leadership': { title: 'Leadership Courses', subtitle: 'In partnership with Ashoka Africa, We are Family Foundation, among others to provide Leadership courses for our learners.', wide: true },
+}
+const metaFor = (category) => SECTION_META[category] || { title: category, subtitle: `Explore our ${category} courses.`, wide: true }
 
 const naira = (n) => (n === 0 ? 'Free' : '₦' + Number(n).toLocaleString('en-NG'))
 
@@ -95,10 +96,15 @@ function Catalog() {
 
       {loading ? (
         <p style={{ color: '#8a8a8a' }}>Loading courses…</p>
+      ) : Object.keys(byCategory).length === 0 ? (
+        <p style={{ color: '#8a8a8a' }}>No courses are available yet. Please check back soon.</p>
       ) : (
-        SECTIONS.map((s) => (
-          <CourseRow key={s.category} title={s.title} subtitle={s.subtitle} items={byCategory[s.category]} wide={s.wide} />
-        ))
+        // Known categories first (in order), then any new ones
+        [...Object.keys(SECTION_META).filter((c) => byCategory[c]), ...Object.keys(byCategory).filter((c) => !SECTION_META[c])]
+          .map((category) => {
+            const m = metaFor(category)
+            return <CourseRow key={category} title={m.title} subtitle={m.subtitle} items={byCategory[category]} wide={m.wide} />
+          })
       )}
     </div>
   )

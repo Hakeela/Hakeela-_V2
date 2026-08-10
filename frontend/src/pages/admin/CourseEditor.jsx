@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { isSupabaseConfigured } from "../../lib/supabase.js";
 import { getCourseForEdit, saveCourse, deleteCourse } from "../../lib/admin.js";
+import { getCategories } from "../../lib/data.js";
 import { courses, courseCategories, sampleCurriculum } from "./adminData.js";
 
 let _id = 2000;
@@ -77,6 +78,14 @@ function CourseEditor() {
   const [loading, setLoading] = useState(isEdit && isSupabaseConfigured);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [categories, setCategories] = useState(courseCategories);
+  const [addingCat, setAddingCat] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    getCategories().then((c) => active && c.length && setCategories(c)).catch(() => {});
+    return () => { active = false; };
+  }, []);
 
   const [details, setDetails] = useState({
     title: demoExisting?.title || "",
@@ -192,9 +201,30 @@ function CourseEditor() {
           </div>
           <div className="adm-field">
             <label>Category</label>
-            <select value={details.category} onChange={(e) => set("category", e.target.value)}>
-              {courseCategories.map((c) => <option key={c}>{c}</option>)}
-            </select>
+            {addingCat ? (
+              <div style={{ display: "flex", gap: 8 }}>
+                <input
+                  autoFocus
+                  style={{ flex: 1 }}
+                  placeholder="New category name"
+                  value={details.category}
+                  onChange={(e) => set("category", e.target.value)}
+                />
+                <button type="button" className="adm-btn-sm" onClick={() => { setAddingCat(false); set("category", categories[0] || ""); }}>Cancel</button>
+              </div>
+            ) : (
+              <select
+                value={details.category}
+                onChange={(e) => {
+                  if (e.target.value === "__new__") { setAddingCat(true); set("category", ""); }
+                  else set("category", e.target.value);
+                }}
+              >
+                {!categories.includes(details.category) && details.category && <option value={details.category}>{details.category}</option>}
+                {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+                <option value="__new__">➕ Add new category…</option>
+              </select>
+            )}
           </div>
           <div className="adm-field">
             <label>Price (₦, 0 = free)</label>
