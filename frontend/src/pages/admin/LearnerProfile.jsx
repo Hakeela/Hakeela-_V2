@@ -3,8 +3,48 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import DataTable from "../../components/AdminUI/DataTable.jsx";
 import Modal from "../../components/AdminUI/Modal.jsx";
 import { useAdminRole } from "../../context/AdminRoleContext.jsx";
-import { getLearner, updateLearner, deleteLearner, sendLearnerPasswordReset } from "../../lib/admin.js";
+import { getLearner, updateLearner, deleteLearner, sendLearnerPasswordReset, getLearnerSubmissions, getLearnerCertificates, issueCertificate } from "../../lib/admin.js";
 import { countryFromPhone, initials } from "./adminData.js";
+
+const payBadge = { Paid: "adm-badge--green", Unpaid: "adm-badge--red", Waived: "adm-badge--blue" };
+const certStatusBadge = { "Ready to issue": "adm-badge--yellow", "Awaiting payment": "adm-badge--gray", Issued: "adm-badge--green" };
+
+function IssueModal({ cert, onClose, onIssue }) {
+  const [payment, setPayment] = useState(cert?.payment || "Paid");
+  const [file, setFile] = useState(null);
+  if (!cert) return null;
+  return (
+    <Modal open={!!cert} title="Issue certificate" subtitle={cert.course} onClose={onClose}
+      footer={<>
+        <button className="dash-btn dash-btn--outline" onClick={onClose}>Cancel</button>
+        <button className="dash-btn dash-btn--solid" onClick={() => onIssue(cert.id, payment, file?.file)}>Issue certificate</button>
+      </>}>
+      <div className="adm-field" style={{ marginBottom: 18 }}>
+        <label>Payment status</label>
+        <select className="adm-select" value={payment} onChange={(e) => setPayment(e.target.value)}>
+          <option>Paid</option><option>Unpaid</option><option>Waived</option>
+        </select>
+      </div>
+      <div className="adm-field">
+        <label>Upload certificate (PDF or image)</label>
+        {file ? (
+          <div className="ce-upload__preview" style={{ background: "#f6f6fa" }}>
+            {file.type?.startsWith("image/")
+              ? <img src={file.url} alt="Certificate preview" />
+              : <div style={{ padding: 24, color: "#4a4a4a" }}>{file.name}</div>}
+            <button className="ce-upload__remove" onClick={() => setFile(null)}>Remove</button>
+          </div>
+        ) : (
+          <label className="ce-file__drop">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <span>Click to upload certificate</span>
+            <input type="file" accept="image/*,application/pdf" hidden onChange={(e) => { const f = e.target.files[0]; if (f) setFile({ name: f.name, type: f.type, url: URL.createObjectURL(f), file: f }); }} />
+          </label>
+        )}
+      </div>
+    </Modal>
+  );
+}
 
 const statusBadge = {
   Active: "adm-badge--green", Graduated: "adm-badge--blue",
@@ -124,6 +164,9 @@ function LearnerProfile() {
   const [resetOpen, setResetOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [toast, setToast] = useState("");
+  const [submissions, setSubmissions] = useState([]);
+  const [certs, setCerts] = useState([]);
+  const [issuing, setIssuing] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -131,8 +174,16 @@ function LearnerProfile() {
       .then((l) => active && setLearner(l || null))
       .catch(() => active && setLearner(null))
       .finally(() => active && setLoading(false));
+    getLearnerSubmissions(id).then((r) => active && setSubmissions(r)).catch(() => {});
+    getLearnerCertificates(id).then((r) => active && setCerts(r)).catch(() => {});
     return () => { active = false; };
   }, [id]);
+
+  const doIssue = (cid, payment, file) => {
+    setCerts((r) => r.map((c) => (c.id === cid ? { ...c, status: "Issued", payment } : c)));
+    setIssuing(null);
+    issueCertificate(cid, payment, file);
+  };
 
   if (loading) return <div className="dashpg"><p style={{ color: "#8a8a8a" }}>Loading…</p></div>;
   if (!learner) {
@@ -224,6 +275,54 @@ function LearnerProfile() {
         pageSize={8}
         minWidth={480}
       />
+
+      {/* Assessments (this learner's submissions) */}
+      <h3 className="dash-section-title" style={{ margin: "28px 0 16px", fontSize: 18, color: "#1a1a1a" }}>Assessments</h3>
+      <DataTable
+        columns={[
+          { key: "course", header: "Course", render: (s) => <span className="adm-user__name">{s.course}</span> },
+          { key: "module", header: "Module" },
+          { key: "type", header: "Type" },
+          { key: "score", header: "Score", align: "center", sortAccessor: (s) => s.score ?? -1, render: (s) => (s.score == null ? "—" : `${s.score}%`) },
+          { key: "status", header: "Status", render: (s) => <span className={`adm-badge ${s.status === "Graded" ? "adm-badge--green" : "adm-badge--yellow"}`}>{s.status}</span> },
+          {
+            key: "actions", header: "Actions", sortable: false,
+            render: (s) => s.status === "Needs grading"
+              ? <button className="adm-btn-sm adm-btn-sm--primary" onClick={() => navigate(`/admin/assessments/${s.id}/grade`)}>Grade</button>
+              : <button className="adm-btn-sm" onClick={() => navigate(`/admin/assessments/${s.id}/review`)}>Review</button>,
+          },
+        ]}
+        rows={submissions}
+        searchKeys={["course", "module", "type"]}
+        searchPlaceholder="Search assessments"
+        pageSize={6}
+        minWidth={520}
+        emptyText="No submissions from this learner yet."
+      />
+
+      {/* Certificates (this learner) */}
+      <h3 className="dash-section-title" style={{ margin: "28px 0 16px", fontSize: 18, color: "#1a1a1a" }}>Certificates</h3>
+      <DataTable
+        columns={[
+          { key: "course", header: "Course", render: (c) => <span className="adm-user__name">{c.course}</span> },
+          { key: "payment", header: "Payment", render: (c) => <span className={`adm-badge ${payBadge[c.payment]}`}>{c.payment}</span> },
+          { key: "status", header: "Status", render: (c) => <span className={`adm-badge ${certStatusBadge[c.status]}`}>{c.status}</span> },
+          {
+            key: "actions", header: "Actions", sortable: false,
+            render: (c) => c.status !== "Issued"
+              ? <button className="adm-btn-sm adm-btn-sm--primary" onClick={() => setIssuing(c)}>Issue</button>
+              : <span style={{ color: "#9a9a9a", fontSize: 13 }}>Issued</span>,
+          },
+        ]}
+        rows={certs}
+        searchKeys={["course"]}
+        searchPlaceholder="Search certificates"
+        pageSize={6}
+        minWidth={480}
+        emptyText="No certificates for this learner yet."
+      />
+
+      <IssueModal cert={issuing} onClose={() => setIssuing(null)} onIssue={doIssue} />
 
       {/* Admin modals */}
       <EditModal

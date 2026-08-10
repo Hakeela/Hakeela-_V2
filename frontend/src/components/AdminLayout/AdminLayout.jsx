@@ -66,31 +66,6 @@ const nav = [
     ),
   },
   {
-    to: "/admin/assessments",
-    label: "Assessments",
-    icon: (
-      <svg viewBox={I.vb} {...I.common}>
-        <path d="M9 2h6a2 2 0 0 1 2 2v0h1a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1" />
-        <rect x="9" y="2" width="6" height="4" rx="1" />
-        <path d="M9 13l2 2l4-4" />
-      </svg>
-    ),
-  },
-  {
-    to: "/admin/certificates",
-    label: "Certificates",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-        <path d="M0 0h24v24H0z" fill="none" />
-        <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
-          <path d="M12 15a3 3 0 1 0 6 0a3 3 0 1 0-6 0" />
-          <path d="M13 17.5V22l2-1.5l2 1.5v-4.5" />
-          <path d="M10 19H5a2 2 0 0 1-2-2V7c0-1.1.9-2 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-1 1.73M6 9h12M6 12h3m-3 3h2" />
-        </g>
-      </svg>
-    ),
-  },
-  {
     to: "/admin/notifications",
     label: "Notifications",
     icon: (
@@ -141,8 +116,6 @@ const titleMap = {
   "/admin/learners": "Learners",
   "/admin/courses": "Courses & Programs",
   "/admin/enrollments": "Enrollments",
-  "/admin/assessments": "Assessments",
-  "/admin/certificates": "Certificates",
   "/admin/notifications": "Notifications",
   "/admin/staff": "Staff & Roles",
   "/admin/payments": "Payments",

@@ -1,20 +1,35 @@
 // Mock data for the admin/staff portal (no backend yet).
 
 // --- Country lookup from a phone's dialing code ---------------------------
+// Codes are digits only; the phone may or may not include a leading "+".
 const DIAL_CODES = [
-  { code: "+234", country: "Nigeria", flag: "🇳🇬" },
-  { code: "+233", country: "Ghana", flag: "🇬🇭" },
-  { code: "+254", country: "Kenya", flag: "🇰🇪" },
-  { code: "+27", country: "South Africa", flag: "🇿🇦" },
-  { code: "+256", country: "Uganda", flag: "🇺🇬" },
-  { code: "+44", country: "United Kingdom", flag: "🇬🇧" },
-  { code: "+1", country: "United States", flag: "🇺🇸" },
+  { code: "234", country: "Nigeria", flag: "🇳🇬" },
+  { code: "233", country: "Ghana", flag: "🇬🇭" },
+  { code: "254", country: "Kenya", flag: "🇰🇪" },
+  { code: "256", country: "Uganda", flag: "🇺🇬" },
+  { code: "255", country: "Tanzania", flag: "🇹🇿" },
+  { code: "250", country: "Rwanda", flag: "🇷🇼" },
+  { code: "251", country: "Ethiopia", flag: "🇪🇹" },
+  { code: "260", country: "Zambia", flag: "🇿🇲" },
+  { code: "237", country: "Cameroon", flag: "🇨🇲" },
+  { code: "225", country: "Côte d’Ivoire", flag: "🇨🇮" },
+  { code: "221", country: "Senegal", flag: "🇸🇳" },
+  { code: "27", country: "South Africa", flag: "🇿🇦" },
+  { code: "20", country: "Egypt", flag: "🇪🇬" },
+  { code: "212", country: "Morocco", flag: "🇲🇦" },
+  { code: "44", country: "United Kingdom", flag: "🇬🇧" },
+  { code: "971", country: "United Arab Emirates", flag: "🇦🇪" },
+  { code: "91", country: "India", flag: "🇮🇳" },
+  { code: "1", country: "United States", flag: "🇺🇸" },
 ];
+// Longest codes first so e.g. "234" wins before the 1-digit "1".
+const DIAL_CODES_SORTED = [...DIAL_CODES].sort((a, b) => b.code.length - a.code.length);
 
 export function countryFromPhone(phone) {
-  const clean = (phone || "").replace(/[\s-]/g, "");
-  const match = DIAL_CODES.find((d) => clean.startsWith(d.code));
-  return match || { country: "Unknown", flag: "🏳️" };
+  const digits = String(phone || "").replace(/\D/g, "");
+  if (!digits) return { country: "—", flag: "🏳️" };
+  const match = DIAL_CODES_SORTED.find((d) => digits.startsWith(d.code));
+  return match ? { country: match.country, flag: match.flag } : { country: "Unknown", flag: "🏳️" };
 }
 
 // --- Learners -------------------------------------------------------------
@@ -163,11 +178,11 @@ export const staff = [
 
 // areas each role can reach (drives the permission matrix + nav gating)
 export const permissionAreas = [
-  "Learners", "Courses", "Enrollments", "Assessments", "Certificates", "Notifications", "Payments", "Staff & Roles", "Settings",
+  "Learners", "Courses", "Enrollments", "Notifications", "Payments", "Staff & Roles", "Settings",
 ];
 export const rolePermissions = {
   Admin: permissionAreas,
-  Staff: ["Learners", "Courses", "Enrollments", "Assessments", "Certificates", "Notifications", "Settings"],
+  Staff: ["Learners", "Courses", "Enrollments", "Notifications", "Settings"],
 };
 
 // --- Payments -------------------------------------------------------------

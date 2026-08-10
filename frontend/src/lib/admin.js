@@ -148,6 +148,26 @@ export async function issueCertificate(id, paymentDisplay, file) {
   return { error: error?.message || null };
 }
 
+// ---------------- Categories ----------------
+export async function getCategoriesFull() {
+  if (!isSupabaseConfigured) return mock.courseCategories.map((name, i) => ({ id: String(i), name }));
+  const { data, error } = await supabase.from("categories").select("id, name").order("name");
+  if (error) return [];
+  return data || [];
+}
+
+export async function addCategory(name) {
+  if (!isSupabaseConfigured) return { error: null };
+  const { error } = await supabase.from("categories").insert({ name: name.trim() });
+  return { error: error?.message || null };
+}
+
+export async function deleteCategory(id) {
+  if (!isSupabaseConfigured) return { error: null };
+  const { error } = await supabase.from("categories").delete().eq("id", id);
+  return { error: error?.message || null };
+}
+
 // ---------------- Courses (list) ----------------
 export async function getCourses() {
   if (!isSupabaseConfigured) return mock.courses;
@@ -324,6 +344,37 @@ export async function getSubmission(id) {
     status: s.status === "graded" ? "Graded" : "Needs grading",
     score: s.score ?? auto, autoScore: auto, feedback: s.feedback || "", questions,
   };
+}
+
+export async function getLearnerSubmissions(userId) {
+  if (!isSupabaseConfigured) return mock.assessments;
+  const { data, error } = await supabase
+    .from("submissions")
+    .select("id, score, status, created_at, assessment:assessments(type, lesson:lessons(module:modules(title, course:courses(title))))")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data || []).map((s) => ({
+    id: s.id,
+    course: s.assessment?.lesson?.module?.course?.title || "—",
+    module: s.assessment?.lesson?.module?.title || "—",
+    type: cap(s.assessment?.type || "quiz"),
+    score: s.score,
+    status: s.status === "graded" ? "Graded" : "Needs grading",
+  }));
+}
+
+export async function getLearnerCertificates(userId) {
+  if (!isSupabaseConfigured) return mock.certificates;
+  const { data, error } = await supabase
+    .from("certificates")
+    .select("id, payment_status, status, course:courses(title)")
+    .eq("user_id", userId);
+  if (error) throw error;
+  return (data || []).map((c) => ({
+    id: c.id, course: c.course?.title || "—",
+    payment: payToDisplay(c.payment_status), status: certStatusToDisplay(c.status),
+  }));
 }
 
 export async function gradeSubmission(id, score, feedback) {

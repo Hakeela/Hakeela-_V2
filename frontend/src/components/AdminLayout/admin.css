@@ -811,6 +811,19 @@
   margin-bottom: 10px;
 }
 .ce-subblock__head span { font-size: 13px; font-weight: 700; color: #4a4a4a; }
+.ce-subblock__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #4a4a4a;
+  padding: 0;
+}
 .ce-mini {
   background: #fff;
   border: 1px solid #ececf0;

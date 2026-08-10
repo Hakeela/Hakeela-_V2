@@ -79,6 +79,16 @@ create table if not exists public.courses (
   created_at timestamptz not null default now()
 );
 
+-- Course categories (managed by staff/admin)
+create table if not exists public.categories (
+  id uuid primary key default gen_random_uuid(),
+  name text unique not null,
+  created_at timestamptz not null default now()
+);
+insert into public.categories (name)
+values ('Courses'), ('Special Needs & Tech'), ('Leadership')
+on conflict (name) do nothing;
+
 create table if not exists public.modules (
   id uuid primary key default gen_random_uuid(),
   course_id uuid not null references public.courses(id) on delete cascade,
@@ -171,6 +181,7 @@ create table if not exists public.help_messages (
 -- ROW LEVEL SECURITY
 -- ============================================================
 alter table public.profiles       enable row level security;
+alter table public.categories     enable row level security;
 alter table public.courses        enable row level security;
 alter table public.modules        enable row level security;
 alter table public.lessons        enable row level security;
@@ -189,6 +200,12 @@ drop policy if exists profiles_self_update on public.profiles;
 create policy profiles_self_update on public.profiles for update using (id = auth.uid() or public.is_admin());
 drop policy if exists profiles_admin_all on public.profiles;
 create policy profiles_admin_all on public.profiles for all using (public.is_admin()) with check (public.is_admin());
+
+-- CATEGORIES: anyone can read; staff/admin manage
+drop policy if exists categories_read on public.categories;
+create policy categories_read on public.categories for select using (true);
+drop policy if exists categories_write on public.categories;
+create policy categories_write on public.categories for all using (public.is_staff_or_admin()) with check (public.is_staff_or_admin());
 
 -- COURSES/MODULES/LESSONS: anyone signed in can read published content; staff/admin manage
 drop policy if exists courses_read on public.courses;

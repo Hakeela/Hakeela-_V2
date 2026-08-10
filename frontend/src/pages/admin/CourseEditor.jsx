@@ -144,8 +144,10 @@ function CourseEditor() {
   const delModule = (mid) => setModules((m) => m.filter((x) => x.id !== mid));
   const toggleModule = (mid) => setModules((ms) => ms.map((m) => (m.id === mid ? { ...m, _open: !m._open } : m)));
 
-  const addLesson = (mid) => patchLessons(mid, (ls) => [...ls, { id: uid(), title: "New lesson", duration: "", video: null, transcript: "", tests: [], assignments: [] }]);
+  const addLesson = (mid) => patchLessons(mid, (ls) => [...ls, { id: uid(), title: "New lesson", duration: "", video: null, transcript: "", tests: [], assignments: [], _open: true }]);
   const delLesson = (mid, lid) => patchLessons(mid, (ls) => ls.filter((l) => l.id !== lid));
+  const toggleLessonFlag = (mid, lid, flag) =>
+    setModules((ms) => ms.map((m) => (m.id === mid ? { ...m, lessons: m.lessons.map((l) => (l.id === lid ? { ...l, [flag]: !l[flag] } : l)) } : m)));
 
   const addTest = (mid, lid) => patchTests(mid, lid, (ts) => [...ts, { id: uid(), title: "New test", questions: [] }]);
   const delTest = (mid, lid, tid) => patchTests(mid, lid, (ts) => ts.filter((t) => t.id !== tid));
@@ -270,7 +272,15 @@ function CourseEditor() {
                 </div>
 
                 {m.lessons.map((l) => (
-                  <div className="ce-lesson" key={l.id}>
+                  <div className={`ce-item ce-lesson-item ${l._open ? "is-open" : ""}`} key={l.id}>
+                    <div className="ce-item__head">
+                      <button type="button" className="ce-item__toggle" onClick={() => toggleLessonFlag(m.id, l.id, "_open")}>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: l._open ? "rotate(90deg)" : "none", transition: "transform .15s" }}><polyline points="9 6 15 12 9 18" /></svg>
+                        <span className="ce-item__title">{l.title || "Untitled lesson"}</span>
+                      </button>
+                    </div>
+                    {l._open && (
+                    <div className="ce-item__body">
                     <div className="adm-form-grid">
                       <div className="adm-field">
                         <label>Lesson title</label>
@@ -303,12 +313,16 @@ function CourseEditor() {
                       </button>
                     </div>
 
-                    {/* Tests under the lesson */}
+                    {/* Tests under the lesson (collapsible) */}
                     <div className="ce-subblock">
                       <div className="ce-subblock__head">
-                        <span>Tests &amp; quizzes</span>
-                        <button className="adm-btn-sm" onClick={() => addTest(m.id, l.id)}>+ Add test</button>
+                        <button type="button" className="ce-subblock__toggle" onClick={() => toggleLessonFlag(m.id, l.id, "_testsOpen")}>
+                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: l._testsOpen ? "rotate(90deg)" : "none", transition: "transform .15s" }}><polyline points="9 6 15 12 9 18" /></svg>
+                          Tests &amp; quizzes ({l.tests.length})
+                        </button>
+                        <button className="adm-btn-sm" onClick={() => { if (!l._testsOpen) toggleLessonFlag(m.id, l.id, "_testsOpen"); addTest(m.id, l.id); }}>+ Add test</button>
                       </div>
+                      {l._testsOpen && (<>
                       {l.tests.length === 0 && <p className="ce-empty" style={{ margin: 0 }}>No tests for this lesson.</p>}
                       {l.tests.map((t) => (
                         <div className="ce-mini" key={t.id}>
@@ -344,14 +358,19 @@ function CourseEditor() {
                           <button className="adm-btn-sm adm-btn-sm--danger" onClick={() => delTest(m.id, l.id, t.id)}>Delete test</button>
                         </div>
                       ))}
+                      </>)}
                     </div>
 
-                    {/* Assignments under the lesson */}
+                    {/* Assignments under the lesson (collapsible) */}
                     <div className="ce-subblock">
                       <div className="ce-subblock__head">
-                        <span>Assignments</span>
-                        <button className="adm-btn-sm" onClick={() => addAssignment(m.id, l.id)}>+ Add assignment</button>
+                        <button type="button" className="ce-subblock__toggle" onClick={() => toggleLessonFlag(m.id, l.id, "_asgOpen")}>
+                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: l._asgOpen ? "rotate(90deg)" : "none", transition: "transform .15s" }}><polyline points="9 6 15 12 9 18" /></svg>
+                          Assignments ({l.assignments.length})
+                        </button>
+                        <button className="adm-btn-sm" onClick={() => { if (!l._asgOpen) toggleLessonFlag(m.id, l.id, "_asgOpen"); addAssignment(m.id, l.id); }}>+ Add assignment</button>
                       </div>
+                      {l._asgOpen && (<>
                       {l.assignments.length === 0 && <p className="ce-empty" style={{ margin: 0 }}>No assignments for this lesson.</p>}
                       {l.assignments.map((a) => (
                         <div className="ce-mini" key={a.id}>
@@ -372,7 +391,10 @@ function CourseEditor() {
                           <button className="adm-btn-sm adm-btn-sm--danger" onClick={() => delAssignment(m.id, l.id, a.id)}>Delete assignment</button>
                         </div>
                       ))}
+                      </>)}
                     </div>
+                    </div>
+                    )}
                   </div>
                 ))}
                 {m.lessons.length === 0 && <p className="ce-empty">No lessons in this module yet.</p>}

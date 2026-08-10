@@ -1,16 +1,26 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
+import { getPublishedCourses } from '../../lib/data.js'
 import './Courses.css'
-
-const courses = [
-  { image: '/course-1.png', title: 'Experteens VA Bootcamp' },
-  { image: '/course-2.png', title: 'Hakeela AI Hustle Bootcamp' },
-  { image: '/course-3.png', title: 'Hakeela Blockchain Challenge' },
-]
 
 function Courses() {
   const swiperRef = useRef(null)
+  const [courses, setCourses] = useState([])
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    let active = true
+    getPublishedCourses()
+      .then((c) => active && setCourses(c))
+      .catch(() => active && setCourses([]))
+      .finally(() => active && setLoaded(true))
+    return () => { active = false }
+  }, [])
+
+  // No static placeholders — hide the section until real courses are published.
+  if (!loaded || courses.length === 0) return null
 
   return (
     <section className="courses">
@@ -34,13 +44,13 @@ function Courses() {
           }}
         >
           {courses.map((course) => (
-            <SwiperSlide key={course.title}>
+            <SwiperSlide key={course.id}>
               <article className="course-card">
                 <div className="course-card__img">
-                  <img src={course.image} alt="" />
+                  <img src={course.thumbnail_url || '/course-1.png'} alt="" />
                 </div>
                 <h3 className="course-card__title">{course.title}</h3>
-                <a href="#" className="course-card__btn">Enroll</a>
+                <Link to={`/dashboard/enroll/${course.id}`} className="course-card__btn">Enroll</Link>
               </article>
             </SwiperSlide>
           ))}

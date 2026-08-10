@@ -28,8 +28,6 @@ import LearnerProfile from './pages/admin/LearnerProfile.jsx'
 import AdminCourses from './pages/admin/AdminCourses.jsx'
 import CourseEditor from './pages/admin/CourseEditor.jsx'
 import Enrollments from './pages/admin/Enrollments.jsx'
-import Assessments from './pages/admin/Assessments.jsx'
-import AdminCertificates from './pages/admin/AdminCertificates.jsx'
 import Notifications from './pages/admin/Notifications.jsx'
 import AssessmentGrade from './pages/admin/AssessmentGrade.jsx'
 import AssessmentReview from './pages/admin/AssessmentReview.jsx'
@@ -80,10 +78,8 @@ function App() {
           <Route path="/admin/courses/new" element={<CourseEditor />} />
           <Route path="/admin/courses/:id/edit" element={<CourseEditor />} />
           <Route path="/admin/enrollments" element={<Enrollments />} />
-          <Route path="/admin/assessments" element={<Assessments />} />
           <Route path="/admin/assessments/:id/grade" element={<AssessmentGrade />} />
           <Route path="/admin/assessments/:id/review" element={<AssessmentReview />} />
-          <Route path="/admin/certificates" element={<AdminCertificates />} />
           <Route path="/admin/notifications" element={<Notifications />} />
           <Route path="/admin/settings" element={<Settings />} />
 

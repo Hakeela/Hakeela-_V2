@@ -69,14 +69,30 @@ const groupByCategory = (list) => {
 // ---------------- categories ----------------
 export const DEFAULT_CATEGORIES = ["Courses", "Special Needs & Tech", "Leadership"];
 
-/** Live category list: the defaults plus any category already used by a course. */
+/** Category names for dropdowns/filters — from the categories table. */
 export async function getCategories() {
   if (!isSupabaseConfigured) return DEFAULT_CATEGORIES;
-  const { data, error } = await supabase.from("courses").select("category");
-  if (error) return DEFAULT_CATEGORIES;
-  const set = new Set(DEFAULT_CATEGORIES);
-  (data || []).forEach((c) => c.category && set.add(c.category));
-  return [...set];
+  const { data, error } = await supabase.from("categories").select("name").order("name");
+  if (error || !data || data.length === 0) {
+    // Fallback if the categories table isn't there yet: derive from courses.
+    const { data: cs } = await supabase.from("courses").select("category");
+    const set = new Set(DEFAULT_CATEGORIES);
+    (cs || []).forEach((c) => c.category && set.add(c.category));
+    return [...set];
+  }
+  return data.map((c) => c.name);
+}
+
+/** Published courses for the public landing page (readable without login via RLS). */
+export async function getPublishedCourses(limit = 9) {
+  if (!isSupabaseConfigured) return [];
+  const { data, error } = await supabase
+    .from("courses")
+    .select("id, title, thumbnail_url, category")
+    .eq("status", "published")
+    .limit(limit);
+  if (error) return [];
+  return data || [];
 }
 
 // ---------------- catalog / courses ----------------
