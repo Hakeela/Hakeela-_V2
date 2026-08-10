@@ -35,6 +35,31 @@ const MOCK_NOTIFICATIONS = [
   { id: "n4", type: "Enrollment", title: "Enrollment approved", body: "You’ve been enrolled into Cohort 4 of Data Analysis.", time: "2 days ago", read: true },
 ];
 
+const MOCK_QUIZ = [
+  { question: "Which of these is primarily a programming language used in data science?", options: "Tableau, Python, Excel, Power BI", answer: "Python" },
+  { question: "R is mostly used for statistical analysis and visualization.", options: "True, False", answer: "True" },
+];
+
+const MOCK_COURSE_DETAIL = {
+  id: "data-analysis", title: "Data Science", description: "Introduction to Data analytics",
+  thumbnail_url: "/gain-1.png", price: 5000, isEnrolled: true,
+  totalLessons: 6, completedLessons: 4, progress: 65,
+  modules: [
+    { id: "m1", name: "Module 1: Introduction to Data Science", status: "Completed", lessonsCount: 4, duration: "2h 30m", lessons: [
+      { id: "l1", title: "What is Data Science?", duration: "25 min", video_url: "", transcript: "An introduction to what data science is and why it matters.", done: true, assessment: null },
+      { id: "l2", title: "Data Science Tools Overview", duration: "30 min", video_url: "", transcript: "Data science tools are software, libraries, and platforms that help professionals process, analyze, and visualize data to extract insights and make informed decisions.", done: true, assessment: { id: "a1", title: "Data Science Tools Assessment", questions: MOCK_QUIZ } },
+      { id: "l3", title: "Setting Up Your Environment", duration: "45 min", video_url: "", transcript: "Install Python, Jupyter and the core libraries.", done: true, assessment: null },
+      { id: "l4", title: "First Data Analysis Project", duration: "50 min", video_url: "", transcript: "Put it together in a first mini-project.", done: true, assessment: null },
+    ] },
+    { id: "m2", name: "Module 2: Python for Data Science", status: "In Progress", lessonsCount: 1, duration: "3h 45m", lessons: [
+      { id: "l5", title: "Getting started with Python", duration: "45 min", video_url: "", transcript: "Python fundamentals for data work.", done: false, assessment: null },
+    ] },
+    { id: "m3", name: "Module 3: Data Visualization", status: "Not Started", lessonsCount: 1, duration: "2h 20m", lessons: [
+      { id: "l6", title: "Charts with Matplotlib", duration: "40 min", video_url: "", transcript: "Build clear charts.", done: false, assessment: null },
+    ] },
+  ],
+};
+
 const groupByCategory = (list) => {
   const g = {};
   for (const c of list) (g[c.category] ||= []).push(c);
@@ -79,6 +104,70 @@ export async function getStats(userId) {
     supabase.from("lesson_progress").select("id", { count: "exact", head: true }).eq("user_id", userId).eq("completed", true),
   ]);
   return { enrolled: enrolled || 0, completedLessons: completedLessons || 0, studyTime: "—", avgScore: "—" };
+}
+
+// ---------------- course detail / player ----------------
+export async function getCourseDetail(courseId, userId) {
+  if (!isSupabaseConfigured) return MOCK_COURSE_DETAIL;
+  const { data, error } = await supabase
+    .from("courses")
+    .select("id, title, description, thumbnail_url, price, modules(id, title, position, lessons(id, title, duration, video_url, transcript, position, assessments(id, title, type, questions)))")
+    .eq("id", courseId)
+    .single();
+  if (error) throw error;
+
+  const [{ data: prog }, { data: enr }] = await Promise.all([
+    supabase.from("lesson_progress").select("lesson_id, completed").eq("user_id", userId),
+    supabase.from("enrollments").select("id").eq("user_id", userId).eq("course_id", courseId).maybeSingle(),
+  ]);
+  const done = new Set((prog || []).filter((p) => p.completed).map((p) => p.lesson_id));
+
+  let total = 0, completed = 0;
+  const modules = (data.modules || []).sort((a, b) => a.position - b.position).map((m) => {
+    const lessons = (m.lessons || []).sort((a, b) => a.position - b.position).map((l) => {
+      const isDone = done.has(l.id);
+      total++; if (isDone) completed++;
+      const quiz = (l.assessments || []).find((a) => a.type === "quiz");
+      return {
+        id: l.id, title: l.title, duration: l.duration || "", video_url: l.video_url || "",
+        transcript: l.transcript || "", done: isDone,
+        assessment: quiz ? { id: quiz.id, title: quiz.title, questions: quiz.questions || [] } : null,
+      };
+    });
+    const dc = lessons.filter((l) => l.done).length;
+    const status = lessons.length && dc === lessons.length ? "Completed" : dc > 0 ? "In Progress" : "Not Started";
+    return { id: m.id, name: m.title, status, lessonsCount: lessons.length, duration: "", lessons };
+  });
+
+  return {
+    id: data.id, title: data.title, description: data.description, thumbnail_url: data.thumbnail_url,
+    price: data.price, isEnrolled: !!enr, totalLessons: total, completedLessons: completed,
+    progress: total ? Math.round((completed / total) * 100) : 0, modules,
+  };
+}
+
+export async function enroll(userId, courseId) {
+  if (!isSupabaseConfigured) return { error: null };
+  const { error } = await supabase
+    .from("enrollments")
+    .upsert({ user_id: userId, course_id: courseId, status: "active" }, { onConflict: "user_id,course_id" });
+  return { error: error?.message || null };
+}
+
+export async function markLessonComplete(userId, lessonId, completed = true) {
+  if (!isSupabaseConfigured) return;
+  await supabase.from("lesson_progress").upsert(
+    { user_id: userId, lesson_id: lessonId, completed, completed_at: completed ? new Date().toISOString() : null },
+    { onConflict: "user_id,lesson_id" }
+  );
+}
+
+export async function submitAssessment(userId, assessmentId, answers, score) {
+  if (!isSupabaseConfigured) return { error: null };
+  const { error } = await supabase
+    .from("submissions")
+    .insert({ assessment_id: assessmentId, user_id: userId, answers, score, status: "graded" });
+  return { error: error?.message || null };
 }
 
 // ---------------- certificates ----------------
