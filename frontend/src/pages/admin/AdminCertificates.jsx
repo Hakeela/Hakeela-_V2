@@ -26,7 +26,7 @@ function IssueModal({ cert, onClose, onIssue }) {
       footer={
         <>
           <button className="dash-btn dash-btn--outline" onClick={onClose}>Cancel</button>
-          <button className="dash-btn dash-btn--solid" onClick={() => onIssue(cert.id, payment)}>Issue certificate</button>
+          <button className="dash-btn dash-btn--solid" onClick={() => onIssue(cert.id, payment, file?.file)}>Issue certificate</button>
         </>
       }
     >
@@ -61,7 +61,7 @@ function IssueModal({ cert, onClose, onIssue }) {
               hidden
               onChange={(e) => {
                 const f = e.target.files[0];
-                if (f) setFile({ name: f.name, type: f.type, url: URL.createObjectURL(f) });
+                if (f) setFile({ name: f.name, type: f.type, url: URL.createObjectURL(f), file: f });
               }}
             />
           </label>
@@ -81,10 +81,10 @@ function AdminCertificates() {
     return () => { active = false; };
   }, []);
 
-  const doIssue = (id, payment) => {
+  const doIssue = (id, payment, file) => {
     setRows((r) => r.map((c) => (c.id === id ? { ...c, status: "Issued", payment } : c)));
     setIssuing(null);
-    issueCertificate(id, payment);
+    issueCertificate(id, payment, file);
   };
 
   const columns = [

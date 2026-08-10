@@ -252,6 +252,52 @@ drop policy if exists help_read on public.help_messages;
 create policy help_read on public.help_messages for select using (user_id = auth.uid() or public.is_staff_or_admin());
 
 -- ============================================================
+-- AUTO-NOTIFICATIONS — insert a notification row on key events.
+-- SECURITY DEFINER so the insert bypasses RLS regardless of who triggered it.
+-- ============================================================
+create or replace function public.notify_enrollment_approved()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  if new.status = 'approved' and new.status is distinct from old.status then
+    insert into public.notifications (user_id, type, title, body)
+    values (new.user_id, 'Enrollment', 'Enrollment approved',
+      'Your enrollment has been approved — you can start learning now.');
+  end if;
+  return new;
+end; $$;
+drop trigger if exists trg_notify_enrollment on public.enrollments;
+create trigger trg_notify_enrollment after update on public.enrollments
+  for each row execute procedure public.notify_enrollment_approved();
+
+create or replace function public.notify_submission_graded()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  if new.status = 'graded' and new.status is distinct from old.status then
+    insert into public.notifications (user_id, type, title, body)
+    values (new.user_id, 'Submission', 'Your submission was graded',
+      'You scored ' || coalesce(new.score, 0) || '% on a recent assessment.');
+  end if;
+  return new;
+end; $$;
+drop trigger if exists trg_notify_submission on public.submissions;
+create trigger trg_notify_submission after update on public.submissions
+  for each row execute procedure public.notify_submission_graded();
+
+create or replace function public.notify_certificate_issued()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  if new.status = 'issued' and new.status is distinct from old.status then
+    insert into public.notifications (user_id, type, title, body)
+    values (new.user_id, 'Certificate', 'Certificate issued',
+      'Your certificate is ready — download it from the Certificates page.');
+  end if;
+  return new;
+end; $$;
+drop trigger if exists trg_notify_certificate on public.certificates;
+create trigger trg_notify_certificate after update on public.certificates
+  for each row execute procedure public.notify_certificate_issued();
+
+-- ============================================================
 -- STORAGE (create these buckets in Dashboard → Storage):
 --   - "avatars"       (public)   profile photos
 --   - "course-media"  (public)   thumbnails + lesson videos

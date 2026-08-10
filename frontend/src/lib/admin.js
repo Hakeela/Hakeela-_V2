@@ -135,11 +135,17 @@ export async function getCertificates() {
   }));
 }
 
-export async function issueCertificate(id, paymentDisplay) {
-  if (!isSupabaseConfigured) return;
-  await supabase.from("certificates")
-    .update({ status: "issued", payment_status: payToDb(paymentDisplay), issued_at: new Date().toISOString() })
-    .eq("id", id);
+export async function issueCertificate(id, paymentDisplay, file) {
+  if (!isSupabaseConfigured) return { error: null };
+  const update = { status: "issued", payment_status: payToDb(paymentDisplay), issued_at: new Date().toISOString() };
+  if (file) {
+    const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const path = `certificates/${id}-${Date.now().toString(36)}-${safe}`;
+    const { error: upErr } = await supabase.storage.from("course-media").upload(path, file, { upsert: true });
+    if (!upErr) update.file_url = supabase.storage.from("course-media").getPublicUrl(path).data.publicUrl;
+  }
+  const { error } = await supabase.from("certificates").update(update).eq("id", id);
+  return { error: error?.message || null };
 }
 
 // ---------------- Courses (list) ----------------
