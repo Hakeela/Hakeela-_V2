@@ -111,12 +111,17 @@ export function AuthProvider({ children }) {
     return { error: null };
   }, []);
 
+  const refreshProfile = useCallback(async () => {
+    if (isSupabaseConfigured && user) await loadProfile(user.id);
+  }, [user, loadProfile]);
+
   const value = {
     user,
     profile,
     loading,
     demo: !isSupabaseConfigured,
     isAuthenticated: !!user,
+    refreshProfile,
     signIn,
     signUp,
     signOut,

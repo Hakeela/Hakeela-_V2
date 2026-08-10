@@ -227,3 +227,15 @@ export async function updateProfile(userId, patch) {
   const { error } = await supabase.from("profiles").update(patch).eq("id", userId);
   return { error: error?.message || null };
 }
+
+/** Upload a profile photo to the `avatars` bucket and save profiles.avatar_url. */
+export async function uploadAvatar(userId, file) {
+  if (!isSupabaseConfigured) return { url: URL.createObjectURL(file), error: null };
+  const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const path = `${userId}/${Date.now().toString(36)}-${safe}`;
+  const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+  if (upErr) return { error: upErr.message };
+  const url = supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl;
+  const { error } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", userId);
+  return { url, error: error?.message || null };
+}

@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
 import PhoneField from '../../components/PhoneField/PhoneField.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
-import { updateProfile } from '../../lib/data.js'
+import { updateProfile, uploadAvatar } from '../../lib/data.js'
 import './dashboard-pages.css'
 
 function Profile() {
-  const { user, profile, updatePassword } = useAuth()
+  const { user, profile, updatePassword, refreshProfile } = useAuth()
   const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
+  const [photo, setPhoto] = useState('/user-photo.png')
   const [pw, setPw] = useState('')
   const [pw2, setPw2] = useState('')
   const [savingInfo, setSavingInfo] = useState(false)
@@ -18,10 +19,22 @@ function Profile() {
     if (profile) {
       setFullName(profile.full_name || '')
       setPhone(profile.phone || '')
+      if (profile.avatar_url) setPhoto(profile.avatar_url)
     }
   }, [profile])
 
   const flash = (t) => { setMsg(t); setTimeout(() => setMsg(''), 3500) }
+
+  const onPhoto = async (e) => {
+    const f = e.target.files[0]
+    if (!f) return
+    setPhoto(URL.createObjectURL(f))
+    const { url, error } = await uploadAvatar(user?.id, f)
+    if (error) return flash(`Error: ${error}`)
+    if (url) setPhoto(url)
+    await refreshProfile()
+    flash('Profile photo updated.')
+  }
 
   const saveInfo = async (e) => {
     e.preventDefault()
@@ -46,12 +59,13 @@ function Profile() {
     <div className="dashpg">
       <div className="dash-card settings-card">
         <div className="settings-user">
-          <div className="settings-user__photo">
-            <img src="/user-photo.png" alt="" />
+          <label className="settings-user__photo" title="Upload photo" style={{ cursor: 'pointer' }}>
+            <img src={photo} alt="" />
             <span className="settings-user__cam">
               <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
             </span>
-          </div>
+            <input type="file" accept="image/*" hidden onChange={onPhoto} />
+          </label>
           <div>
             <h2 className="settings-user__name">{fullName || user?.email?.split('@')[0] || 'Your account'}</h2>
             <p className="settings-user__role">Student</p>

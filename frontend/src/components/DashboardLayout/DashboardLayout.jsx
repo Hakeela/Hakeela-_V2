@@ -282,11 +282,11 @@ function DashboardLayout() {
             </button>
 
             <div className="dash-welcome">
-              <img src="/user-photo.png" alt="" />
+              <img src={profile?.avatar_url || "/user-photo.png"} alt="" />
               <span>Welcome, {firstName}</span>
             </div>
 
-            <img className="dash-avatar" src="/avatar-146.png" alt="Account" />
+            <img className="dash-avatar" src={profile?.avatar_url || "/avatar-146.png"} alt="Account" />
           </div>
         </header>
 

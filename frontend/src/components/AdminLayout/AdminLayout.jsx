@@ -277,7 +277,7 @@ function AdminLayout() {
             </button>
 
             <button className="dash-welcome adm-account" onClick={() => navigate("/admin/settings")}>
-              <img src="/avatar-146.png" alt="" />
+              <img src={profile?.avatar_url || "/avatar-146.png"} alt="" />
               <span className="adm-account__meta">
                 <span className="adm-account__name">{profile?.full_name || user?.email?.split("@")[0] || "Account"}</span>
                 <span className="adm-account__role">{isAdmin ? "Administrator" : "Staff"}</span>
