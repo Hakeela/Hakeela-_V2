@@ -162,6 +162,17 @@ export async function markLessonComplete(userId, lessonId, completed = true) {
   );
 }
 
+/** Create a certificate row (awaiting issuance) the first time a learner finishes a course. */
+export async function ensureCertificate(userId, courseId) {
+  if (!isSupabaseConfigured) return;
+  const { data: existing } = await supabase
+    .from("certificates").select("id").eq("user_id", userId).eq("course_id", courseId).maybeSingle();
+  if (existing) return;
+  await supabase.from("certificates").insert({
+    user_id: userId, course_id: courseId, status: "ready", payment_status: "unpaid",
+  });
+}
+
 export async function submitAssessment(userId, assessmentId, answers, score) {
   if (!isSupabaseConfigured) return { error: null };
   const { error } = await supabase
@@ -175,10 +186,10 @@ export async function getMyCertificates(userId) {
   if (!isSupabaseConfigured) return MOCK_CERTIFICATES;
   const { data, error } = await supabase
     .from("certificates")
-    .select("id, payment_status, status, course:courses(title)")
+    .select("id, payment_status, status, file_url, course:courses(title)")
     .eq("user_id", userId);
   if (error) throw error;
-  return (data || []).map((c) => ({ id: c.id, course: c.course?.title, payment_status: c.payment_status, status: c.status }));
+  return (data || []).map((c) => ({ id: c.id, course: c.course?.title, payment_status: c.payment_status, status: c.status, file_url: c.file_url }));
 }
 
 // ---------------- notifications ----------------

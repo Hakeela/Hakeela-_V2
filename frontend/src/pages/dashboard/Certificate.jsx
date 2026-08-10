@@ -1,7 +1,23 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext.jsx'
+import { getMyCertificates } from '../../lib/data.js'
 import './dashboard-pages.css'
 
+const statusLabel = { issued: 'Issued', ready: 'Ready', awaiting_payment: 'Awaiting payment' }
+const statusClass = { issued: 'cl-meta--green', ready: 'cl-meta--blue', awaiting_payment: 'cl-meta--yellow' }
+
 function Certificate() {
+  const { user, profile } = useAuth()
+  const name = profile?.full_name || user?.email?.split('@')[0] || 'your name'
+  const [certs, setCerts] = useState([])
+
+  useEffect(() => {
+    let active = true
+    getMyCertificates(user?.id).then((r) => active && setCerts(r)).catch(() => active && setCerts([]))
+    return () => { active = false }
+  }, [user?.id])
+
   return (
     <div className="dashpg">
       <section className="cert-banner">
@@ -17,12 +33,33 @@ function Certificate() {
         <div style={{ position: 'relative', zIndex: 1 }}>
           <h2>Your Certificate Journey</h2>
           <p>
-            Your name, Victor Eyo, will appear on your certificates.{' '}
+            Your name, {name}, will appear on your certificates.{' '}
             <Link to="/dashboard/profile">Click here to change your name</Link> on
             your profile page.
           </p>
         </div>
       </section>
+
+      {certs.length > 0 && (
+        <div className="dash-card" style={{ marginTop: 24 }}>
+          <h3 className="cl-modules__title">Your certificates</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {certs.map((c) => (
+              <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', border: '1px solid #ececf0', borderRadius: 12, padding: '14px 16px' }}>
+                <span style={{ fontWeight: 700, color: '#1a1a1a', flex: 1, minWidth: 160 }}>{c.course}</span>
+                <span className={statusClass[c.status] || 'cl-meta--blue'} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 14, fontWeight: 600 }}>
+                  {statusLabel[c.status] || c.status}
+                </span>
+                {c.status === 'issued' && c.file_url ? (
+                  <a className="dash-btn dash-btn--outline" href={c.file_url} target="_blank" rel="noreferrer">Download</a>
+                ) : (
+                  <span style={{ color: '#9a9a9a', fontSize: 13 }}>Not yet available</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="dash-card cert-block">
         <span className="cert-block__icon">

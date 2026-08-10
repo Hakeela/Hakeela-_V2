@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import LessonModal from '../../components/LessonModal/LessonModal.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
-import { getCourseDetail, markLessonComplete } from '../../lib/data.js'
+import { getCourseDetail, markLessonComplete, ensureCertificate } from '../../lib/data.js'
 import './dashboard-pages.css'
 
 const sp = { viewBox: '0 0 24 24', width: 16, height: 16, fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' }
@@ -46,7 +46,9 @@ function ContinueLearning() {
       })
       const completed = modules.flatMap((m) => m.lessons).filter((l) => l.done).length
       const total = modules.flatMap((m) => m.lessons).length
-      return { ...c, modules, completedLessons: completed, progress: total ? Math.round((completed / total) * 100) : 0 }
+      const progress = total ? Math.round((completed / total) * 100) : 0
+      if (progress === 100) ensureCertificate(user?.id, id) // course finished → queue a certificate
+      return { ...c, modules, completedLessons: completed, progress }
     })
     markLessonComplete(user?.id, lessonId, true)
   }

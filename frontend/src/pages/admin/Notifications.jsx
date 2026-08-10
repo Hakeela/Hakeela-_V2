@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { getMyNotifications, setNotificationRead, deleteNotification } from "../../lib/data.js";
 import { notifications as seed } from "./adminData.js";
 
 const typeStyle = {
@@ -10,16 +12,33 @@ const typeStyle = {
 };
 
 function Notifications() {
-  const [items, setItems] = useState(seed);
+  const { user, demo } = useAuth();
+  const [items, setItems] = useState(demo ? seed : []);
   const [filter, setFilter] = useState("All");
+
+  useEffect(() => {
+    let active = true;
+    getMyNotifications(user?.id).then((r) => active && setItems(r)).catch(() => active && setItems([]));
+    return () => { active = false; };
+  }, [user?.id]);
 
   const unread = items.filter((n) => !n.read).length;
   const filters = ["All", "Unread", "Enrollment", "Submission", "Payment", "Certificate", "System"];
   const view = items.filter((n) => filter === "All" || (filter === "Unread" ? !n.read : n.type === filter));
 
-  const markAllRead = () => setItems((it) => it.map((n) => ({ ...n, read: true })));
-  const toggleRead = (id) => setItems((it) => it.map((n) => (n.id === id ? { ...n, read: !n.read } : n)));
-  const remove = (id) => setItems((it) => it.filter((n) => n.id !== id));
+  const markAllRead = () => {
+    items.filter((n) => !n.read).forEach((n) => setNotificationRead(n.id, true));
+    setItems((it) => it.map((n) => ({ ...n, read: true })));
+  };
+  const toggleRead = (id) => {
+    const next = !items.find((n) => n.id === id)?.read;
+    setItems((it) => it.map((n) => (n.id === id ? { ...n, read: next } : n)));
+    setNotificationRead(id, next);
+  };
+  const remove = (id) => {
+    setItems((it) => it.filter((n) => n.id !== id));
+    deleteNotification(id);
+  };
 
   return (
     <div className="dashpg">

@@ -184,7 +184,7 @@ alter table public.help_messages  enable row level security;
 
 -- PROFILES: read/update own; admins manage all
 drop policy if exists profiles_self_read on public.profiles;
-create policy profiles_self_read on public.profiles for select using (id = auth.uid() or public.is_admin());
+create policy profiles_self_read on public.profiles for select using (id = auth.uid() or public.is_staff_or_admin());
 drop policy if exists profiles_self_update on public.profiles;
 create policy profiles_self_update on public.profiles for update using (id = auth.uid() or public.is_admin());
 drop policy if exists profiles_admin_all on public.profiles;
@@ -235,6 +235,9 @@ create policy sub_staff_update on public.submissions for update using (public.is
 -- certificates
 drop policy if exists cert_owner_read on public.certificates;
 create policy cert_owner_read on public.certificates for select using (user_id = auth.uid() or public.is_staff_or_admin());
+-- a learner may create their own certificate row on course completion (issuance still needs staff)
+drop policy if exists cert_owner_insert on public.certificates;
+create policy cert_owner_insert on public.certificates for insert with check (user_id = auth.uid() or public.is_staff_or_admin());
 drop policy if exists cert_staff_write on public.certificates;
 create policy cert_staff_write on public.certificates for all using (public.is_staff_or_admin()) with check (public.is_staff_or_admin());
 
