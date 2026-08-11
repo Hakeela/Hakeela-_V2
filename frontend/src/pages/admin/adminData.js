@@ -103,14 +103,8 @@ export const genderSplit = [
 ];
 
 // --- Courses --------------------------------------------------------------
-export const courses = [
-  { id: "data-analysis", title: "Data Analysis", category: "Courses", price: 5000, modules: 6, lessons: 24, students: 312, status: "Published" },
-  { id: "product-design", title: "Product Design", category: "Courses", price: 5000, modules: 5, lessons: 20, students: 208, status: "Published" },
-  { id: "web-development", title: "Web Development", category: "Courses", price: 5000, modules: 7, lessons: 30, students: 174, status: "Published" },
-  { id: "intro-computer", title: "Introduction to Computer", category: "Special Needs & Tech", price: 0, modules: 4, lessons: 12, students: 96, status: "Published" },
-  { id: "excel", title: "Excel for Beginners", category: "Special Needs & Tech", price: 0, modules: 3, lessons: 10, students: 121, status: "Published" },
-  { id: "changemaker", title: "Everyone a Changemaker", category: "Leadership", price: 5000, modules: 4, lessons: 16, students: 64, status: "Draft" },
-];
+// Courses are fully dynamic (admin-created in Supabase) — no static placeholders.
+export const courses = [];
 
 export const courseCategories = ["Courses", "Special Needs & Tech", "Leadership"];
 

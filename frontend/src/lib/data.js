@@ -6,23 +6,8 @@ import { supabase, isSupabaseConfigured } from "./supabase.js";
  * data so the app keeps working locally before keys are added.
  */
 
-// ---------------- demo mock data ----------------
-const MOCK_CATALOG = [
-  { id: "data-analysis", title: "Data Analysis", category: "Courses", price: 5000, thumbnail_url: "/course-1.png", description: "Unlock the power of data to make smart, informed decisions. This course equips you with analytical tools and techniques to interpret, visualize, and communicate data effectively." },
-  { id: "product-design", title: "Product Design", category: "Courses", price: 5000, thumbnail_url: "/course-2.png", description: "Learn how to create user-centered products that solve real problems. This hands-on course walks you through the design thinking process, UI/UX principles, and the tools top designers use." },
-  { id: "web-development", title: "Web Development", category: "Courses", price: 5000, thumbnail_url: "/course-3.png", description: "Start from the basics and grow into a full-stack web developer. This course takes you from writing your first line of code to deploying real-world applications." },
-  { id: "intro-computer", title: "Introduction to Computer", category: "Special Needs & Tech", price: 0, thumbnail_url: "/gain-1.png", description: "Begin your tech career by understanding Computer essentials" },
-  { id: "excel", title: "Excel for Beginners", category: "Special Needs & Tech", price: 0, thumbnail_url: "/gain-2.png", description: "Welcome to a world of charts & tables." },
-  { id: "changemaker", title: "Everyone a Changemaker", category: "Leadership", price: 5000, thumbnail_url: "/gain-2.png", description: "Unlock skills, knowledge and insight on how to lead a change in your community." },
-  { id: "peace-building", title: "Peace building and development", category: "Leadership", price: 5000, thumbnail_url: "/hero-collage.png", description: "Unlock knowledge and skills to drive peace in your community." },
-];
-
-const MOCK_MY_COURSES = [
-  { id: "data-analysis", title: "Data Science", description: "Introduction to Data analytics", thumbnail_url: "/gain-1.png", lessons: 12, duration: "8h 30m", progress: 65 },
-  { id: "changemaker", title: "Everyone a Changemaker", description: "Unlock skills, knowledge and insight on how to lead a change in your community.", thumbnail_url: "/gain-2.png", lessons: 8, duration: "6h 15m", progress: 65 },
-];
-
-const MOCK_STATS = { enrolled: 3, completedLessons: 14, studyTime: "24h", avgScore: "85%" };
+// ---------------- demo mock data (no course placeholders — courses are dynamic) ----------------
+const MOCK_STATS = { enrolled: 0, completedLessons: 0, studyTime: "—", avgScore: "—" };
 
 const MOCK_CERTIFICATES = [
   { id: "c1", course: "Web Development", payment_status: "paid", status: "issued" },
@@ -34,31 +19,6 @@ const MOCK_NOTIFICATIONS = [
   { id: "n3", type: "Certificate", title: "Certificate ready", body: "Pay for your certificate to unlock the download.", time: "Yesterday", read: true },
   { id: "n4", type: "Enrollment", title: "Enrollment approved", body: "You’ve been enrolled into Cohort 4 of Data Analysis.", time: "2 days ago", read: true },
 ];
-
-const MOCK_QUIZ = [
-  { question: "Which of these is primarily a programming language used in data science?", options: "Tableau, Python, Excel, Power BI", answer: "Python" },
-  { question: "R is mostly used for statistical analysis and visualization.", options: "True, False", answer: "True" },
-];
-
-const MOCK_COURSE_DETAIL = {
-  id: "data-analysis", title: "Data Science", description: "Introduction to Data analytics",
-  thumbnail_url: "/gain-1.png", price: 5000, isEnrolled: true,
-  totalLessons: 6, completedLessons: 4, progress: 65,
-  modules: [
-    { id: "m1", name: "Module 1: Introduction to Data Science", status: "Completed", lessonsCount: 4, duration: "2h 30m", lessons: [
-      { id: "l1", title: "What is Data Science?", duration: "25 min", video_url: "", transcript: "An introduction to what data science is and why it matters.", done: true, assessment: null },
-      { id: "l2", title: "Data Science Tools Overview", duration: "30 min", video_url: "", transcript: "Data science tools are software, libraries, and platforms that help professionals process, analyze, and visualize data to extract insights and make informed decisions.", done: true, assessment: { id: "a1", title: "Data Science Tools Assessment", questions: MOCK_QUIZ } },
-      { id: "l3", title: "Setting Up Your Environment", duration: "45 min", video_url: "", transcript: "Install Python, Jupyter and the core libraries.", done: true, assessment: null },
-      { id: "l4", title: "First Data Analysis Project", duration: "50 min", video_url: "", transcript: "Put it together in a first mini-project.", done: true, assessment: null },
-    ] },
-    { id: "m2", name: "Module 2: Python for Data Science", status: "In Progress", lessonsCount: 1, duration: "3h 45m", lessons: [
-      { id: "l5", title: "Getting started with Python", duration: "45 min", video_url: "", transcript: "Python fundamentals for data work.", done: false, assessment: null },
-    ] },
-    { id: "m3", name: "Module 3: Data Visualization", status: "Not Started", lessonsCount: 1, duration: "2h 20m", lessons: [
-      { id: "l6", title: "Charts with Matplotlib", duration: "40 min", video_url: "", transcript: "Build clear charts.", done: false, assessment: null },
-    ] },
-  ],
-};
 
 const groupByCategory = (list) => {
   const g = {};
@@ -97,7 +57,7 @@ export async function getPublishedCourses(limit = 9) {
 
 // ---------------- catalog / courses ----------------
 export async function getCatalog() {
-  if (!isSupabaseConfigured) return groupByCategory(MOCK_CATALOG);
+  if (!isSupabaseConfigured) return {};
   const { data, error } = await supabase
     .from("courses")
     .select("id, title, description, category, price, thumbnail_url")
@@ -108,7 +68,7 @@ export async function getCatalog() {
 }
 
 export async function getMyCourses(userId) {
-  if (!isSupabaseConfigured) return MOCK_MY_COURSES;
+  if (!isSupabaseConfigured) return [];
   const { data, error } = await supabase
     .from("enrollments")
     .select("progress:status, course:courses(id, title, description, thumbnail_url)")
@@ -137,7 +97,7 @@ export async function getStats(userId) {
 
 // ---------------- course detail / player ----------------
 export async function getCourseDetail(courseId, userId) {
-  if (!isSupabaseConfigured) return MOCK_COURSE_DETAIL;
+  if (!isSupabaseConfigured) return null;
   const { data, error } = await supabase
     .from("courses")
     .select("id, title, description, thumbnail_url, price, modules(id, title, position, lessons(id, title, duration, video_url, transcript, position, assessments(id, title, type, questions)))")
