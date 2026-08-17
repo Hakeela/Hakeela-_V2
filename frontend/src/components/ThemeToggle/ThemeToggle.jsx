@@ -4,7 +4,8 @@ import './ThemeToggle.css'
 function getInitialTheme() {
   const saved = localStorage.getItem('theme')
   if (saved === 'light' || saved === 'dark') return saved
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  // Default to light mode when the user has not made an explicit choice.
+  return 'light'
 }
 
 const SunIcon = () => (

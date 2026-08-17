@@ -15,8 +15,8 @@ const otherInitiatives = [
   },
   {
     logo: '/logo-techhub.png',
-    alt: 'Hakeela Tech Hub',
-    title: 'Hakeela Tech Hub',
+    alt: 'HakVersity',
+    title: 'HakVersity',
     body: 'A network of physical tech hubs across at least 10 African countries, providing young Africans with quiet, durable workspaces to learn, collaborate, innovate, and grow.',
   },
 ]
@@ -72,7 +72,7 @@ function Initiatives() {
         {/* Block 3 — Meet Hakpilot */}
         <div className="hakpilot">
           <header className="hakpilot__head">
-            <h3 className="hakpilot__title">Meet Hakpilot!</h3>
+            <h3 className="hakpilot__title">Meet HakPortal</h3>
             <p className="hakpilot__subtitle">
               Easily launch your courses, ebooks, events, and products — and
               accept payments all in one place.

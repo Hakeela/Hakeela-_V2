@@ -2,11 +2,10 @@ import './Footer.css'
 
 const quickLinks = [
   { label: 'HakPortal', href: '#' },
-  { label: 'HakAbilityTech', href: '#' },
+  { label: 'Hak-AbilityTech', href: '#' },
   { label: 'HakStudios', href: '#' },
   { label: 'Hakeela Fund', href: '#' },
   { label: 'HakVersity', href: '#' },
-  { label: 'Hakeela Tech Hub', href: '#' },
 ]
 
 const resources = [

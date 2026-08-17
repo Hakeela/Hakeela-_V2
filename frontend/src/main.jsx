@@ -4,15 +4,11 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
 import './index.css'
 
-// Apply saved/preferred theme before render to avoid a flash of the wrong theme
+// Apply saved theme before render to avoid a flash of the wrong theme.
+// Light is the default when the user has not explicitly chosen a theme.
 ;(() => {
   const saved = localStorage.getItem('theme')
-  const theme =
-    saved === 'light' || saved === 'dark'
-      ? saved
-      : window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light'
+  const theme = saved === 'light' || saved === 'dark' ? saved : 'light'
   document.documentElement.setAttribute('data-theme', theme)
 })()
 

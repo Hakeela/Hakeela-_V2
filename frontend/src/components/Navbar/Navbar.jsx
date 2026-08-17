@@ -6,14 +6,14 @@ import './Navbar.css'
 const navLinks = [
   { label: 'Blog', to: '/blog' },
   { label: 'HakStudios', href: '#' },
-  { label: 'HakPortal', href: '#' },
+  { label: 'HakPortal', href: 'https://hakportal.hakeela.org', external: true },
   { label: 'HakVersity', href: '#' },
-  { label: 'HakAbilityTech', href: '#' },
+  { label: 'Hak-AbilityTech', href: '#' },
 ]
 
 const initiatives = [
   { label: 'Hakeela Fund', href: '#' },
-  { label: 'Hakeela Tech Hub', href: '#' },
+  { label: 'HakVersity', href: '#' },
 ]
 
 function Navbar() {
@@ -65,7 +65,14 @@ function Navbar() {
                     {link.label}
                   </NavLink>
                 ) : (
-                  <a href={link.href} className="navbar__link">
+                  <a
+                    href={link.href}
+                    className="navbar__link"
+                    onClick={() => setMenuOpen(false)}
+                    {...(link.external
+                      ? { target: '_blank', rel: 'noopener noreferrer' }
+                      : {})}
+                  >
                     {link.label}
                   </a>
                 )}
@@ -98,7 +105,14 @@ function Navbar() {
                 <ul className="navbar__submenu">
                   {initiatives.map((item) => (
                     <li key={item.label}>
-                      <a href={item.href} className="navbar__submenu-link">
+                      <a
+                        href={item.href}
+                        className="navbar__submenu-link"
+                        onClick={() => {
+                          setInitiativesOpen(false)
+                          setMenuOpen(false)
+                        }}
+                      >
                         {item.label}
                       </a>
                     </li>
