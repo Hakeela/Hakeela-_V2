@@ -40,7 +40,7 @@ function Team() {
     <section className="team">
       <div className="team__inner">
         <header className="team__head">
-          <h2 className="team__title">Meet the Individuals, changing the world</h2>
+          <h2 className="team__title">Meet the team</h2>
         </header>
 
         <Swiper
