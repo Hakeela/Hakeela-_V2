@@ -81,6 +81,10 @@ body {
 :root[data-theme='dark'] {
   color-scheme: dark;
   background: #0f1115;
+  /* Brightened brand blue for headings — the primary --hak-blue is too dark
+     to read on the dark background, so dark mode uses this legible variant
+     (~4.8:1 contrast) that stays in the blue family. */
+  --hak-blue-dark: #4f7cff;
 }
 
 /* Page + section backgrounds */
@@ -154,7 +158,7 @@ body {
   border-color: #2a2f3a;
 }
 
-/* Blue headings keep the primary brand blue in dark mode. */
+/* Blue headings use a brightened brand blue in dark mode for readability. */
 :root[data-theme='dark'] .hero__title,
 :root[data-theme='dark'] .hero__subtitle,
 :root[data-theme='dark'] .hero__quote,
@@ -174,7 +178,7 @@ body {
 :root[data-theme='dark'] .about-member__name,
 :root[data-theme='dark'] .blog-card__title,
 :root[data-theme='dark'] .blog-tab.is-active {
-  color: var(--hak-blue);
+  color: var(--hak-blue-dark);
 }
 
 /* Dark (non-blue) headings -> light */
@@ -210,12 +214,12 @@ body {
 :root[data-theme='dark'] .init-btn--outline,
 :root[data-theme='dark'] .story-card__btn,
 :root[data-theme='dark'] .blog-card__btn {
-  border-color: #837dff;
-  color: #837dff;
+  border-color: var(--hak-blue-dark);
+  color: var(--hak-blue-dark);
 }
 :root[data-theme='dark'] .init-btn--outline:hover,
 :root[data-theme='dark'] .story-card__btn:hover,
 :root[data-theme='dark'] .blog-card__btn:hover {
-  background: #837dff;
+  background: var(--hak-blue-dark);
   color: #0f1115;
 }
