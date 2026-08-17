@@ -154,8 +154,7 @@ body {
   border-color: #2a2f3a;
 }
 
-/* Blue headings/accents -> lighter indigo for contrast on dark.
-   (Panels/buttons keep the rich --hak-blue; only text accents lighten.) */
+/* Blue headings keep the primary brand blue in dark mode. */
 :root[data-theme='dark'] .hero__title,
 :root[data-theme='dark'] .hero__subtitle,
 :root[data-theme='dark'] .hero__quote,
@@ -175,7 +174,7 @@ body {
 :root[data-theme='dark'] .about-member__name,
 :root[data-theme='dark'] .blog-card__title,
 :root[data-theme='dark'] .blog-tab.is-active {
-  color: #837dff;
+  color: var(--hak-blue);
 }
 
 /* Dark (non-blue) headings -> light */
@@ -186,7 +185,7 @@ body {
   color: #f2f3f5;
 }
 
-/* Muted body text -> lighter muted */
+/* Body / paragraph text -> a single uniform white shade */
 :root[data-theme='dark'] .hero__desc,
 :root[data-theme='dark'] .foundation__subtitle,
 :root[data-theme='dark'] .foundation-card__body,
@@ -204,7 +203,7 @@ body {
 :root[data-theme='dark'] .about-check li,
 :root[data-theme='dark'] .about-member__role,
 :root[data-theme='dark'] .story-card__body {
-  color: #a6acb8;
+  color: #eef0f4;
 }
 
 /* Outline buttons: lighten border/text so they read on dark */
