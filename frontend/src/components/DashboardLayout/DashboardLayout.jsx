@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
+import Popup from "../Popup/Popup.jsx";
 import "./DashboardLayout.css";
 
 const nav = [
@@ -149,6 +150,7 @@ function DashboardLayout() {
   const { profile, signOut } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [imabongOpen, setImabongOpen] = useState(false);
 
   const firstName = (profile?.full_name || "there").split(" ")[0];
 
@@ -286,7 +288,14 @@ function DashboardLayout() {
               <span>Welcome, {firstName}</span>
             </div>
 
-            <img className="dash-avatar" src={profile?.avatar_url || "/avatar-146.png"} alt="Account" />
+            <button
+              type="button"
+              className="dash-avatar dash-avatar--btn"
+              aria-label="Meet Imabong, our AI Agent"
+              onClick={() => setImabongOpen(true)}
+            >
+              <img src={profile?.avatar_url || "/avatar-146.png"} alt="Imabong, our AI Agent" />
+            </button>
           </div>
         </header>
 
@@ -321,6 +330,15 @@ function DashboardLayout() {
           onClick={() => setMobileOpen(false)}
         />
       )}
+
+      <Popup
+        open={imabongOpen}
+        onClose={() => setImabongOpen(false)}
+        title="Imabong is coming soon!"
+        image="/nav-avatar.png"
+      >
+        <p>Imabong, our AI Agent, is coming soon. Stay tuned!</p>
+      </Popup>
     </div>
   );
 }

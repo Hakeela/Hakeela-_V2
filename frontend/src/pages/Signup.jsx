@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import AuthLayout from '../components/AuthLayout/AuthLayout.jsx'
 import PasswordInput from '../components/AuthLayout/PasswordInput.jsx'
 import PhoneField from '../components/PhoneField/PhoneField.jsx'
+import Popup from '../components/Popup/Popup.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 
 function Signup() {
@@ -14,12 +15,12 @@ function Signup() {
   })
   const set = (k, v) => setF((p) => ({ ...p, [k]: v }))
   const [error, setError] = useState('')
-  const [notice, setNotice] = useState('')
   const [busy, setBusy] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setError(''); setNotice('')
+    setError('')
     if (f.password.length < 6) return setError('Password must be at least 6 characters.')
     if (f.password !== f.confirm) return setError('Passwords do not match.')
     setBusy(true)
@@ -33,7 +34,7 @@ function Signup() {
     })
     setBusy(false)
     if (error) return setError(error)
-    if (needsConfirmation) return setNotice('Account created! Check your email to confirm, then log in.')
+    if (needsConfirmation) return setConfirmOpen(true)
     navigate('/dashboard', { replace: true })
   }
 
@@ -44,7 +45,6 @@ function Signup() {
 
       {demo && <p className="auth-note">Demo mode — Supabase keys not set yet, so this creates a local demo session.</p>}
       {error && <p className="auth-error">{error}</p>}
-      {notice && <p className="auth-note">{notice}</p>}
 
       <form className="auth-form" onSubmit={handleSubmit}>
         <div className="auth-field">
@@ -123,6 +123,20 @@ function Signup() {
         Already have an account?{' '}
         <Link to="/login" className="auth-inline-link">Login here</Link>
       </p>
+
+      <Popup
+        open={confirmOpen}
+        onClose={() => navigate('/login')}
+        title="Confirm your email"
+        actionLabel="Go to login"
+        onAction={() => navigate('/login')}
+      >
+        <p>
+          Your account has been created! A confirmation email has been sent to{' '}
+          <strong>{f.email}</strong>. Please check your inbox and confirm your
+          email address to activate your account, then log in.
+        </p>
+      </Popup>
     </AuthLayout>
   )
 }
