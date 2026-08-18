@@ -100,27 +100,3 @@
   border-color: var(--hak-blue);
   box-shadow: 0 0 0 3px rgba(26, 19, 214, 0.12);
 }
-
-/* auth dark theme */
-:root[data-theme='dark'] .phone2--auth .phone2__input.form-control,
-:root[data-theme='dark'] .phone2--auth .phone2__flag.flag-dropdown {
-  background: #1b1f28;
-  border-color: #2a2f3a;
-  color: #eef0f4;
-}
-:root[data-theme='dark'] .phone2--auth .phone2__input.form-control::placeholder {
-  color: #7a8090;
-}
-:root[data-theme='dark'] .phone2--auth .country-list {
-  background: #1b1f28;
-  color: #eef0f4;
-}
-:root[data-theme='dark'] .phone2--auth .country-list .country.highlight,
-:root[data-theme='dark'] .phone2--auth .country-list .country:hover {
-  background: #262b36;
-}
-:root[data-theme='dark'] .phone2--auth .country-list .search-box {
-  background: #262b36;
-  border-color: #2a2f3a;
-  color: #eef0f4;
-}

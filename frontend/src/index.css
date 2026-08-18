@@ -5,7 +5,7 @@
   --hak-dark: #1a1a1a;
   --hak-white: #ffffff;
 
-  /* Theme-driven page tokens (overridden in dark) */
+  /* Page tokens (light only) */
   --page-bg: #ffffff;
   --page-text: #1a1a1a;
 
@@ -60,65 +60,4 @@ img {
 
 body {
   transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* ============================================================
-   Dark theme (hero + banners stay brand-blue; light surfaces darken)
-   ============================================================ */
-:root[data-theme='dark'] {
-  color-scheme: dark;
-  --page-bg: #0f1115;
-  --page-text: #eef0f4;
-  background: #0f1115;
-}
-
-/* Light sections -> dark */
-:root[data-theme='dark'] .gain,
-:root[data-theme='dark'] .courses,
-:root[data-theme='dark'] .navbar {
-  background: #14171f;
-}
-
-/* Navbar outline button */
-:root[data-theme='dark'] .navbar__btn--outline {
-  border-color: #837dff;
-  color: #837dff;
-}
-
-/* Card surfaces */
-:root[data-theme='dark'] .gain-card,
-:root[data-theme='dark'] .course-card {
-  background: #1b1f28;
-  border-color: #2a2f3a;
-}
-
-:root[data-theme='dark'] .course-card__img {
-  background: #232a45;
-}
-
-/* Blue text accents -> lighter indigo for contrast on dark */
-:root[data-theme='dark'] .gain__title,
-:root[data-theme='dark'] .gain-card__title,
-:root[data-theme='dark'] .courses__title,
-:root[data-theme='dark'] .course-card__title {
-  color: #837dff;
-}
-
-/* Muted body text */
-:root[data-theme='dark'] .gain__subtitle,
-:root[data-theme='dark'] .gain-card__body,
-:root[data-theme='dark'] .courses__subtitle {
-  color: #a6acb8;
-}
-
-/* Outline buttons on cards */
-:root[data-theme='dark'] .gain-card__btn,
-:root[data-theme='dark'] .course-card__btn {
-  border-color: #837dff;
-  color: #837dff;
-}
-:root[data-theme='dark'] .gain-card__btn:hover,
-:root[data-theme='dark'] .course-card__btn:hover {
-  background: #837dff;
-  color: #0f1115;
 }

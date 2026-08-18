@@ -1,19 +1,20 @@
 import './Footer.css'
 
+const SITE = 'https://hakeela.org'
+
 const quickLinks = [
-  { label: 'HakPortal', href: '#' },
-  { label: 'HakAbilityTech', href: '#' },
-  { label: 'HakStudios', href: '#' },
-  { label: 'Hakeela Fund', href: '#' },
-  { label: 'HakVersity', href: '#' },
-  { label: 'Hakeela Tech Hub', href: '#' },
+  { label: 'HakPortal', href: '/' },
+  { label: 'Hak-AbilityTech', href: SITE },
+  { label: 'HakStudios', href: SITE },
+  { label: 'Hakeela Fund', href: SITE },
+  { label: 'HakVersity', href: SITE },
 ]
 
 const resources = [
-  { label: 'Blog', href: '#' },
-  { label: 'About us', href: '#' },
-  { label: 'Our team', href: '#' },
-  { label: 'Donate', href: '#' },
+  { label: 'Blog', href: `${SITE}/blog` },
+  { label: 'About us', href: `${SITE}/about` },
+  { label: 'Our team', href: `${SITE}/about` },
+  { label: 'Donate', href: SITE },
 ]
 
 const contacts = [
@@ -21,6 +22,10 @@ const contacts = [
   { label: '+2349019006751', href: 'tel:+2349019006751' },
   { label: 'hello.wgdtafrica@gmail.com', href: 'mailto:hello.wgdtafrica@gmail.com' },
 ]
+
+// External links (marketing site) open in a new tab.
+const linkProps = (href) =>
+  /^https?:/i.test(href) ? { target: '_blank', rel: 'noopener noreferrer' } : {}
 
 function Footer() {
   return (
@@ -67,7 +72,7 @@ function Footer() {
           <ul className="footer__list">
             {quickLinks.map((item) => (
               <li key={item.label}>
-                <a className="footer__link" href={item.href}>
+                <a className="footer__link" href={item.href} {...linkProps(item.href)}>
                   {item.label}
                 </a>
               </li>
@@ -81,7 +86,7 @@ function Footer() {
           <ul className="footer__list">
             {resources.map((item) => (
               <li key={item.label}>
-                <a className="footer__link" href={item.href}>
+                <a className="footer__link" href={item.href} {...linkProps(item.href)}>
                   {item.label}
                 </a>
               </li>
