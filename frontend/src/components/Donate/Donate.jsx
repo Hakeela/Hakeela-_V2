@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import './Donate.css'
 
 function Donate() {
@@ -22,12 +23,12 @@ function Donate() {
             <a href="#" className="donate__btn donate__btn--solid">
               Donate
             </a>
-            <a href="#" className="donate__btn donate__btn--outline">
+            <Link to="/about" className="donate__btn donate__btn--outline">
               Learn More
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <polyline points="9 18 15 12 9 6" />
               </svg>
-            </a>
+            </Link>
           </div>
         </div>
 

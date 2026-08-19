@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import './Initiatives.css'
 
 const Chevron = () => (
@@ -44,32 +45,13 @@ function Initiatives() {
               we are doing all this using A.I&rdquo;
               <br />- Victor Eyo
             </p>
-            <a href="#" className="init-btn init-btn--outline">
+            <Link to="/about" className="init-btn init-btn--outline">
               Learn More <Chevron />
-            </a>
+            </Link>
           </div>
         </div>
 
-        {/* Block 2 — HakStudios (text left, image right) */}
-        <div className="init-block init-block--reverse">
-          <div className="init-block__text">
-            <img className="init-block__logo" src="/logo-hakstudios.png" alt="HakStudios" />
-            <h3 className="init-block__heading">When Inclusion Meets Creativity</h3>
-            <p className="init-block__body">
-              We build tech talent, design meaningful solutions, write impactful
-              stories, and teach the next generation, all through the power of
-              inclusive innovation.
-            </p>
-            <a href="#" className="init-btn init-btn--outline">
-              Collaborate with Us
-            </a>
-          </div>
-          <div className="init-figure">
-            <img src="/init-2.png" alt="Learners collaborating at a computer" />
-          </div>
-        </div>
-
-        {/* Block 3 — Meet Hakpilot */}
+        {/* Block 3 — Meet HakPortal */}
         <div className="hakpilot">
           <header className="hakpilot__head">
             <h3 className="hakpilot__title">Meet HakPortal</h3>
@@ -81,7 +63,7 @@ function Initiatives() {
 
           <div className="hakpilot__card">
             <div className="hakpilot__bar">
-              <img className="hakpilot__logo" src="/logo-hakpilot.png" alt="Hakpilot" />
+              <img className="hakpilot__logo" src="/HakPortal.png" alt="HakPortal" />
               <div className="hakpilot__search">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <circle cx="11" cy="11" r="7" />
@@ -89,7 +71,7 @@ function Initiatives() {
                 </svg>
                 <span>Search</span>
               </div>
-              <a href="#" className="init-btn init-btn--solid hakpilot__learn">
+              <a href="https://hakportal.hakeela.org" target="_blank" rel="noopener noreferrer" className="init-btn init-btn--solid hakpilot__learn">
                 Learn more <Chevron />
               </a>
             </div>

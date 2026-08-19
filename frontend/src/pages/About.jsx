@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import CTA from '../components/CTA/CTA.jsx'
+import { teamMembers } from '../data/team.js'
 import './About.css'
 
 const Chevron = () => (
@@ -68,14 +70,6 @@ const stories = [
 const storyExcerpt =
   'Learn how Hakeela started, why it started and the impact the Edtech organization has been making in regions across Africa, and why Hakeela is the literally the Future.'
 
-// Team
-const team = [
-  { name: 'Victor Eyo', role: 'Founder/CEO Hakeela', img: '/about-victor.png' },
-  { name: 'Comfort Alphonsus', role: 'Founder/CEO Hakeela', img: '/about-comfort.png' },
-  { name: 'Laurenz', role: 'Founder/CEO Hakeela', img: '/about-laurenz.png' },
-  { name: 'Kavita', role: 'Founder/CEO Hakeela', img: '/about-kavita.png' },
-]
-
 const Social = () => (
   <div className="about-member__socials">
     <a href="#" aria-label="LinkedIn">
@@ -90,7 +84,11 @@ const Social = () => (
   </div>
 )
 
+const TEAM_STEP = 4
+
 function About() {
+  const [visibleTeam, setVisibleTeam] = useState(TEAM_STEP)
+
   return (
     <main className="about">
       {/* Hero banner */}
@@ -195,8 +193,8 @@ function About() {
         <div className="about-team__inner">
           <h2 className="about-team__title">Meet the Individuals, changing the world</h2>
           <div className="about-team__grid">
-            {team.map((member) => (
-              <article className="about-member" key={member.name}>
+            {teamMembers.slice(0, visibleTeam).map((member) => (
+              <article className="about-member" key={member.img}>
                 <div className="about-member__photo">
                   <img src={member.img} alt={member.name} />
                 </div>
@@ -206,9 +204,17 @@ function About() {
               </article>
             ))}
           </div>
-          <div className="about-team__more">
-            <a href="#" className="about-team__load">Load More</a>
-          </div>
+          {visibleTeam < teamMembers.length && (
+            <div className="about-team__more">
+              <button
+                type="button"
+                className="about-team__load"
+                onClick={() => setVisibleTeam((n) => n + TEAM_STEP)}
+              >
+                Load More
+              </button>
+            </div>
+          )}
         </div>
       </section>
     </main>

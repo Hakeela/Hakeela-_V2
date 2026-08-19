@@ -5,7 +5,6 @@ import './Navbar.css'
 
 const navLinks = [
   { label: 'Blog', to: '/blog' },
-  { label: 'HakStudios', href: '#' },
   { label: 'HakPortal', href: 'https://hakportal.hakeela.org', external: true },
   { label: 'HakVersity', href: '#' },
   { label: 'Hak-AbilityTech', href: '#' },

@@ -372,9 +372,12 @@
   padding: 11px 30px;
   border-radius: 999px;
   border: 1.5px solid var(--hak-blue);
+  background: none;
   color: var(--hak-blue);
+  font-family: inherit;
   font-size: 15px;
   font-weight: 600;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 

@@ -2,21 +2,11 @@ import { useRef } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
 import 'swiper/css'
+import { teamMembers } from '../../data/team.js'
 import './Team.css'
 
-// People sourced from the About page ("Meet the Individuals"), using the
-// About images (yellow-circle cutouts). Roles kept from the homepage list
-// where the person had one; the rest keep their About role.
-const team = [
-  { img: '/about-victor.png', name: 'Victor Eyo', role: 'Founder, Director' },
-  { img: '/about-comfort.png', name: 'Comfort Alphonsus', role: 'Chief Graphics Designer' },
-  { img: '/about-laurenz.png', name: 'Laurenz', role: 'Founder/CEO Hakeela' },
-  { img: '/about-kavita.png', name: 'Kavita', role: 'Founder/CEO Hakeela' },
-]
-
-// Duplicated so Swiper has enough slides to loop seamlessly (4 members shown
-// up to 4-at-a-time would otherwise disable looping and freeze the arrows).
-const loopTeam = [...team, ...team]
+// Duplicated so Swiper has enough slides to loop seamlessly across breakpoints.
+const loopTeam = [...teamMembers, ...teamMembers]
 
 // Social icons — links intentionally left empty (#) for now.
 const Social = () => (

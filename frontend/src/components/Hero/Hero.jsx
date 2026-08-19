@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import './Hero.css'
 
 function Hero() {
@@ -27,7 +28,7 @@ function Hero() {
           assisted.
         </p>
 
-        <a className="hero__cta" href="#">
+        <Link className="hero__cta" to="/about">
           Learn More
           <svg
             viewBox="0 0 24 24"
@@ -42,7 +43,7 @@ function Hero() {
           >
             <polyline points="9 6 15 12 9 18" />
           </svg>
-        </a>
+        </Link>
       </div>
 
       <div className="hero__gallery">

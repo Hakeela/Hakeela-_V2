@@ -1,9 +1,11 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+import Popup from '../Popup/Popup.jsx'
 import './Imaobong.css'
 
 function Imaobong() {
   const boxRef = useRef(null)
   const imgRef = useRef(null)
+  const [popupOpen, setPopupOpen] = useState(false)
 
   const handleMove = (e) => {
     const box = boxRef.current
@@ -37,12 +39,12 @@ function Imaobong() {
             know where to start, chat with Imaobong — our A.I. chatbot ready to
             guide you.
           </p>
-          <a href="#" className="imaobong__btn">
+          <button type="button" className="imaobong__btn" onClick={() => setPopupOpen(true)}>
             Chat with Imaobong
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <polyline points="9 18 15 12 9 6" />
             </svg>
-          </a>
+          </button>
         </div>
 
         <div
@@ -54,6 +56,15 @@ function Imaobong() {
           <img ref={imgRef} src="/imaobong.png" alt="Imaobong, the Hakeela A.I. chatbot" />
         </div>
       </div>
+
+      <Popup
+        open={popupOpen}
+        onClose={() => setPopupOpen(false)}
+        title="Imaobong is coming soon!"
+        image="/imaobong.png"
+      >
+        <p>Imaobong, our A.I. chatbot, is coming soon. Stay tuned!</p>
+      </Popup>
     </section>
   )
 }
