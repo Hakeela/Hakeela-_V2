@@ -1,9 +1,53 @@
 import { useEffect, useState } from 'react'
 import { submitAssessment } from '../../lib/data.js'
+import { lessonTypeLabel, isPdfUrl } from '../../lib/lessonTypes.js'
 import './LessonModal.css'
 
 const parseOptions = (opts) =>
   (Array.isArray(opts) ? opts : String(opts || '').split(',')).map((o) => o.trim()).filter(Boolean)
+
+const DownloadIcon = () => (
+  <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" />
+  </svg>
+)
+
+/** Renders the lesson's main content according to its type. */
+function LessonMedia({ lesson }) {
+  const type = lesson.type || 'video'
+  const url = lesson.content_url || lesson.video_url || ''
+
+  if (type === 'text') {
+    return <div className="lm-media-text">{lesson.transcript || 'No content for this lesson yet.'}</div>
+  }
+
+  if (!url) {
+    return <div className="lm-media-empty">No {lessonTypeLabel(type).toLowerCase()} for this lesson yet.</div>
+  }
+
+  switch (type) {
+    case 'video':
+      return <video src={url} controls className="lm-media-fill" style={{ background: '#000' }} />
+    case 'audio':
+      return <div className="lm-media-audio"><audio src={url} controls /></div>
+    case 'image':
+      return <img src={url} alt={lesson.title} className="lm-media-fill" style={{ objectFit: 'contain', background: '#000' }} />
+    case 'pdf':
+      return <iframe src={url} title={lesson.title} className="lm-media-fill" />
+    case 'slides':
+    case 'document':
+    default:
+      // PDFs (incl. PDF-exported slides/docs) embed; other formats offer a download.
+      if (isPdfUrl(url)) return <iframe src={url} title={lesson.title} className="lm-media-fill" />
+      return (
+        <div className="lm-file-card">
+          <DownloadIcon />
+          <p className="lm-file-card__name">{lessonTypeLabel(type)} attachment</p>
+          <a className="dash-btn dash-btn--solid" href={url} target="_blank" rel="noopener noreferrer">Open / Download</a>
+        </div>
+      )
+  }
+}
 
 function LessonModal({ open, courseTitle = 'Course', lesson, hasPrev, hasNext, onPrev, onNext, onClose, onCompleted, userId }) {
   const [tab, setTab] = useState('transcript')
@@ -56,12 +100,8 @@ function LessonModal({ open, courseTitle = 'Course', lesson, hasPrev, hasNext, o
           </div>
         </div>
 
-        <div className="lm__video">
-          {lesson.video_url ? (
-            <video src={lesson.video_url} controls style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#000' }} />
-          ) : (
-            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.75)', fontSize: 14 }}>No video for this lesson yet.</div>
-          )}
+        <div className={`lm__video lm__video--${lesson.type || 'video'}`}>
+          <LessonMedia lesson={lesson} />
         </div>
 
         <div className="lm__tabs">

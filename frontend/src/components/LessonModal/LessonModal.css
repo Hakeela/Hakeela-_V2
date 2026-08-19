@@ -75,6 +75,77 @@
   object-fit: cover;
 }
 
+/* Type-aware lesson media */
+.lm-media-fill {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* Non-video types don't need the 16:8 letterbox */
+.lm__video--text,
+.lm__video--audio,
+.lm__video--slides,
+.lm__video--document {
+  aspect-ratio: auto;
+  min-height: 160px;
+  background: #f7f8fa;
+  border: 1px solid #ececf1;
+}
+
+.lm__video--pdf,
+.lm__video--image {
+  background: #000;
+}
+
+.lm-media-text {
+  padding: 24px 26px;
+  max-height: 380px;
+  overflow: auto;
+  white-space: pre-wrap;
+  line-height: 1.7;
+  color: #1f2430;
+  font-size: 15px;
+}
+
+.lm-media-audio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  min-height: 160px;
+}
+.lm-media-audio audio {
+  width: 100%;
+  max-width: 520px;
+}
+
+.lm-media-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 160px;
+  color: #8a8f9a;
+  font-size: 14px;
+}
+
+.lm-file-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 24px;
+  color: var(--hak-blue);
+}
+.lm-file-card__name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2430;
+}
+
 .lm__play {
   position: absolute;
   top: 50%;

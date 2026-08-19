@@ -204,7 +204,7 @@ export async function getCourseForEdit(id) {
   if (!isSupabaseConfigured) return null; // demo: editor uses its own sample seed
   const { data, error } = await supabase
     .from("courses")
-    .select("id, title, description, category, price, status, thumbnail_url, modules(id, title, position, lessons(id, title, duration, video_url, transcript, position, assessments(id, title, type, questions)))")
+    .select("id, title, description, category, price, status, thumbnail_url, modules(id, title, position, lessons(id, title, duration, type, video_url, content_url, transcript, position, assessments(id, title, type, questions)))")
     .eq("id", id)
     .single();
   if (error) throw error;
@@ -212,16 +212,20 @@ export async function getCourseForEdit(id) {
     .sort((a, b) => a.position - b.position)
     .map((m, mi) => ({
       id: m.id, name: m.title, _open: mi === 0,
-      lessons: (m.lessons || []).sort((a, b) => a.position - b.position).map((l) => ({
+      lessons: (m.lessons || []).sort((a, b) => a.position - b.position).map((l) => {
+        const url = l.content_url || l.video_url || "";
+        return {
         id: l.id, title: l.title, duration: l.duration || "", transcript: l.transcript || "",
-        video: l.video_url ? { name: "current video", url: l.video_url, file: null } : null,
+        type: l.type || "video",
+        content: url ? { name: "current file", url, file: null } : null,
         tests: (l.assessments || []).filter((a) => a.type === "quiz").map((a) => ({
           id: a.id, title: a.title, questions: Array.isArray(a.questions) ? a.questions : [],
         })),
         assignments: (l.assessments || []).filter((a) => a.type === "assignment").map((a) => ({
           id: a.id, title: a.title, description: a.questions?.description || "", due: a.questions?.due || "",
         })),
-      })),
+        };
+      }),
     }));
   return {
     courseId: data.id,
@@ -274,10 +278,18 @@ export async function saveCourse(courseId, details, modules) {
     if (me) return { error: me.message };
     for (let li = 0; li < (m.lessons || []).length; li++) {
       const l = m.lessons[li];
-      let video_url = l.video && !l.video.file ? l.video.url : null;
-      if (l.video?.file) video_url = await uploadMedia("videos", l.video.file);
+      const type = l.type || "video";
+      // Text lessons have no file; everything else uploads to content_url.
+      let content_url = l.content && !l.content.file ? l.content.url : null;
+      if (l.content?.file) content_url = await uploadMedia(type, l.content.file);
       const { data: les, error: le } = await supabase.from("lessons")
-        .insert({ module_id: mod.id, title: l.title, duration: l.duration, video_url, transcript: l.transcript, position: li })
+        .insert({
+          module_id: mod.id, title: l.title, duration: l.duration,
+          type, content_url,
+          // keep video_url populated for video lessons (backward compat)
+          video_url: type === "video" ? content_url : null,
+          transcript: l.transcript, position: li,
+        })
         .select("id").single();
       if (le) return { error: le.message };
       const rows = [];

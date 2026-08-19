@@ -743,6 +743,17 @@
 }
 .ce-upload__preview img,
 .ce-upload__preview video { width: 100%; display: block; max-height: 220px; object-fit: contain; background: #0b1020; }
+.ce-upload__preview audio { width: 100%; display: block; padding: 16px; background: #14171f; }
+.ce-file-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px;
+  font-size: 14px;
+  color: #dfe1ea;
+  background: #14171f;
+  word-break: break-all;
+}
 .ce-upload__remove {
   position: absolute;
   top: 8px;

@@ -106,6 +106,11 @@ create table if not exists public.lessons (
   position integer not null default 0
 );
 
+-- Lesson content type (video/audio/image/pdf/slides/document/text) + a generic
+-- file URL. video_url is kept for backward compatibility with existing lessons.
+alter table public.lessons add column if not exists type text not null default 'video';
+alter table public.lessons add column if not exists content_url text;
+
 -- ---------- ENROLLMENTS + PROGRESS ----------
 create table if not exists public.enrollments (
   id uuid primary key default gen_random_uuid(),

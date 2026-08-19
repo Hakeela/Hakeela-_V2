@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { isSupabaseConfigured } from "../../lib/supabase.js";
 import { getCourseForEdit, saveCourse, deleteCourse } from "../../lib/admin.js";
 import { getCategories } from "../../lib/data.js";
+import { LESSON_TYPES, lessonTypeAccept, lessonTypeLabel } from "../../lib/lessonTypes.js";
 import { courses, courseCategories, sampleCurriculum } from "./adminData.js";
 
 let _id = 2000;
@@ -17,7 +18,8 @@ const UploadIcon = () => (
   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
 );
 
-/** Upload field with live preview + remove (image or video). value: {name,url}|null */
+/** Upload field with live preview + remove. Handles image/video/audio inline;
+ *  other file kinds (pdf/slides/document) show a file chip. value: {name,url}|null */
 function UploadField({ label, kind, accept, value, onChange, onRemove }) {
   return (
     <div>
@@ -26,6 +28,10 @@ function UploadField({ label, kind, accept, value, onChange, onRemove }) {
         <div className="ce-upload__preview">
           {value.url && kind === "image" && <img src={value.url} alt="preview" />}
           {value.url && kind === "video" && <video src={value.url} controls />}
+          {value.url && kind === "audio" && <audio src={value.url} controls style={{ width: "100%" }} />}
+          {value.url && !["image", "video", "audio"].includes(kind) && (
+            <div className="ce-file-chip"><UploadIcon /> {value.name}</div>
+          )}
           {!value.url && (
             <div style={{ padding: 18, color: "#c9c9d4", display: "flex", alignItems: "center", gap: 10, fontSize: 14 }}>
               <UploadIcon /> {value.name} <span style={{ fontSize: 12 }}>· preview appears after re-upload</span>
@@ -106,7 +112,8 @@ function CourseEditor() {
         id: l.id,
         title: l.title,
         duration: l.duration,
-        video: l.video ? { name: l.video, url: "" } : null,
+        type: "video",
+        content: l.video ? { name: l.video, url: "" } : null,
         transcript: l.transcript || "",
         tests: mi === 0 && li === 0 ? sampleCurriculum.tests.map((t) => ({ ...t, questions: t.questions.map((q) => ({ ...q })) })) : [],
         assignments: mi === 0 && li === 0 ? sampleCurriculum.assignments.map((a) => ({ ...a })) : [],
@@ -144,7 +151,7 @@ function CourseEditor() {
   const delModule = (mid) => setModules((m) => m.filter((x) => x.id !== mid));
   const toggleModule = (mid) => setModules((ms) => ms.map((m) => (m.id === mid ? { ...m, _open: !m._open } : m)));
 
-  const addLesson = (mid) => patchLessons(mid, (ls) => [...ls, { id: uid(), title: "New lesson", duration: "", video: null, transcript: "", tests: [], assignments: [], _open: true }]);
+  const addLesson = (mid) => patchLessons(mid, (ls) => [...ls, { id: uid(), title: "New lesson", duration: "", type: "video", content: null, transcript: "", tests: [], assignments: [], _open: true }]);
   const delLesson = (mid, lid) => patchLessons(mid, (ls) => ls.filter((l) => l.id !== lid));
   const toggleLessonFlag = (mid, lid, flag) =>
     setModules((ms) => ms.map((m) => (m.id === mid ? { ...m, lessons: m.lessons.map((l) => (l.id === lid ? { ...l, [flag]: !l[flag] } : l)) } : m)));
@@ -290,20 +297,39 @@ function CourseEditor() {
                         <label>Duration</label>
                         <input value={l.duration} onChange={(e) => patchLesson(m.id, l.id, { duration: e.target.value })} placeholder="e.g. 25 min" />
                       </div>
-                      <div className="adm-field adm-field--full">
-                        <UploadField
-                          label="Lesson video"
-                          kind="video"
-                          accept="video/*"
-                          value={l.video}
-                          onChange={(v) => patchLesson(m.id, l.id, { video: v })}
-                          onRemove={() => patchLesson(m.id, l.id, { video: null })}
-                        />
+                      <div className="adm-field">
+                        <label>Lesson type</label>
+                        <select
+                          value={l.type || "video"}
+                          onChange={(e) => patchLesson(m.id, l.id, { type: e.target.value, content: null })}
+                        >
+                          {LESSON_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+                        </select>
                       </div>
-                      <div className="adm-field adm-field--full">
-                        <label>Transcript</label>
-                        <textarea value={l.transcript} onChange={(e) => patchLesson(m.id, l.id, { transcript: e.target.value })} placeholder="Lesson transcript / notes" />
-                      </div>
+
+                      {(l.type || "video") === "text" ? (
+                        <div className="adm-field adm-field--full">
+                          <label>Lesson content</label>
+                          <textarea value={l.transcript} onChange={(e) => patchLesson(m.id, l.id, { transcript: e.target.value })} placeholder="Write the lesson text here" />
+                        </div>
+                      ) : (
+                        <>
+                          <div className="adm-field adm-field--full">
+                            <UploadField
+                              label={`Lesson ${lessonTypeLabel(l.type).toLowerCase()} file`}
+                              kind={l.type || "video"}
+                              accept={lessonTypeAccept(l.type)}
+                              value={l.content}
+                              onChange={(v) => patchLesson(m.id, l.id, { content: v })}
+                              onRemove={() => patchLesson(m.id, l.id, { content: null })}
+                            />
+                          </div>
+                          <div className="adm-field adm-field--full">
+                            <label>Transcript / notes</label>
+                            <textarea value={l.transcript} onChange={(e) => patchLesson(m.id, l.id, { transcript: e.target.value })} placeholder="Lesson transcript / notes (optional)" />
+                          </div>
+                        </>
+                      )}
                     </div>
 
                     {/* Lesson delete — under the transcript, trash icon + tooltip */}

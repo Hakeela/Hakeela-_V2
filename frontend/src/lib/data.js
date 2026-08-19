@@ -100,7 +100,7 @@ export async function getCourseDetail(courseId, userId) {
   if (!isSupabaseConfigured) return null;
   const { data, error } = await supabase
     .from("courses")
-    .select("id, title, description, thumbnail_url, price, modules(id, title, position, lessons(id, title, duration, video_url, transcript, position, assessments(id, title, type, questions)))")
+    .select("id, title, description, thumbnail_url, price, modules(id, title, position, lessons(id, title, duration, type, video_url, content_url, transcript, position, assessments(id, title, type, questions)))")
     .eq("id", courseId)
     .single();
   if (error) throw error;
@@ -118,7 +118,10 @@ export async function getCourseDetail(courseId, userId) {
       total++; if (isDone) completed++;
       const quiz = (l.assessments || []).find((a) => a.type === "quiz");
       return {
-        id: l.id, title: l.title, duration: l.duration || "", video_url: l.video_url || "",
+        id: l.id, title: l.title, duration: l.duration || "",
+        type: l.type || "video",
+        content_url: l.content_url || l.video_url || "",
+        video_url: l.video_url || "",
         transcript: l.transcript || "", done: isDone,
         assessment: quiz ? { id: quiz.id, title: quiz.title, questions: quiz.questions || [] } : null,
       };
