@@ -13,7 +13,10 @@ const stats = [
 
 function Payments() {
   const [status, setStatus] = useState("All");
-  const view = transactions.filter((t) => status === "All" || t.status === status);
+  const [rows, setRows] = useState(transactions);
+  const view = rows.filter((t) => status === "All" || t.status === status);
+  // Demo data has no backend, so bulk-delete only removes from the current view.
+  const bulkDelete = async (ids) => setRows((r) => r.filter((t) => !ids.includes(t.id)));
 
   const columns = [
     { key: "id", header: "Reference", render: (t) => <span className="adm-user__sub" style={{ fontFamily: "monospace" }}>{t.id}</span> },
@@ -56,6 +59,9 @@ function Payments() {
         searchPlaceholder="Search transactions"
         initialSort={{ key: "date", dir: "desc" }}
         minWidth={760}
+        selectable
+        onBulkDelete={bulkDelete}
+        bulkNoun="transaction"
         filters={
           <select className="adm-select" value={status} onChange={(e) => setStatus(e.target.value)}>
             {["All", "Success", "Pending", "Failed"].map((s) => <option key={s} value={s}>{s === "All" ? "All statuses" : s}</option>)}

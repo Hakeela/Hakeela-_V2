@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/logo-icon.png" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>HakPortal — Gain In-demand Tech Skills for Free</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -14,6 +14,18 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Capture the Supabase auth-link type before the app/router loads, so an
+      // invite link that lands on the site root can still be routed to the
+      // onboarding page (/accept-invite) even if redirectTo wasn't applied.
+      (function () {
+        try {
+          var s = (window.location.hash || "") + "&" + (window.location.search || "");
+          var m = s.match(/[#&?]type=([a-z_]+)/i);
+          if (m) window.__hakAuthType = m[1].toLowerCase();
+        } catch (e) {}
+      })();
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -1,4 +1,5 @@
-import { Routes, Route, Outlet } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Routes, Route, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import CursorFollower from './components/CursorFollower/CursorFollower.jsx'
 import Home from './pages/Home.jsx'
 import Login from './pages/Login.jsx'
@@ -37,9 +38,29 @@ import Payments from './pages/admin/Payments.jsx'
 import Settings from './pages/admin/Settings.jsx'
 import AdminLogin from './pages/admin/AdminLogin.jsx'
 
+/**
+ * Routes Supabase invite links to the onboarding page even if they land on the
+ * site root (e.g. when the invite's redirectTo wasn't applied). The auth-link
+ * type is captured in index.html before supabase-js consumes the URL hash.
+ */
+function AuthLinkRouter() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  useEffect(() => {
+    const type = window.__hakAuthType
+    if (!type) return
+    window.__hakAuthType = null
+    if (type === 'invite' && location.pathname !== '/accept-invite') {
+      navigate('/accept-invite', { replace: true })
+    }
+  }, [navigate, location.pathname])
+  return null
+}
+
 function App() {
   return (
     <>
+      <AuthLinkRouter />
       <CursorFollower />
       <Routes>
         <Route path="/" element={<Home />} />

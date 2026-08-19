@@ -71,6 +71,10 @@ function AdminCourses() {
       deleteCourse(id);
     }
   };
+  const bulkDelete = async (ids) => {
+    setRows((r) => r.filter((c) => !ids.includes(c.id)));
+    await Promise.all(ids.map((id) => deleteCourse(id)));
+  };
 
   const columns = [
     { key: "title", header: "Course", render: (c) => <span className="adm-user__name">{c.title}</span> },
@@ -110,6 +114,9 @@ function AdminCourses() {
         searchKeys={["title", "category"]}
         searchPlaceholder="Search courses"
         initialSort={{ key: "title", dir: "asc" }}
+        selectable
+        onBulkDelete={bulkDelete}
+        bulkNoun="course"
         filters={
           <select className="adm-select" value={cat} onChange={(e) => setCat(e.target.value)}>
             <option value="All">All categories</option>

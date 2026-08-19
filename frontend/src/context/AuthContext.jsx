@@ -97,7 +97,11 @@ export function AuthProvider({ children }) {
 
   const verifyResetOtp = useCallback(async (email, token) => {
     if (isSupabaseConfigured) {
-      const { error } = await supabase.auth.verifyOtp({ email, token, type: "recovery" });
+      const { error } = await supabase.auth.verifyOtp({
+        email: email.trim(),
+        token: String(token).trim(),
+        type: "recovery",
+      });
       return { error: error?.message || null };
     }
     return { error: null };

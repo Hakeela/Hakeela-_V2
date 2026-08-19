@@ -135,6 +135,10 @@ function Staff() {
     setRemoveFor(null);
     await removeStaff(id);
   };
+  const bulkDelete = async (ids) => {
+    setRows((r) => r.filter((s) => !ids.includes(s.id)));
+    await Promise.all(ids.map((id) => removeStaff(id)));
+  };
 
   const columns = [
     {
@@ -179,6 +183,9 @@ function Staff() {
         searchPlaceholder="Search team members"
         initialSort={{ key: "name", dir: "asc" }}
         pageSize={8}
+        selectable
+        onBulkDelete={bulkDelete}
+        bulkNoun="member"
       />
 
       <div className="dash-card" style={{ marginTop: 24 }}>

@@ -98,13 +98,14 @@ function ResetPassword() {
             <div className="auth-field">
               <label className="auth-label" htmlFor="rp-otp">Enter OTP</label>
               <div className="auth-otp-wrap">
-                <input id="rp-otp" type="text" inputMode="numeric" maxLength={6} className="auth-input" placeholder="Enter OTP" value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))} />
+                <input id="rp-otp" type="text" inputMode="numeric" maxLength={10} className="auth-input" placeholder="Enter OTP" value={otp} onChange={(e) => setOtp(e.target.value.replace(/[^0-9a-zA-Z]/g, ''))} />
                 <span className="auth-timer">
                   {seconds > 0 ? mmss : <button type="button" onClick={resend}>Resend</button>}
                 </span>
               </div>
             </div>
             <button type="submit" className="auth-btn" disabled={otp.length < 6 || busy}>{busy ? 'Verifying…' : 'Verify'}</button>
+            <p className="auth-note" style={{ marginTop: 10 }}>The code from your email may be 6–8 digits. Paste or type it exactly.</p>
           </form>
         </>
       )}

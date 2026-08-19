@@ -122,6 +122,12 @@ export async function setEnrollmentStatus(id, statusDisplay) {
   await supabase.from("enrollments").update({ status: enrollToDb(statusDisplay) }).eq("id", id);
 }
 
+export async function deleteEnrollment(id) {
+  if (!isSupabaseConfigured) return { ok: true };
+  const { error } = await supabase.from("enrollments").delete().eq("id", id);
+  return { error: error?.message || null };
+}
+
 // ---------------- Certificates ----------------
 export async function getCertificates() {
   if (!isSupabaseConfigured) return mock.certificates;

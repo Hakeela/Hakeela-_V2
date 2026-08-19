@@ -33,6 +33,11 @@ function Learners() {
     await deleteUserAccount(l.id);
   };
 
+  const bulkDelete = async (ids) => {
+    setLearners((rows) => rows.filter((r) => !ids.includes(r.id)));
+    await Promise.all(ids.map((id) => deleteUserAccount(id)));
+  };
+
   const rows = learners
     .map((l) => ({ ...l, country: countryFromPhone(l.phone).country, flag: countryFromPhone(l.phone).flag }))
     .filter((l) => gender === "All" || l.gender === gender);
@@ -87,6 +92,9 @@ function Learners() {
         searchKeys={["name", "email", "country"]}
         searchPlaceholder="Search by name, email or country"
         initialSort={{ key: "name", dir: "asc" }}
+        selectable={isAdmin}
+        onBulkDelete={bulkDelete}
+        bulkNoun="learner"
         filters={
           <select className="adm-select" value={gender} onChange={(e) => setGender(e.target.value)}>
             {["All", "Male", "Female", "Other"].map((g) => <option key={g} value={g}>{g === "All" ? "All genders" : g}</option>)}

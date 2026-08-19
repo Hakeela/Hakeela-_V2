@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 /**
  * Reusable admin data table with search, sortable columns and numbered pagination.
@@ -7,6 +7,9 @@ import { useMemo, useState } from "react";
  * rows: array of objects
  * searchKeys: array of row keys used by the search box
  * filters: optional React node rendered in the toolbar (extra dropdowns/tabs)
+ * selectable: show a checkbox column + bulk-delete bar (requires row.id)
+ * onBulkDelete(ids): called with the selected row ids when "Delete selected" is used
+ * bulkNoun: singular label for the confirm/count (e.g. "learner")
  */
 function DataTable({
   columns,
@@ -18,10 +21,14 @@ function DataTable({
   initialSort = null,
   minWidth = 640,
   emptyText = "Nothing to show.",
+  selectable = false,
+  onBulkDelete = null,
+  bulkNoun = "item",
 }) {
   const [q, setQ] = useState("");
   const [sort, setSort] = useState(initialSort);
   const [page, setPage] = useState(1);
+  const [selected, setSelected] = useState(() => new Set());
 
   const val = (row, key) => (row == null ? "" : row[key]);
 
@@ -51,6 +58,36 @@ function DataTable({
   const start = (curPage - 1) * pageSize;
   const pageRows = processed.slice(start, start + pageSize);
 
+  // ---- selection (multi-select + bulk delete) ----
+  // Drop any selected ids that no longer exist (e.g. after a delete/filter).
+  useEffect(() => {
+    setSelected((prev) => {
+      if (prev.size === 0) return prev;
+      const ids = new Set(rows.map((r) => r.id));
+      const next = new Set([...prev].filter((id) => ids.has(id)));
+      return next.size === prev.size ? prev : next;
+    });
+  }, [rows]);
+
+  const allSelected = processed.length > 0 && processed.every((r) => selected.has(r.id));
+  const someSelected = processed.some((r) => selected.has(r.id));
+  const toggleOne = (id) =>
+    setSelected((s) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  const toggleAll = () =>
+    setSelected((s) => {
+      const n = new Set(s);
+      if (processed.every((r) => n.has(r.id))) processed.forEach((r) => n.delete(r.id));
+      else processed.forEach((r) => n.add(r.id));
+      return n;
+    });
+  const doBulkDelete = async () => {
+    const ids = [...selected];
+    if (!ids.length) return;
+    if (!window.confirm(`Delete ${ids.length} selected ${bulkNoun}${ids.length > 1 ? "s" : ""}? This cannot be undone.`)) return;
+    await onBulkDelete?.(ids);
+    setSelected(new Set());
+  };
+
   const toggleSort = (key) => {
     setPage(1);
     setSort((s) => (s && s.key === key ? { key, dir: s.dir === "asc" ? "desc" : "asc" } : { key, dir: "asc" }));
@@ -76,11 +113,31 @@ function DataTable({
         {filters}
       </div>
 
+      {selectable && selected.size > 0 && (
+        <div className="adm-bulkbar">
+          <span>{selected.size} selected</span>
+          <span className="adm-bulkbar__spacer" />
+          <button className="adm-btn-sm" onClick={() => setSelected(new Set())}>Clear</button>
+          <button className="adm-btn-sm adm-btn-sm--danger" onClick={doBulkDelete}>Delete selected</button>
+        </div>
+      )}
+
       <div className="adm-table-wrap">
         <div className="adm-table-scroll">
           <table className="adm-table" style={{ minWidth }}>
             <thead>
               <tr>
+                {selectable && (
+                  <th className="adm-th-check">
+                    <input
+                      type="checkbox"
+                      aria-label="Select all"
+                      checked={allSelected}
+                      ref={(el) => { if (el) el.indeterminate = someSelected && !allSelected; }}
+                      onChange={toggleAll}
+                    />
+                  </th>
+                )}
                 {columns.map((c) => {
                   const sortable = c.sortable !== false;
                   const active = sort?.key === c.key;
@@ -102,7 +159,17 @@ function DataTable({
             </thead>
             <tbody>
               {pageRows.map((row, i) => (
-                <tr key={row.id ?? i}>
+                <tr key={row.id ?? i} className={selectable && selected.has(row.id) ? "is-selected" : ""}>
+                  {selectable && (
+                    <td className="adm-td-check">
+                      <input
+                        type="checkbox"
+                        aria-label="Select row"
+                        checked={selected.has(row.id)}
+                        onChange={() => toggleOne(row.id)}
+                      />
+                    </td>
+                  )}
                   {columns.map((c) => (
                     <td key={c.key} style={{ textAlign: c.align || "left" }}>
                       {c.render ? c.render(row) : val(row, c.key)}
@@ -111,7 +178,7 @@ function DataTable({
                 </tr>
               ))}
               {pageRows.length === 0 && (
-                <tr><td colSpan={columns.length} style={{ textAlign: "center", color: "#9a9a9a", padding: 32 }}>{emptyText}</td></tr>
+                <tr><td colSpan={columns.length + (selectable ? 1 : 0)} style={{ textAlign: "center", color: "#9a9a9a", padding: 32 }}>{emptyText}</td></tr>
               )}
             </tbody>
           </table>

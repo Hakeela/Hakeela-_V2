@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import DataTable from "../../components/AdminUI/DataTable.jsx";
-import { getEnrollments, setEnrollmentStatus } from "../../lib/admin.js";
+import { getEnrollments, setEnrollmentStatus, deleteEnrollment } from "../../lib/admin.js";
 import { initials } from "./adminData.js";
 
 const badge = { Pending: "adm-badge--yellow", Approved: "adm-badge--green", Rejected: "adm-badge--red" };
@@ -18,6 +18,10 @@ function Enrollments() {
   const setStatusFor = (id, s) => {
     setRows((r) => r.map((e) => (e.id === id ? { ...e, status: s } : e)));
     setEnrollmentStatus(id, s);
+  };
+  const bulkDelete = async (ids) => {
+    setRows((r) => r.filter((e) => !ids.includes(e.id)));
+    await Promise.all(ids.map((id) => deleteEnrollment(id)));
   };
   const view = rows.filter((e) => status === "All" || e.status === status);
 
@@ -69,6 +73,9 @@ function Enrollments() {
         searchKeys={["name", "program", "id"]}
         searchPlaceholder="Search applicants"
         initialSort={{ key: "date", dir: "desc" }}
+        selectable
+        onBulkDelete={bulkDelete}
+        bulkNoun="enrollment"
         filters={
           <select className="adm-select" value={status} onChange={(e) => setStatus(e.target.value)}>
             {["All", "Pending", "Approved", "Rejected"].map((s) => <option key={s} value={s}>{s === "All" ? "All statuses" : s}</option>)}

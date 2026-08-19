@@ -28,6 +28,13 @@ function AcceptInvite() {
     if (name) setF((p) => (p.full_name ? p : { ...p, full_name: name }))
   }, [profile, user])
 
+  // Surface a Supabase error passed back in the invite link (e.g. expired link).
+  useEffect(() => {
+    const src = (window.location.hash || '') + '&' + (window.location.search || '')
+    const m = src.match(/error_description=([^&]+)/)
+    if (m) setError(decodeURIComponent(m[1].replace(/\+/g, ' ')))
+  }, [])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')

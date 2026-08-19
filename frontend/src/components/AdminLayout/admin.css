@@ -193,6 +193,32 @@
   border-collapse: collapse;
   min-width: 640px;
 }
+
+/* Multi-select bulk bar + checkbox column */
+.adm-bulkbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  background: #eef0ff;
+  border: 1px solid #d7d9f7;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--hak-blue);
+}
+.adm-bulkbar__spacer { flex: 1; }
+.adm-th-check,
+.adm-td-check { width: 40px; text-align: center; padding-right: 0; }
+.adm-table input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--hak-blue);
+  vertical-align: middle;
+}
+.adm-table tbody tr.is-selected { background: #f4f5ff; }
 .adm-table thead th {
   text-align: left;
   font-size: 12px;

@@ -314,7 +314,7 @@ function CourseEditor() {
                         </div>
                       ) : (
                         <>
-                          <div className="adm-field adm-field--full">
+                          <div className="adm-field">
                             <UploadField
                               label={`Lesson ${lessonTypeLabel(l.type).toLowerCase()} file`}
                               kind={l.type || "video"}
