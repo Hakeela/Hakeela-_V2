@@ -387,24 +387,38 @@ export async function gradeSubmission(id, score, feedback) {
 }
 
 // ---------------- Staff invites / user deletion (Edge Function) ----------------
+/**
+ * Invoke the admin-users Edge Function and surface a useful error.
+ * supabase-js hides the function's JSON error body inside `error.context`
+ * (a Response) on non-2xx responses, so we read it back out here — otherwise
+ * every failure just reads "Edge Function returned a non-2xx status code".
+ */
+async function invokeAdminUsers(body) {
+  const { data, error } = await supabase.functions.invoke("admin-users", { body });
+  if (error) {
+    let message = error.message;
+    try {
+      const parsed = await error.context?.json?.();
+      if (parsed?.error) message = parsed.error;
+    } catch {
+      // context wasn't JSON (e.g. function not deployed / network) — keep error.message
+    }
+    return { error: message };
+  }
+  if (data?.error) return { error: data.error };
+  return { ok: true, data };
+}
+
 export async function inviteStaff({ name, email, role }) {
   if (!isSupabaseConfigured) return { ok: true };
-  const { data, error } = await supabase.functions.invoke("admin-users", {
-    body: { action: "invite", email, role, full_name: name },
-  });
-  if (error) return { error: error.message };
-  if (data?.error) return { error: data.error };
-  return { ok: true };
+  // Land the invitee on the onboarding page to set their details + password.
+  const redirectTo = `${window.location.origin}/accept-invite`;
+  return invokeAdminUsers({ action: "invite", email, role, full_name: name, redirectTo });
 }
 
 export async function deleteUserAccount(userId) {
   if (!isSupabaseConfigured) return { ok: true };
-  const { data, error } = await supabase.functions.invoke("admin-users", {
-    body: { action: "delete", userId },
-  });
-  if (error) return { error: error.message };
-  if (data?.error) return { error: data.error };
-  return { ok: true };
+  return invokeAdminUsers({ action: "delete", userId });
 }
 
 // ---------------- Overview ----------------

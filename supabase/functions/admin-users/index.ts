@@ -39,11 +39,16 @@ Deno.serve(async (req) => {
     if (profile?.role !== "admin") return json({ error: "Admin access required" }, 403);
 
     // 2) Perform the requested action
-    const { action, email, role, full_name, userId } = await req.json();
+    const { action, email, role, full_name, userId, redirectTo } = await req.json();
 
     if (action === "invite") {
       if (!email) return json({ error: "email is required" }, 400);
-      const { data, error } = await admin.auth.admin.inviteUserByEmail(email, { data: { full_name } });
+      // redirectTo lands the invitee on the onboarding page (/accept-invite),
+      // where they fill in their details and set a password.
+      const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
+        data: { full_name },
+        redirectTo,
+      });
       if (error) return json({ error: error.message }, 400);
       // The signup trigger creates a 'student' profile; promote to the chosen role.
       await admin.from("profiles")

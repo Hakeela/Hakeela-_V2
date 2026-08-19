@@ -4,6 +4,7 @@ import Home from './pages/Home.jsx'
 import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
 import ResetPassword from './pages/ResetPassword.jsx'
+import AcceptInvite from './pages/AcceptInvite.jsx'
 import DashboardLayout from './components/DashboardLayout/DashboardLayout.jsx'
 import RequireAuth from './components/RequireAuth.jsx'
 import Dashboard from './pages/dashboard/Dashboard.jsx'
@@ -45,6 +46,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/accept-invite" element={<AcceptInvite />} />
 
         {/* Dashboard (student portal) — requires a signed-in learner */}
         <Route element={<RequireAuth><DashboardLayout /></RequireAuth>}>

@@ -111,6 +111,17 @@ export function AuthProvider({ children }) {
     return { error: null };
   }, []);
 
+  // Finalize an invited account: set the password + save details to user metadata.
+  const completeInvite = useCallback(async ({ password, meta }) => {
+    if (isSupabaseConfigured) {
+      const { error } = await supabase.auth.updateUser({ password, data: meta });
+      if (error) return { error: error.message };
+      if (user) await loadProfile(user.id);
+      return { error: null };
+    }
+    return { error: null };
+  }, [user, loadProfile]);
+
   const refreshProfile = useCallback(async () => {
     if (isSupabaseConfigured && user) await loadProfile(user.id);
   }, [user, loadProfile]);
@@ -128,6 +139,7 @@ export function AuthProvider({ children }) {
     requestPasswordReset,
     verifyResetOtp,
     updatePassword,
+    completeInvite,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
