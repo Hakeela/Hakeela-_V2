@@ -26,3 +26,14 @@ Thumbs.db
 
 # Local-only design mockups (not committed)
 Dashboard Mobile/
+
+# Design references / Figma exports — not used by the app (served images live in frontend/public)
+design/
+
+# Reference mockups / images kept at the repo root (build & reference only)
+/*.png
+/*.jpg
+/*.jpeg
+/*.gif
+/*.svg
+/*.webp
