@@ -1,6 +1,14 @@
 # Design references (Figma exports) — not needed in repo; assets live in frontend/
 design/
 
+# Reference mockups / images kept at the repo root (build & reference only)
+/*.png
+/*.jpg
+/*.jpeg
+/*.gif
+/*.svg
+/*.webp
+
 # Dependencies
 node_modules/
 
