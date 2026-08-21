@@ -1,13 +1,16 @@
 const items = ['Tech Education', 'Remote Learning', 'Inclusive Design', 'Innovation Hub', 'Africa-First']
 
+// Two copies so the track can loop seamlessly (animate -50% = one full copy).
+const seq = [...items, ...items]
+
 function Marquee() {
   return (
-    <section className="marquee">
-      <div className="container marquee__row">
-        {items.map((item, i) => (
-          <span className="marquee__item" style={{ display: 'inline-flex', alignItems: 'center', gap: 18 }} key={item}>
+    <section className="marquee" aria-label="What HakVersity stands for">
+      <div className="marquee__track">
+        {seq.map((item, i) => (
+          <span className="marquee__item" key={`${item}-${i}`}>
             {item}
-            {i < items.length - 1 && <span className="marquee__dot" />}
+            <span className="marquee__dot" aria-hidden="true" />
           </span>
         ))}
       </div>

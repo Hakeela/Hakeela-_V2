@@ -1,3 +1,4 @@
+import CursorFollower from '../components/CursorFollower.jsx'
 import Navbar from '../components/Navbar.jsx'
 import Hero from '../components/Hero.jsx'
 import Marquee from '../components/Marquee.jsx'
@@ -10,6 +11,7 @@ import Footer from '../components/Footer.jsx'
 function Home() {
   return (
     <>
+      <CursorFollower />
       <Navbar />
       <Hero />
       <Marquee />

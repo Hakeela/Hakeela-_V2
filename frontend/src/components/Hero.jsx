@@ -1,7 +1,9 @@
+import CountUp from 'react-countup'
+
 const stats = [
-  { value: '300', label: 'Special needs Trained' },
-  { value: '4', label: 'African countries' },
-  { value: '70 hrs', label: 'of learning' },
+  { to: 300, suffix: '', label: 'Special needs Trained' },
+  { to: 4, suffix: '', label: 'African countries' },
+  { to: 70, suffix: ' hrs', label: 'of learning' },
 ]
 
 const CapIcon = () => (
@@ -27,13 +29,13 @@ function Hero() {
   return (
     <section className="hero">
       <div className="container">
-        <h1 className="hero__title">
-          Learn. Build.
-          <br />
+        <h1 className="hero__title hero__title--1">Learn. Build.</h1>
+        <h1 className="hero__title hero__title--2">
+          Lead{' '}
           <span className="hero__ul">
-            Lead Africa.
-            <svg viewBox="0 0 300 20" preserveAspectRatio="none" fill="none" aria-hidden="true">
-              <path d="M5 14 Q150 2 295 10" stroke="#ffc21a" strokeWidth="6" strokeLinecap="round" />
+            Africa.
+            <svg viewBox="0 0 200 20" preserveAspectRatio="none" fill="none" aria-hidden="true">
+              <path d="M5 14 Q100 2 195 10" stroke="#ffc21a" strokeWidth="7" strokeLinecap="round" />
             </svg>
           </span>
         </h1>
@@ -55,7 +57,9 @@ function Hero() {
         <div className="hero__stats">
           {stats.map((s) => (
             <div className="hero__stat" key={s.label}>
-              <b>{s.value}</b>
+              <b>
+                <CountUp end={s.to} suffix={s.suffix} duration={30} useEasing={false} enableScrollSpy scrollSpyOnce />
+              </b>
               <span>{s.label}</span>
             </div>
           ))}
