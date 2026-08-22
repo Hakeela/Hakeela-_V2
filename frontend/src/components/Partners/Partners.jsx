@@ -11,6 +11,9 @@ const partners = [
   { src: "/partner-experteens.png", alt: "Experteens", width: 115 },
   { src: "/partner-league.png", alt: "League of Innovators", width: 180 },
   { src: "/partner-ashoka.png", alt: "Ashoka", width: 180 },
+  { src: "/partner-zeroup.jpeg", alt: "Zero Up Initiative", width: 160 },
+  { src: "/partner-crif.jpeg", alt: "Children's Rights Innovation Fund", width: 170 },
+  { src: "/partner-link.jpeg", alt: "Link Gadgets & Store", width: 90 },
 ];
 
 function Partners() {
