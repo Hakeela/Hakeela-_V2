@@ -303,6 +303,7 @@ button { font-family: inherit; }
   display: inline-flex; align-items: center; justify-content: center;
   margin-bottom: 12px;
 }
+.feature__icon img, .prog__icon img { width: 22px; height: 22px; object-fit: contain; display: block; }
 .feature__title { font-size: 18px; font-weight: 700; color: var(--hak-blue); margin: 0 0 6px; }
 .feature__body { font-size: 14px; color: var(--muted); line-height: 1.6; margin: 0; }
 
