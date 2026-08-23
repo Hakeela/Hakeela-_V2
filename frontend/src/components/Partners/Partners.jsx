@@ -32,12 +32,12 @@ function Partners() {
           allowTouchMove={false}
           speed={3500}
           autoplay={{ delay: 0, disableOnInteraction: false }}
-          slidesPerView={1}
-          spaceBetween={40}
+          slidesPerView={2}
+          spaceBetween={24}
           breakpoints={{
-            600: { slidesPerView: 2 },
-            900: { slidesPerView: 3 },
-            1200: { slidesPerView: 4 },
+            600: { slidesPerView: 2, spaceBetween: 32 },
+            900: { slidesPerView: 3, spaceBetween: 40 },
+            1200: { slidesPerView: 4, spaceBetween: 40 },
           }}
         >
           {partners.map((p) => (
