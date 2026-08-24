@@ -1,0 +1,103 @@
+.partners {
+  background: #f7f8fa;
+  padding: 60px 24px;
+}
+
+.partners__inner {
+  max-width: 1450px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.partners__title {
+    margin: 0;
+    font-size: clamp(30px, 3.6vw, 42px);
+    font-weight: 700;
+    color: black;
+}
+
+.partners__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+  flex-shrink: 0;
+}
+
+.partners__icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* Carousel */
+.partners__swiper {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 6%,
+    #000 94%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 6%,
+    #000 94%,
+    transparent 100%
+  );
+}
+
+.partners__swiper .swiper-wrapper {
+  /* linear timing gives a smooth continuous marquee */
+  transition-timing-function: linear;
+  align-items: center;
+}
+
+.partner-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+}
+
+.partner-logo img {
+  /* width is set per-logo inline for individual control */
+  height: auto;
+  max-height: 72px;
+  object-fit: contain;
+  opacity: 0.8;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.partner-logo img:hover {
+  opacity: 1;
+  transform: scale(1.12);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .partners__inner {
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .partners {
+    padding: 32px 20px;
+  }
+}
+
+@media (max-width: 560px) {
+  .partner-logo img {
+    max-height: 40px;
+  }
+}

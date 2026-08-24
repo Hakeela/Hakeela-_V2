@@ -1,0 +1,25 @@
+.fellowship {
+  padding: 40px 24px 20px;
+}
+.fellowship__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+.fellowship__text {
+  font-size: clamp(17px, 2vw, 25px);
+  line-height: 1.5;
+  font-weight: 500;
+  color: var(--hak-dark);
+  /* max-width: 760px; */
+  margin: 0 auto 32px;
+}
+.fellowship__figure {
+  border-radius: 18px;
+  overflow: hidden;
+}
+.fellowship__figure img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}

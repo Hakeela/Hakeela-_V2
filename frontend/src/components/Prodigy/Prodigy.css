@@ -1,0 +1,46 @@
+.prodigy {
+  padding: 40px 24px 60px;
+}
+.prodigy__inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 56px;
+  align-items: center;
+}
+.prodigy__figure {
+  border-radius: 16px;
+  overflow: hidden;
+}
+.prodigy__figure img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
+.prodigy__quote {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(20px, 2.3vw, 28px);
+  line-height: 1.35;
+  font-weight: 700;
+  color: var(--hak-blue);
+  margin: 0 0 22px;
+}
+.prodigy__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 24px;
+  border-radius: 999px;
+  border: 1.5px solid var(--hak-blue);
+  color: var(--hak-blue);
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.prodigy__btn:hover { background: var(--hak-blue); color: #fff; }
+
+@media (max-width: 900px) {
+  .prodigy__inner { grid-template-columns: 1fr; gap: 28px; }
+  .prodigy__figure { max-width: 420px; }
+}

@@ -1,0 +1,24 @@
+.impact-hl {
+  padding: 40px 24px 80px;
+}
+.impact-hl__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+.impact-hl__title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(24px, 3vw, 40px);
+  font-weight: 700;
+  color: var(--hak-blue);
+  margin: 30 0 20px;
+}
+.impact-hl__figure {
+  border-radius: 18px;
+  overflow: hidden;
+}
+.impact-hl__figure img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}

@@ -1,0 +1,89 @@
+.habhero {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  background-color: var(--hak-blue);
+  /* designed blue backdrop (with triangles/cubes) + soft glow toward the image */
+  background-image:
+    radial-gradient(120% 90% at 82% 45%, rgba(150, 120, 255, 0.4) 0%, rgba(26, 19, 214, 0) 55%),
+    url('/hero-bg.png');
+  background-size: auto, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+}
+
+.habhero__inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 72px 24px 80px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.habhero__accent { width: 150px; height: 15px; display: block; margin-bottom: 18px; }
+
+.habhero__title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(38px, 5vw, 62px);
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin: 0;
+  max-width: 560px;
+}
+.habhero__word { white-space: nowrap; }
+.habhero__ul { position: relative; display: inline-block; }
+.habhero__ul svg {
+  position: absolute;
+  left: 0; right: 0; bottom: -0.16em;
+  width: 100%; height: 0.2em;
+}
+
+.habhero__stats {
+  display: inline-flex;
+  gap: 32px;
+  margin-top: 36px;
+  padding: 18px 28px;
+  background: #ffffff1a;
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 14px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px #0000001f;
+}
+.habhero__stat b {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.habhero__stat span { font-size: 12px; color: rgba(255, 255, 255, 0.8); font-weight: 500; }
+
+.habhero__media { position: relative; display: flex; justify-content: center; }
+.habhero__media img {
+  width: 100%;
+  max-width: 560px;
+  border-radius: 18px;
+  object-fit: cover;
+}
+
+/* decorative triangles */
+
+@media (max-width: 900px) {
+  .habhero__inner { grid-template-columns: 1fr; gap: 32px; padding: 48px 24px 56px; }
+  .habhero__title { max-width: none; }
+  .habhero__media img { max-width: 460px; }
+}
+@media (max-width: 560px) {
+  /* keep all three stats on one row */
+  .habhero__stats { display: flex; width: 100%; justify-content: space-between; gap: 10px; padding: 14px 16px; }
+  .habhero__stat { flex: 1; }
+  .habhero__stat b { font-size: 18px; }
+  .habhero__stat span { font-size: 10px; line-height: 1.25; }
+}

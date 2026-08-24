@@ -1,0 +1,102 @@
+.foundation {
+  background: #f7f8fa;
+  padding: 80px 24px 96px;
+}
+
+.foundation__inner {
+  max-width: 1450px;
+  margin: 0 auto;
+}
+
+/* Heading */
+.foundation__head {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 56px;
+}
+
+.foundation__title {
+  margin: 0;
+  font-size: clamp(30px, 3.6vw, 42px);
+  font-weight: 700;
+  color: var(--hak-blue);
+}
+
+.foundation__subtitle {
+  margin: 12px auto 0;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: #575656;
+}
+
+/* Cards grid */
+.foundation__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+.foundation-card {
+  background: #ffffff;
+  border-left: 5px solid var(--hak-blue);
+  border-radius: 16px;
+  padding: 32px 30px 36px;
+  box-shadow: 0 12px 34px rgba(23, 23, 60, 0.08);
+}
+
+.foundation-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--hak-blue);
+  color: #ffffff;
+}
+
+.foundation-card__title {
+  margin: 24px 0 14px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--hak-blue);
+}
+
+.foundation-card__body {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.65;
+  color: #575656;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .foundation__grid {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .impact {
+    padding: 24px;
+  }
+
+  .hero__photo--mid,
+  .hero__photo--right,
+  .hakpilot__logo,
+  .hakpilot__learn {
+    display: none;
+  }
+
+  .impact__inner {
+    padding: 64px 0px 64px;
+  }
+}
+
+@media (max-width: 560px) {
+  .foundation {
+    padding: 56px 20px 64px;
+  }
+}
