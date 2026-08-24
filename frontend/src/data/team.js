@@ -8,5 +8,6 @@ export const teamMembers = [
   { img: '/about-harrison.png', name: 'Harrison Divine', role: 'Head of Media Marketing' },
   { img: '/about-laurenz.png', name: 'Lawrence Godwin', role: 'Community Director' },
   { img: '/about-comfort.png', name: 'Comfort Alphonsus', role: 'Chief Graphic Designer' },
+  { img: '/about-edor.png', name: 'Emmanuel Edor', role: 'Chief Product Designer' },
   { img: '/about-extra.png', name: 'Ruphina Adaobi', role: 'Team Lead Developer' },
 ]
