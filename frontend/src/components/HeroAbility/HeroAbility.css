@@ -19,8 +19,8 @@
   margin: 0 auto;
   padding: 72px 24px 80px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 40px;
   align-items: center;
 }
 
@@ -62,13 +62,14 @@
   font-size: 22px;
   font-weight: 800;
   line-height: 1.2;
+  white-space: nowrap;
 }
 .habhero__stat span { font-size: 12px; color: rgba(255, 255, 255, 0.8); font-weight: 500; }
 
 .habhero__media { position: relative; display: flex; justify-content: center; }
 .habhero__media img {
   width: 100%;
-  max-width: 560px;
+  max-width: 680px;
   border-radius: 18px;
   object-fit: cover;
 }
