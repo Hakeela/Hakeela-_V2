@@ -3,7 +3,7 @@ import './Donate.css'
 
 function Donate() {
   return (
-    <section className="donate">
+    <section className="donate" id="donate">
       <div className="donate__panel">
         <div className="donate__text">
           <span className="donate__badge">

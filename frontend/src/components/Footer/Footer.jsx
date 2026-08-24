@@ -1,17 +1,18 @@
+import { Link } from 'react-router-dom'
 import './Footer.css'
 
 const quickLinks = [
-  { label: 'HakPortal', href: '#' },
-  { label: 'Hak-AbilityTech', href: '#' },
-  { label: 'Hakeela Fund', href: '#' },
-  { label: 'HakVersity', href: '#' },
+  { label: 'HakPortal', href: 'https://hakportal.hakeela.org', external: true },
+  { label: 'Hak-AbilityTech', href: 'https://hakabilitytech.hakeela.org', external: true },
+  { label: 'Hakeela Fund', href: '/#initiatives' },
+  { label: 'HakVersity', href: 'https://hakversity.hakeela.org', external: true },
 ]
 
 const resources = [
-  { label: 'Blog', href: '#' },
-  { label: 'About us', href: '#' },
-  { label: 'Our team', href: '#' },
-  { label: 'Donate', href: '#' },
+  { label: 'Blog', to: '/blog' },
+  { label: 'About us', to: '/about' },
+  { label: 'Our team', to: '/about' },
+  { label: 'Donate', href: '/#donate' },
 ]
 
 const contacts = [
@@ -65,9 +66,13 @@ function Footer() {
           <ul className="footer__list">
             {quickLinks.map((item) => (
               <li key={item.label}>
-                <a className="footer__link" href={item.href}>
-                  {item.label}
-                </a>
+                {item.to ? (
+                  <Link className="footer__link" to={item.to}>{item.label}</Link>
+                ) : (
+                  <a className="footer__link" href={item.href} {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+                    {item.label}
+                  </a>
+                )}
               </li>
             ))}
           </ul>
@@ -79,9 +84,13 @@ function Footer() {
           <ul className="footer__list">
             {resources.map((item) => (
               <li key={item.label}>
-                <a className="footer__link" href={item.href}>
-                  {item.label}
-                </a>
+                {item.to ? (
+                  <Link className="footer__link" to={item.to}>{item.label}</Link>
+                ) : (
+                  <a className="footer__link" href={item.href} {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+                    {item.label}
+                  </a>
+                )}
               </li>
             ))}
           </ul>

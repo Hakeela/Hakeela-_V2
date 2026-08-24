@@ -24,7 +24,7 @@ const otherInitiatives = [
 
 function Initiatives() {
   return (
-    <section className="initiatives">
+    <section className="initiatives" id="initiatives">
       <div className="initiatives__inner">
         <h2 className="initiatives__title">Our Initiatives</h2>
 
