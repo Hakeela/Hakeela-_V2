@@ -269,3 +269,11 @@
     padding: 11px 18px;
   }
 }
+
+/* Loading / empty / error state for the post list */
+.blog-empty {
+  text-align: center;
+  color: #6f6f6f;
+  font-size: 16px;
+  padding: 40px 0 64px;
+}

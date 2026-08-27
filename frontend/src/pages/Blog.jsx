@@ -1,20 +1,27 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { getBlogPosts } from '../lib/blog.js'
 import './Blog.css'
-
-// Static placeholder posts
-const posts = Array.from({ length: 6 }, (_, i) => ({
-  id: i + 1,
-  image: '/hero-2.png',
-  author: 'Victor Eyo',
-  avatar: '/team-victor.png',
-  readTime: '3 min',
-  title: 'From Community Project to Global Organization',
-  excerpt:
-    'Learn how Hakeela started, why it started and the impact the Edtech organization has been making in regions across Africa, and why Hakeela is the literally the Future.',
-}))
 
 function Blog() {
   const [activeTab, setActiveTab] = useState('blog')
+  const [sort, setSort] = useState('Latest')
+  const [posts, setPosts] = useState([])
+  const [status, setStatus] = useState('loading') // loading | ready | error
+
+  useEffect(() => {
+    let active = true
+    getBlogPosts()
+      .then((p) => active && (setPosts(p), setStatus('ready')))
+      .catch(() => active && setStatus('error'))
+    return () => { active = false }
+  }, [])
+
+  const sortedPosts = useMemo(() => {
+    const list = [...posts]
+    if (sort === 'Oldest') list.sort((a, b) => new Date(a.date) - new Date(b.date))
+    else list.sort((a, b) => new Date(b.date) - new Date(a.date)) // Latest / Popular
+    return list
+  }, [posts, sort])
 
   return (
     <main className="blog-page">
@@ -28,10 +35,7 @@ function Blog() {
           <p className="blog-hero__subtitle">
             Subscribe to get updates on our blog and events
           </p>
-          <form
-            className="blog-hero__form"
-            onSubmit={(e) => e.preventDefault()}
-          >
+          <form className="blog-hero__form" onSubmit={(e) => e.preventDefault()}>
             <input
               type="email"
               className="blog-hero__input"
@@ -68,36 +72,69 @@ function Blog() {
               </button>
             </div>
 
-            <div className="blog-sort">
-              <select className="blog-sort__select" aria-label="Sort posts">
-                <option>Latest</option>
-                <option>Oldest</option>
-                <option>Popular</option>
-              </select>
-            </div>
+            {activeTab === 'blog' && (
+              <div className="blog-sort">
+                <select
+                  className="blog-sort__select"
+                  aria-label="Sort posts"
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value)}
+                >
+                  <option>Latest</option>
+                  <option>Oldest</option>
+                </select>
+              </div>
+            )}
           </div>
 
-          <div className="blog-grid">
-            {posts.map((post) => (
-              <article className="blog-card" key={post.id}>
-                <div className="blog-card__img">
-                  <img src={post.image} alt="" />
-                </div>
-                <div className="blog-card__meta">
-                  <span className="blog-card__author">
-                    <img src={post.avatar} alt="" />
-                    {post.author}
-                  </span>
-                  <span className="blog-card__time">{post.readTime}</span>
-                </div>
-                <h3 className="blog-card__title">{post.title}</h3>
-                <p className="blog-card__excerpt">{post.excerpt}</p>
-                <a href="#" className="blog-card__btn">
-                  Read More
-                </a>
-              </article>
-            ))}
-          </div>
+          {activeTab === 'events' ? (
+            <p className="blog-empty">Events are coming soon — check back later.</p>
+          ) : status === 'loading' ? (
+            <p className="blog-empty">Loading posts…</p>
+          ) : status === 'error' ? (
+            <p className="blog-empty">
+              We couldn&rsquo;t load the blog right now. Please try again later.
+            </p>
+          ) : sortedPosts.length === 0 ? (
+            <p className="blog-empty">No posts published yet.</p>
+          ) : (
+            <div className="blog-grid">
+              {sortedPosts.map((post) => (
+                <article className={`blog-card ${post.image ? '' : 'blog-card--noimg'}`} key={post.id}>
+                  {post.image && (
+                    <div className="blog-card__img">
+                      <img
+                        src={post.image}
+                        alt=""
+                        loading="lazy"
+                        onError={(e) => {
+                          const box = e.currentTarget.closest('.blog-card__img')
+                          if (box) box.style.display = 'none'
+                        }}
+                      />
+                    </div>
+                  )}
+                  <div className="blog-card__meta">
+                    <span className="blog-card__author">
+                      <img src={post.avatar} alt="" onError={(e) => { e.currentTarget.style.display = 'none' }} />
+                      {post.author}
+                    </span>
+                    <span className="blog-card__time">{post.readTime}</span>
+                  </div>
+                  <h3 className="blog-card__title">{post.title}</h3>
+                  <p className="blog-card__excerpt">{post.excerpt}</p>
+                  <a
+                    href={post.link}
+                    className="blog-card__btn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Read More
+                  </a>
+                </article>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </main>

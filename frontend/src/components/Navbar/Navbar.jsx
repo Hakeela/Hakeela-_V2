@@ -6,13 +6,13 @@ import './Navbar.css'
 const navLinks = [
   { label: 'Blog', to: '/blog' },
   { label: 'HakPortal', href: 'https://hakportal.hakeela.org', external: true },
-  { label: 'HakVersity', href: '#' },
-  { label: 'Hak-AbilityTech', href: '#' },
+  { label: 'HakVersity', href: 'https://hakversity.hakeela.org', external: true },
+  { label: 'Hak-AbilityTech', href: 'https://hakabilitytech.hakeela.org', external: true },
 ]
 
 const initiatives = [
-  { label: 'Hakeela Fund', href: '#' },
-  { label: 'HakVersity', href: '#' },
+  { label: 'Hakeela Fund', href: '/#initiatives' },
+  { label: 'HakVersity', href: 'https://hakversity.hakeela.org', external: true },
 ]
 
 function Navbar() {
@@ -107,6 +107,7 @@ function Navbar() {
                       <a
                         href={item.href}
                         className="navbar__submenu-link"
+                        {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                         onClick={() => {
                           setInitiativesOpen(false)
                           setMenuOpen(false)
