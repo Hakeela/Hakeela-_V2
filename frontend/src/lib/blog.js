@@ -33,30 +33,50 @@ function pickImage(media) {
   )
 }
 
-/** Fetch published posts from WordPress, newest first. */
-export async function getBlogPosts({ perPage = 12 } = {}) {
-  const res = await fetch(`${WP_BASE}/posts?per_page=${perPage}&_embed`)
+function mapPost(p) {
+  const media = p._embedded?.['wp:featuredmedia']?.[0]
+  const author = p._embedded?.author?.[0]
+  const excerpt = stripHtml(p.excerpt?.rendered || '')
+    .replace(/\s*\[[.…]+\]\s*$/, '')
+    .replace(/\s*Continue reading.*$/i, '')
+    .trim()
+
+  return {
+    id: p.id,
+    title: decodeEntities(p.title?.rendered || 'Untitled'),
+    excerpt,
+    image: pickImage(media),
+    author: decodeEntities(author?.name || 'Hakeela'),
+    avatar: author?.avatar_urls?.['48'] || author?.avatar_urls?.['96'] || FALLBACK_AVATAR,
+    date: p.date,
+    readTime: readTime(p.content?.rendered || p.excerpt?.rendered || ''),
+    link: p.link,
+  }
+}
+
+// Resolve a category slug -> id once, then reuse it.
+const categoryIdCache = {}
+async function getCategoryId(slug) {
+  if (slug in categoryIdCache) return categoryIdCache[slug]
+  try {
+    const res = await fetch(`${WP_BASE}/categories?slug=${encodeURIComponent(slug)}&_fields=id,slug`)
+    const arr = res.ok ? await res.json() : []
+    categoryIdCache[slug] = Array.isArray(arr) && arr[0] ? arr[0].id : null
+  } catch {
+    categoryIdCache[slug] = null
+  }
+  return categoryIdCache[slug]
+}
+
+/**
+ * Fetch published posts from a WordPress category (by slug), newest first.
+ * Blog tab uses "blog"; Events tab uses "event".
+ */
+export async function getPostsByCategory(slug, { perPage = 12 } = {}) {
+  const catId = await getCategoryId(slug)
+  if (!catId) return [] // category not found -> nothing to show
+  const res = await fetch(`${WP_BASE}/posts?categories=${catId}&per_page=${perPage}&_embed`)
   if (!res.ok) throw new Error(`Failed to load posts (${res.status})`)
   const data = await res.json()
-
-  return data.map((p) => {
-    const media = p._embedded?.['wp:featuredmedia']?.[0]
-    const author = p._embedded?.author?.[0]
-    const excerpt = stripHtml(p.excerpt?.rendered || '')
-      .replace(/\s*\[[.…]+\]\s*$/, '')
-      .replace(/\s*Continue reading.*$/i, '')
-      .trim()
-
-    return {
-      id: p.id,
-      title: decodeEntities(p.title?.rendered || 'Untitled'),
-      excerpt,
-      image: pickImage(media),
-      author: decodeEntities(author?.name || 'Hakeela'),
-      avatar: author?.avatar_urls?.['48'] || author?.avatar_urls?.['96'] || FALLBACK_AVATAR,
-      date: p.date,
-      readTime: readTime(p.content?.rendered || p.excerpt?.rendered || ''),
-      link: p.link,
-    }
-  })
+  return data.map(mapPost)
 }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { getBlogPosts } from '../lib/blog.js'
+import { getPostsByCategory } from '../lib/blog.js'
 import './Blog.css'
 
 function Blog() {
@@ -10,11 +10,14 @@ function Blog() {
 
   useEffect(() => {
     let active = true
-    getBlogPosts()
+    setStatus('loading')
+    setPosts([])
+    const slug = activeTab === 'events' ? 'event' : 'blog'
+    getPostsByCategory(slug)
       .then((p) => active && (setPosts(p), setStatus('ready')))
       .catch(() => active && setStatus('error'))
     return () => { active = false }
-  }, [])
+  }, [activeTab])
 
   const sortedPosts = useMemo(() => {
     const list = [...posts]
@@ -72,31 +75,29 @@ function Blog() {
               </button>
             </div>
 
-            {activeTab === 'blog' && (
-              <div className="blog-sort">
-                <select
-                  className="blog-sort__select"
-                  aria-label="Sort posts"
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value)}
-                >
-                  <option>Latest</option>
-                  <option>Oldest</option>
-                </select>
-              </div>
-            )}
+            <div className="blog-sort">
+              <select
+                className="blog-sort__select"
+                aria-label="Sort posts"
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+              >
+                <option>Latest</option>
+                <option>Oldest</option>
+              </select>
+            </div>
           </div>
 
-          {activeTab === 'events' ? (
-            <p className="blog-empty">Events are coming soon — check back later.</p>
-          ) : status === 'loading' ? (
-            <p className="blog-empty">Loading posts…</p>
+          {status === 'loading' ? (
+            <p className="blog-empty">Loading {activeTab === 'events' ? 'events' : 'posts'}…</p>
           ) : status === 'error' ? (
             <p className="blog-empty">
-              We couldn&rsquo;t load the blog right now. Please try again later.
+              We couldn&rsquo;t load the {activeTab === 'events' ? 'events' : 'blog'} right now. Please try again later.
             </p>
           ) : sortedPosts.length === 0 ? (
-            <p className="blog-empty">No posts published yet.</p>
+            <p className="blog-empty">
+              No {activeTab === 'events' ? 'events' : 'posts'} published yet.
+            </p>
           ) : (
             <div className="blog-grid">
               {sortedPosts.map((post) => (
