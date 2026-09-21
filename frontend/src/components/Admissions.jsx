@@ -4,19 +4,39 @@ import Popup from './Popup.jsx'
 const PROGRAMS = ['Software Engineering', 'Product & UI/UX Design', 'Data & AI Fundamentals', 'Graphics Design', 'Tech Entrepreneurship']
 const MODES = ['Online', 'Hybrid (online + hub)', 'In-person hub']
 const SUPPORT = ['No', 'Yes — hearing/speech support', 'Yes — visual support', 'Yes — other (we will follow up)']
+const SCHOLARSHIP_OPTIONS = ['No', 'Yes']
 
-const empty = { first: '', last: '', email: '', phone: '', program: '', mode: '', support: '' }
+const empty = { first: '', last: '', email: '', phone: '', program: '', mode: '', support: '', scholarship: '', scholarshipReason: '' }
 
 function Admissions() {
   const [f, setF] = useState(empty)
   const [done, setDone] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
   const set = (k, v) => setF((p) => ({ ...p, [k]: v }))
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault()
-    // No backend yet — show a confirmation. Wire to a real endpoint later.
-    setDone(true)
-    setF(empty)
+    setSubmitting(true)
+    setError('')
+
+    try {
+      const response = await fetch('/api/applications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(f),
+      })
+
+      const result = await response.json()
+      if (!response.ok) throw new Error(result.error || 'Unable to submit application.')
+
+      setDone(true)
+      setF(empty)
+    } catch (submissionError) {
+      setError(submissionError.message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -79,7 +99,32 @@ function Admissions() {
             </select>
           </div>
 
-          <button type="submit" className="btn btn--solid apply__submit">Submit Application</button>
+          <div className="field">
+            <label htmlFor="scholarship">Are you applying for a scholarship?</label>
+            <select id="scholarship" value={f.scholarship} onChange={(e) => set('scholarship', e.target.value)} required>
+              <option value="" disabled>Select option</option>
+              {SCHOLARSHIP_OPTIONS.map((option) => <option key={option}>{option}</option>)}
+            </select>
+          </div>
+
+          {f.scholarship === 'Yes' && (
+            <div className="field">
+              <label htmlFor="scholarshipReason">Why should we select you for a scholarship?</label>
+              <textarea
+                id="scholarshipReason"
+                value={f.scholarshipReason}
+                onChange={(e) => set('scholarshipReason', e.target.value)}
+                placeholder="Tell us why you should be selected for a scholarship"
+                rows="5"
+                required
+              />
+            </div>
+          )}
+
+          <button type="submit" className="btn btn--solid apply__submit" disabled={submitting}>
+            {submitting ? 'Submitting...' : 'Submit Application'}
+          </button>
+          {error && <p className="apply__status apply__status--error" role="alert">{error}</p>}
           <p className="apply__note">
             By applying you agree to Hakeela&rsquo;s <a href="#">Privacy Policy</a>. We never share your data with third parties.
           </p>

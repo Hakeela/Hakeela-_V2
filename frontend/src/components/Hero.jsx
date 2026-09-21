@@ -14,14 +14,14 @@ const CapIcon = () => (
 
 const programs = [
   {
-    title: 'Graphics Design',
-    desc: 'Build real-world products with mentoring from industry professionals across Africa and the diaspora.',
-    pills: ['Online Learning', 'Certificate Available', 'Scholarship Available', 'Real-Time Mentoring Sessions'],
+    title: 'Enrollment Fee',
+    desc: 'Enrollment fee is N5,000 for Nigerians, and $3 for non-Nigerians.',
+    pills: ['Nigerians: N5,000', 'Non-Nigerians: $3'],
   },
   {
-    title: 'Tech Entrepreneurship',
-    desc: 'Build real-world products with mentoring from industry professionals across Africa and the diaspora.',
-    pills: ['Online Learning', 'Certificate Available', 'Scholarship Available', 'Real-Time Mentoring Sessions'],
+    title: 'Fee and Scholarship',
+    desc: 'Fee is N15k a month for Nigerians, and $10 a month for non-nigerians. A session is for 3 months. Full tuition covered by Hakeela fund.',
+    pills: ['Nigerians: N15,000/month', 'Non-Nigerians: $10/month', '3-Month Session', 'Scholarship Available'],
   },
 ]
 
