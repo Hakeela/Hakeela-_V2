@@ -67,13 +67,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 80px;
+  height: 170px;
 }
 
 .partner-logo img {
-  /* width is set per-logo inline for individual control */
   height: auto;
-  max-height: 72px;
+  max-height: 160px;
   object-fit: contain;
   opacity: 0.8;
   transition: transform 0.3s ease, opacity 0.3s ease;
@@ -98,6 +97,6 @@
 
 @media (max-width: 560px) {
   .partner-logo img {
-    max-height: 40px;
+    max-height: 80px;
   }
 }

@@ -66,9 +66,14 @@
 }
 
 .init-block__logo {
-  height: 45px;
   width: auto;
-  margin-bottom: 20px;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+
+  /* 3D effect */
+
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .init-block__heading {
@@ -255,6 +260,12 @@
   margin-bottom: 18px;
 }
 
+.hakversity-logo {
+  width: 200px;
+  height: 80px;
+  object-fit: cover;
+}
+
 .other-card__title {
   margin: 0 0 12px;
   font-size: 22px;
@@ -324,6 +335,11 @@
   }
   .hakpilot__card {
     padding: 20px 18px 24px;
+  }
+
+  .hakversity-logo {
+    width: 220px;
+    height: 70px;
   }
 }
 

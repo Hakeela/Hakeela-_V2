@@ -113,20 +113,23 @@ function About() {
           </div>
           <div className="about-who__text">
             <h2 className="about-who__title">Who We Are</h2>
+
             <p className="about-who__body">
-              Hakeela is a social enterprise designed to train and equip young
+              Hakeela is an edtech organization designed to train and equip young
               Africans from marginalized backgrounds and people living with
               disabilities with tech skills.
             </p>
+
             <ul className="about-check">
               <li>
                 <span className="about-check__icon"><Check /></span>
-                We use AI to bridge communication and edtech learning gap for
-                special needs people.
+                We use AI to bridge communication and edtech learning gaps for
+                people living with disabilities.
               </li>
+
               <li>
                 <span className="about-check__icon"><Check /></span>
-                We empower marginalized individuals in tech skills, accessible
+                We empower marginalized individuals with tech skills, accessible
                 tech education, and tech job opportunities.
               </li>
             </ul>

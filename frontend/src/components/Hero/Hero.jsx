@@ -16,16 +16,16 @@ function Hero() {
         <h1 className="hero__title">
           <span className="hero__quote">&ldquo;</span>Building{' '}
           <mark className="hero__mark">the Future</mark> of Tech Inclusion one
-          community <mark className="hero__mark">a time</mark>
+          community <mark className="hero__mark">at a time</mark>
           <span className="hero__quote">&rdquo;</span>
         </h1>
 
         <p className="hero__subtitle">using AI + Empathy</p>
 
         <p className="hero__desc">
-          Creating an inclusive and sustainable future of edtech for young
-          Africans that are marginalized, underprivileged, and specially
-          assisted.
+          Creating an inclusive and sustainable future of edtech 
+          for young Africans that are living with disabilities, 
+          marginalized, and underprivileged.
         </p>
 
         <Link className="hero__cta" to="/about">

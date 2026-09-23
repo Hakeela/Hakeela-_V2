@@ -27,12 +27,12 @@ const cards = [
   {
     icon: <EyeIcon />,
     title: 'Vision',
-    body: 'To provide the best technological learning, grooming, and growing platform for marginalized and special needs people, and also become the number one ed-tech solution provider for individuals, businesses, and organizations globally.',
+    body: 'To provide the best technological learning, grooming, and growing platform for people living with disabilities, marginalized and underprivileged young Africans, and also become the number one ed-tech solution provider for individuals, businesses, and organizations globally.',
   },
   {
     icon: <TargetIcon />,
     title: 'Mission',
-    body: 'Our mission is to build an inclusive future where marginalized and special needs individuals have equal access to tech skills and opportunities. We aim to break barriers, promote inclusivity, and empower everyone to thrive in the global tech economy through accessibility and policy advocacy.',
+    body: 'Our mission is to build an inclusive future where marginalized young Africans and persons living with dsiabilities have equal access to tech skills and opportunities. We aim to break barriers, promote inclusivity, and empower everyone to thrive in the global tech economy through accessibility and policy advocacy.',
   },
   {
     icon: <RocketIcon />,
