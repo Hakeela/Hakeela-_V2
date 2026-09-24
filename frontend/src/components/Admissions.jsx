@@ -46,8 +46,8 @@ function Admissions() {
           <p className="apply__label">Join HakVersity</p>
           <h2 className="apply__title">Start your journey today.</h2>
           <p className="apply__sub">
-            Fill in the form below and our admissions team will reach out within 48 hours
-            with your next steps. Scholarships available for qualifying applicants.
+            Fill in the form below and our admissions team will reach out within 36 hours
+            with your next steps. Enrollment fee is N5,000 for Nigerians, and $3 for Non-Nigerians (A-Must). Scholarships available for qualifying applicants.
           </p>
         </div>
 
@@ -126,7 +126,7 @@ function Admissions() {
           </button>
           {error && <p className="apply__status apply__status--error" role="alert">{error}</p>}
           <p className="apply__note">
-            By applying you agree to Hakeela&rsquo;s <a href="#">Privacy Policy</a>. We never share your data with third parties.
+            By applying you agree to Hakeela&rsquo;s <a href="/hakversity/privacy-policy">Privacy Policy</a>. We never share your data with third parties.
           </p>
         </form>
       </div>

@@ -3,7 +3,7 @@ import CountUp from 'react-countup'
 const stats = [
   { to: 300, suffix: '', label: 'Special needs Trained' },
   { to: 4, suffix: '', label: 'African countries' },
-  { to: 70, suffix: ' hrs', label: 'of learning' },
+  { to: 150, suffix: '+', label: 'Internship placements' },
 ]
 
 const CapIcon = () => (
