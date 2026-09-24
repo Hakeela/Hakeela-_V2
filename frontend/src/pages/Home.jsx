@@ -3,6 +3,7 @@ import CTA from '../components/CTA/CTA.jsx'
 import Donate from '../components/Donate/Donate.jsx'
 import Prodigy from '../components/Prodigy/Prodigy.jsx'
 import Fellowship from '../components/Fellowship/Fellowship.jsx'
+import FellowshipForm from '../components/FellowshipForm/FellowshipForm.jsx'
 import ImpactHighlights from '../components/ImpactHighlights/ImpactHighlights.jsx'
 
 function Home() {
@@ -17,6 +18,7 @@ function Home() {
       <Donate />
       <Prodigy />
       <Fellowship />
+      <FellowshipForm />
       <ImpactHighlights />
     </>
   )

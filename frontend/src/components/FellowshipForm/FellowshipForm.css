@@ -1,0 +1,149 @@
+.ability-form {
+    padding: 72px 24px 48px;
+    background: linear-gradient(180deg, #f8faff 0%, #eef4ff 100%);
+}
+
+.ability-form__inner {
+    max-width: 1040px;
+    margin: 0 auto;
+}
+
+.ability-form__head {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.ability-form__label {
+    margin: 0 0 12px;
+    color: #1a13d6;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.ability-form__title {
+    margin: 0;
+    font-size: clamp(2.1rem, 5vw, 3.2rem);
+    color: #111827;
+}
+
+.ability-form__subtitle {
+    margin: 16px auto 0;
+    max-width: 700px;
+    font-size: 1.03rem;
+    color: #374151;
+}
+
+.ability-form__form {
+    max-width: 760px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 1px solid rgba(26, 19, 214, 0.12);
+    border-radius: 28px;
+    padding: 28px;
+    box-shadow: 0 22px 45px rgba(17, 24, 39, 0.08);
+}
+
+.ability-form__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.field label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+.field input,
+.field select {
+    width: 100%;
+    min-height: 52px;
+    border: 1px solid #dfe3ee;
+    border-radius: 14px;
+    background: #fff;
+    padding: 0 16px;
+    font: inherit;
+    color: #111827;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field input:focus,
+.field select:focus {
+    outline: none;
+    border-color: #1a13d6;
+    box-shadow: 0 0 0 3px rgba(26, 19, 214, 0.14);
+}
+
+.ability-form__checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 18px 0 22px;
+    font-size: 0.96rem;
+    line-height: 1.5;
+    color: #374151;
+}
+
+.ability-form__checkbox input {
+    margin-top: 4px;
+    width: 18px;
+    height: 18px;
+    accent-color: #1a13d6;
+}
+
+.ability-form__submit {
+    appearance: none;
+    border: none;
+    border-radius: 999px;
+    background: #1a13d6;
+    color: #ffffff;
+    padding: 15px 28px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    box-shadow: 0 16px 28px rgba(26, 19, 214, 0.22);
+}
+
+.ability-form__submit:hover {
+    transform: translateY(-1px);
+}
+
+.ability-form__submit:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+.ability-form__status {
+    margin-top: 16px;
+    font-size: 0.96rem;
+    font-weight: 600;
+}
+
+.ability-form__status--error {
+    color: #b42318;
+}
+
+@media (max-width: 720px) {
+    .ability-form {
+        padding-top: 52px;
+    }
+
+    .ability-form__form {
+        padding: 18px;
+    }
+
+    .ability-form__grid {
+        grid-template-columns: 1fr;
+    }
+}
