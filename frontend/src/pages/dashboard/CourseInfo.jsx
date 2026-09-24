@@ -40,7 +40,7 @@ function CourseInfo() {
   }
 
   if (loading) return <div className="dashpg"><p style={{ color: '#8a8a8a' }}>Loading…</p></div>
-  if (!course) return <div className="dashpg"><p>Course not found.</p></div>
+  if (!course) return <div className="dashpg"><p>Program not found.</p></div>
 
   return (
     <div className="dashpg">
@@ -60,7 +60,7 @@ function CourseInfo() {
       </div>
 
       <div className="dash-card" style={{ marginTop: 28 }}>
-        <h3 className="cl-modules__title">Course Modules</h3>
+        <h3 className="cl-modules__title">Program Modules</h3>
 
         {course.modules.map((m, mi) => {
           const completed = m.status === 'Completed'

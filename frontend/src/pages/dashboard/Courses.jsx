@@ -32,13 +32,13 @@ function Courses() {
   }, [user?.id]);
 
   const statCards = stats ? [
-    { value: stats.enrolled, label: "Enrolled Courses", bg: "#eceafd", color: "#1a13d6", icon: <BookIcon /> },
+    { value: stats.enrolled, label: "Enrolled Programs", bg: "#eceafd", color: "#1a13d6", icon: <BookIcon /> },
     { value: stats.completedLessons, label: "Completed Lessons", bg: "#e4f6ec", color: "#1e9e5a", icon: <CheckIcon /> },
     { value: stats.studyTime, label: "Total Study Time", bg: "#f0eafd", color: "#7a3ff2", icon: <ClockIcon /> },
     { value: stats.avgScore, label: "Average Score", bg: "#fff4d6", color: "#c99700", icon: <StarIcon /> },
   ] : [];
 
-  if (loading) return <div className="dashpg"><p style={{ color: "#8a8a8a" }}>Loading your courses…</p></div>;
+  if (loading) return <div className="dashpg"><p style={{ color: "#8a8a8a" }}>Loading your programs…</p></div>;
 
   return (
     <div className="dashpg">
@@ -55,12 +55,12 @@ function Courses() {
       </div>
 
       <div className="courses-head">
-        <h3 className="dash-section-title">Enrolled Courses</h3>
-        <Link to="/dashboard/enroll" className="dash-btn dash-btn--solid">Enroll New Course →</Link>
+        <h3 className="dash-section-title">Enrolled Programs</h3>
+        <Link to="/dashboard/enroll" className="dash-btn dash-btn--solid">Enroll New Program →</Link>
       </div>
 
       {courses.length === 0 ? (
-        <p style={{ color: "#8a8a8a" }}>You haven&apos;t enrolled in any courses yet. <Link className="pf__link" to="/dashboard/enroll">Browse the catalog →</Link></p>
+        <p style={{ color: "#8a8a8a" }}>You haven&apos;t enrolled in any programs yet. <Link className="pf__link" to="/dashboard/enroll">Browse the catalog →</Link></p>
       ) : (
         <div className="course-grid">
           {courses.map((c) => (

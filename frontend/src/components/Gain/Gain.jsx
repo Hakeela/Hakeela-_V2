@@ -25,7 +25,7 @@ function Gain() {
         <header className="gain__head">
           <h2 className="gain__title">What you stand to gain</h2>
           <p className="gain__subtitle">
-            Be a part of the Hakeela Margin Internship to enjoy these benefits
+            Be a part of any tech program on our HakPortal
           </p>
         </header>
 

@@ -7,11 +7,11 @@ import './dashboard-pages.css'
 
 // Presentation for the well-known categories; anything else gets a generic section.
 const SECTION_META = {
-  'Courses': { title: 'Courses', subtitle: 'Select from our wide range of courses and get started!', wide: false },
-  'Special Needs & Tech': { title: 'Special Need and Tech Courses', subtitle: 'Kindly note these courses are available anytime, any day, anywhere for our learners with special needs', wide: true },
-  'Leadership': { title: 'Leadership Courses', subtitle: 'In partnership with Ashoka Africa, We are Family Foundation, among others to provide Leadership courses for our learners.', wide: true },
+  'Courses': { title: 'Programs', subtitle: 'Select from our wide range of programs and get started!', wide: false },
+  'Special Needs & Tech': { title: 'Special Need and Tech Programs', subtitle: 'Kindly note these programs are available anytime, any day, anywhere for our learners with special needs', wide: true },
+  'Leadership': { title: 'Leadership Programs', subtitle: 'In partnership with Ashoka Africa, We are Family Foundation, among others to provide Leadership programs for our learners.', wide: true },
 }
-const metaFor = (category) => SECTION_META[category] || { title: category, subtitle: `Explore our ${category} courses.`, wide: true }
+const metaFor = (category) => SECTION_META[category] || { title: category, subtitle: `Explore our ${category} programs.`, wide: true }
 
 const naira = (n) => (n === 0 ? 'Free' : '₦' + Number(n).toLocaleString('en-NG'))
 
@@ -95,9 +95,9 @@ function Catalog() {
       </div>
 
       {loading ? (
-        <p style={{ color: '#8a8a8a' }}>Loading courses…</p>
+        <p style={{ color: '#8a8a8a' }}>Loading programs…</p>
       ) : Object.keys(byCategory).length === 0 ? (
-        <p style={{ color: '#8a8a8a' }}>No courses are available yet. Please check back soon.</p>
+        <p style={{ color: '#8a8a8a' }}>No programs are available yet. Please check back soon.</p>
       ) : (
         // Known categories first (in order), then any new ones
         [...Object.keys(SECTION_META).filter((c) => byCategory[c]), ...Object.keys(byCategory).filter((c) => !SECTION_META[c])]

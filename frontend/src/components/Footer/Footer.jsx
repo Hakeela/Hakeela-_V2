@@ -5,7 +5,6 @@ const SITE = 'https://hakeela.org'
 const quickLinks = [
   { label: 'HakPortal', href: '/' },
   { label: 'Hak-AbilityTech', href: SITE },
-  { label: 'HakStudios', href: SITE },
   { label: 'Hakeela Fund', href: SITE },
   { label: 'HakVersity', href: SITE },
 ]

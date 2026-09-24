@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom'
 import './Hero.css'
 
 const stats = [
-  { value: '1000+', label: 'Students Trained' },
-  { value: '65%', label: 'Job Placement' },
-  { value: '8', label: 'Weeks Training' },
+  { value: '10+', label: 'Programs' },
+  { value: '100+', label: 'Projects and tasks submitted' },
+  { value: '30+', label: 'Trainings and challenges' },
 ]
 
 function Hero() {

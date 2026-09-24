@@ -53,8 +53,8 @@ function ContinueLearning() {
     markLessonComplete(user?.id, lessonId, true)
   }
 
-  if (loading) return <div className="dashpg"><p style={{ color: '#8a8a8a' }}>Loading course…</p></div>
-  if (!course) return <div className="dashpg"><p>Course not found.</p></div>
+  if (loading) return <div className="dashpg"><p style={{ color: '#8a8a8a' }}>Loading program…</p></div>
+  if (!course) return <div className="dashpg"><p>Program not found.</p></div>
 
   const overall = course.progress >= 100 ? 'Completed' : course.progress > 0 ? 'In Progress' : 'Not Started'
 
@@ -77,7 +77,7 @@ function ContinueLearning() {
       <div className="cl__progress"><div className="dash-bar"><i style={{ width: `${course.progress}%` }} /></div></div>
 
       <div className="dash-card">
-        <h3 className="cl-modules__title">Course Modules</h3>
+        <h3 className="cl-modules__title">Program Modules</h3>
 
         {course.modules.map((m, mi) => {
           const completed = m.status === 'Completed'

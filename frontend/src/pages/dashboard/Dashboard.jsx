@@ -33,7 +33,7 @@ function Dashboard() {
           </h2>
           <p className="dwb__desc">
             Your consistency is paying off and you&apos;re making tremendous
-            progress. Keep going, and you&apos;ll complete your course in no
+            progress. Keep going, and you&apos;ll complete your program in no
             time. A certificate with your name on it is waiting!
           </p>
         </div>
@@ -48,9 +48,9 @@ function Dashboard() {
             <img src={resume?.thumbnail_url || "/gain-1.png"} alt="" />
           </div>
           <div className="quick-card__body">
-            <span className="quick-card__eyebrow">Resume Course</span>
-            <h4 className="quick-card__title">{resume?.title || "No active course"}</h4>
-            <p className="quick-card__sub">{resume?.description || "Enroll in a course to get started."}</p>
+            <span className="quick-card__eyebrow">Resume Program</span>
+            <h4 className="quick-card__title">{resume?.title || "No active program"}</h4>
+            <p className="quick-card__sub">{resume?.description || "Enroll in a program to get started."}</p>
             <div className="quick-card__progress">
               <span>{resume ? `${resume.progress}% complete` : "—"}</span>
               <div className="dash-bar">
@@ -61,7 +61,7 @@ function Dashboard() {
               to={resume ? `/dashboard/courses/${resume.id}` : "/dashboard/enroll"}
               className="dash-btn dash-btn--outline"
             >
-              {resume ? "Continue" : "Browse courses"}
+              {resume ? "Continue" : "Browse programs"}
             </Link>
           </div>
         </article>

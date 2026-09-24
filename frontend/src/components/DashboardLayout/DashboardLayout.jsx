@@ -26,7 +26,7 @@ const nav = [
   },
   {
     to: "/dashboard/courses",
-    label: "Courses",
+    label: "Programs",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -135,8 +135,8 @@ const nav = [
 
 const titleMap = {
   "/dashboard": "Dashboard",
-  "/dashboard/courses": "Courses",
-  "/dashboard/enroll": "Courses",
+  "/dashboard/courses": "Programs",
+  "/dashboard/enroll": "Programs",
   "/dashboard/certificate": "Certificate",
   "/dashboard/portfolio": "Portfolio",
   "/dashboard/notifications": "Notifications",
@@ -168,8 +168,8 @@ function DashboardLayout() {
   const title =
     titleMap[location.pathname] ||
     (location.pathname.startsWith("/dashboard/course") ||
-    location.pathname.startsWith("/dashboard/enroll")
-      ? "Courses"
+      location.pathname.startsWith("/dashboard/enroll")
+      ? "Programs"
       : "Dashboard");
 
   return (

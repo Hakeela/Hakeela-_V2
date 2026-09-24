@@ -26,9 +26,9 @@ function Courses() {
     <section className="courses">
       <div className="courses__inner">
         <header className="courses__head">
-          <h2 className="courses__title">Courses</h2>
+          <h2 className="courses__title">Programs</h2>
           <p className="courses__subtitle">
-            Select from our wide range of courses and get started!
+            Select from our wide range of programs and get started!
           </p>
         </header>
 

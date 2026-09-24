@@ -41,7 +41,12 @@ function AuthLayout({ children }) {
             ideas into impact. From coding to design, our expert-led courses help
             you learn fast, build real projects, and thrive in the digital world.
           </p>
-          <a href="#" className="auth__aside-btn">
+          <a
+            href="https://wa.me/2347040247816?text=Hello%20Hakeela%2C%20I%20want%20to%20join%20the%20community"
+            className="auth__aside-btn"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Join the community
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <line x1="7" y1="17" x2="17" y2="7" />
