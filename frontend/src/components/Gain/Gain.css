@@ -46,7 +46,7 @@
 .gain-card__img {
   border-radius: 12px;
   overflow: hidden;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 3 / 2;
   margin-bottom: 18px;
 }
 

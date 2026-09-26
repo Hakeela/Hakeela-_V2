@@ -44,7 +44,7 @@ function Hero() {
         </div>
 
         <div className="hero__media">
-          <img src="/hero-collage.png" alt="Students learning tech skills across Product Design, Web Development and Data Analysis" />
+          <img src="/hero-collage.png" alt="A collage of Product Design and Data Analysis illustrations" />
         </div>
       </div>
     </section>

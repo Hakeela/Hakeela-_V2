@@ -5,12 +5,12 @@ import './Gain.css'
 
 const cards = [
   {
-    image: '/gain-1.png',
+    image: '/INTERNSHIP%20VECTOR.jfif',
     title: 'Internship & Job Placements',
     body: 'Gain access to Internship opportunities and job placements after the 8 weeks program.',
   },
   {
-    image: '/gain-2.png',
+    image: '/CERTIFICATE%20VECTOR.jfif',
     title: 'Certification',
     body: 'Get a certificate of completion from Hakeela.',
   },
