@@ -12,7 +12,7 @@ const otherInitiatives = [
     logo: '/logo-hfund.png',
     alt: 'Hakeela Fund',
     title: 'Hakeela Fund',
-    body: 'A dedicated scholarship program aimed at providing learning sponsorships for marginalized communities across Africa.',
+    body: 'A dedicated scholarship program aimed at providing educational sponsorships for children and teens from marginalized communities across Africa.',
   },
   {
     logo: '/logo-newhakversity.png',
@@ -40,20 +40,15 @@ function Initiatives() {
               Empowering Accessibility Through A.I
             </h3>
             <p className="init-block__body">
-              &ldquo;Through our Hak-AbilityTech Initiative, we are building a world
-              where the mobility impaired, speech impaired, hearing impaired among
-              others can learn tech skills, work in tech establishments, and we plan
-              to achieve this using A.I.&rdquo;
+              &ldquo;Through our Hak-AbilityTech Initiative; we are building a
+              world were the visually impaired, speech impaired, or hearing
+              impaired can learn tech skills, work in tech establishments, and
+              we are doing all this using A.I&rdquo;
               <br />- Victor Eyo
             </p>
-            <a
-              href="https://hakabilitytech.hakeela.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="init-btn init-btn--outline"
-            >
+            <Link to="/about" className="init-btn init-btn--outline">
               Learn More <Chevron />
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -62,8 +57,8 @@ function Initiatives() {
           <header className="hakpilot__head">
             <h3 className="hakpilot__title">Meet HakPortal</h3>
             <p className="hakpilot__subtitle">
-              Participate in training sessions, submit task assessments, track your
-              progress, and more, all with HakPortal.
+              Easily launch your courses, ebooks, events, and products — and
+              accept payments all in one place.
             </p>
           </header>
 
@@ -85,11 +80,19 @@ function Initiatives() {
             <div className="hakpilot__hero">
               <div className="hakpilot__hero-text">
                 <h4 className="hakpilot__hero-title">
-                  Where real learning happens!
+                  Where{' '}
+                  <img className="hakpilot__avatars" src="/hakpilot-avatars.png" alt="" />
+                  <br />
+                  creators launch!
                 </h4>
                 <p className="hakpilot__hero-body">
-                  Learn, Grow, Intern, Land Jobs, earn, track progress all in one place.
+                  Launch your course, ebooks, event tickets, digital products,
+                  and even accept payments for your physical goods — all in one
+                  place.
                 </p>
+                <a href="#" className="init-btn init-btn--outline">
+                  Coming Soon!
+                </a>
               </div>
               <div className="hakpilot__hero-art">
                 <img src="/hakpilot-rocket.png" alt="Illustration of creators launching a rocket" />
@@ -100,15 +103,11 @@ function Initiatives() {
 
         {/* Block 4 — Other Initiatives */}
         <div className="other-init">
+          <h3 className="other-init__title">Other Initiatives</h3>
           <div className="other-init__grid">
             {otherInitiatives.map((item) => (
               <article className="other-card" key={item.title}>
-                <img
-                  className={`other-card__logo ${item.className || ''}`}
-                  style={item.style}
-                  src={item.logo}
-                  alt={item.alt}
-                />
+                <img className="other-card__logo" src={item.logo} alt={item.alt} />
                 <h4 className="other-card__title">{item.title}</h4>
                 <p className="other-card__body">{item.body}</p>
               </article>
