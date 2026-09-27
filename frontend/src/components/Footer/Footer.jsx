@@ -52,8 +52,8 @@ const contacts = [
     href: 'tel:+2349019006751',
   },
   {
-    label: 'hello.wgdtafrica@gmail.com',
-    href: 'mailto:hello.wgdtafrica@gmail.com',
+    label: 'connect@hakeela.org',
+    href: 'mailto:connect@hakeela.org',
   },
 ]
 
