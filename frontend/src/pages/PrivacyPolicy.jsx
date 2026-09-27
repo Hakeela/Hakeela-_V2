@@ -85,7 +85,7 @@ function PrivacyPolicy() {
                         <ul className="privacy-policy__contact">
                             <li>Phone: +2347040247816</li>
                             <li>Phone: +2349019006751</li>
-                            <li>Email: hello.wgdtafrica@gmail.com</li>
+                            <li>Email: connect@hakeela.org</li>
                         </ul>
                     </section>
 

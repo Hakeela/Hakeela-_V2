@@ -20,7 +20,7 @@ const resources = [
 const contacts = [
   { label: '+2347040247816', href: 'tel:+2347040247816' },
   { label: '+2349019006751', href: 'tel:+2349019006751' },
-  { label: 'hello.wgdtafrica@gmail.com', href: 'mailto:hello.wgdtafrica@gmail.com' },
+  { label: 'connect@hakeela.org', href: 'mailto:connect@hakeela.org' },
 ]
 
 const ext = (l) => (l.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})
