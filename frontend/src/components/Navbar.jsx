@@ -17,9 +17,9 @@ function Navbar() {
   return (
     <header className="nav">
       <div className="container nav__inner">
-        <Link className="nav__logo" to="/hakversity" aria-label="HakVersity home">
+        <a className="nav__logo" href="https://www.hakeela.org" aria-label="Hakeela home">
           <img src="/logo-full-blue.png" alt="Hakeela" />
-        </Link>
+        </a>
 
         <button className="nav__toggle" aria-label="Menu" onClick={() => setOpen((o) => !o)}>
           <span /><span /><span />
