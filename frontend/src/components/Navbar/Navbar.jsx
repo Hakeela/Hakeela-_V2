@@ -9,9 +9,9 @@ function Navbar() {
   return (
     <header className="navbar">
       <div className="navbar__inner">
-        <Link to="/" className="navbar__logo" aria-label="HakPortal home">
+        <a href="https://www.hakeela.org" className="navbar__logo" aria-label="Hakeela home">
           <img src="/logo-hakportal.png" alt="HakPortal" height="50" />
-        </Link>
+        </a>
 
         <div className="navbar__actions">
           <Link to="/login" className="navbar__btn navbar__btn--outline">Login</Link>
