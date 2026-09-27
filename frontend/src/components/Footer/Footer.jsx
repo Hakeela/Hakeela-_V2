@@ -43,6 +43,7 @@ const resources = [
 ]
 
 const contacts = [
+<<<<<<< Updated upstream
   {
     label: '+2347040247816',
     href: 'tel:+2347040247816',
@@ -55,6 +56,11 @@ const contacts = [
     label: 'hello.wgdtafrica@gmail.com',
     href: 'mailto:hello.wgdtafrica@gmail.com',
   },
+=======
+  { label: '+2347040247816', href: 'tel:+2347040247816' },
+  { label: '+2349019006751', href: 'tel:+2349019006751' },
+  { label: 'connect@hakeela.org', href: 'mailto:connect@hakeela.org' },
+>>>>>>> Stashed changes
 ]
 
 function Footer() {
