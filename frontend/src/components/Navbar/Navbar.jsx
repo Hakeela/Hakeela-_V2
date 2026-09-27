@@ -35,9 +35,9 @@ function Navbar() {
   return (
     <header className="navbar">
       <div className="navbar__inner">
-        <Link to="/" className="navbar__logo" aria-label="Hakeela home">
+        <a href="https://www.hakeela.org" className="navbar__logo" aria-label="Hakeela home">
           <img src="/logo-full-blue.png" alt="Hakeela" height="40" />
-        </Link>
+        </a>
 
         <button
           className="navbar__toggle"
