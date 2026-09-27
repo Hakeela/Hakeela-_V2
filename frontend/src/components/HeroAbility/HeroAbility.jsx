@@ -1,7 +1,7 @@
 import './HeroAbility.css'
 
 const stats = [
-  { value: '300', label: 'Special needs Trained' },
+  { value: '300', label: 'PWDs Trained' },
   { value: '4', label: 'African countries' },
   { value: '70 hrs', label: 'of learning' },
 ]
@@ -16,17 +16,7 @@ function HeroAbility() {
           </svg>
 
           <h1 className="habhero__title">
-            &ldquo;Welcome to a world of limitless{' '}
-            <span className="habhero__word">
-              possibi
-              <span className="habhero__ul">
-                lities
-                <svg viewBox="0 0 100 16" preserveAspectRatio="none" fill="none" aria-hidden="true">
-                  <path d="M3 5 Q50 15 97 5" stroke="#ffc21a" strokeWidth="4" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-                </svg>
-              </span>
-            </span>
-            &rdquo;
+            Building a world where persons living with disabilities can learn tech skills, and be relevant in the socio-economic technological space
           </h1>
 
           <div className="habhero__stats">
