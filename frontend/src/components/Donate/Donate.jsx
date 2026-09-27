@@ -1,9 +1,29 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import './Donate.css'
 
 function Donate() {
+  const [isVideoOpen, setIsVideoOpen] = useState(false)
+
   return (
     <section className="donate" id="donate">
+      {isVideoOpen && (
+        <div className="donate__modal" onClick={() => setIsVideoOpen(false)}>
+          <div className="donate__modal-content" onClick={e => e.stopPropagation()}>
+            <button className="donate__modal-close" onClick={() => setIsVideoOpen(false)} aria-label="Close video">×</button>
+            <div className="donate__iframe-container">
+              <iframe
+                src="https://www.youtube.com/embed/XjA22yft2c4?autoplay=1"
+                title="Special Needs Workshop Interview"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="donate__panel">
         <div className="donate__text">
           <span className="donate__badge">
@@ -33,7 +53,7 @@ function Donate() {
         </div>
 
         <div className="donate__media">
-          <button className="donate__video" aria-label="Play: Special Needs Workshop Interview">
+          <button className="donate__video" aria-label="Play: Special Needs Workshop Interview" onClick={() => setIsVideoOpen(true)}>
             <img src="/donate-video.png" alt="Special Needs Workshop Interview" />
           </button>
         </div>
