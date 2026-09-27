@@ -16,7 +16,7 @@ const otherInitiatives = [
   },
   {
     logo: '/logo-newhakversity.png',
-    style: { width: '200px', height: '200px', marginTop: '-85px', marginBottom: '-50px', marginLeft: '-50px' },
+    style: { width: 'fit-content', height: '250px', marginTop: '-110px',marginBottom: '-70px', marginLeft: '-70px' },
     alt: 'HakVersity',
     title: 'HakVersity',
     body: 'A network of hybrid tech university across at least 10 African countries, providing young Africans with quiet, durable workspaces to learn, collaborate, innovate, and grow.',
@@ -35,7 +35,7 @@ function Initiatives() {
             <img src="/init-1.jpg" alt="A mentor and student smiling together" />
           </div>
           <div className="init-block__text">
-            <img className="init-block__logo" src="/logo-newhakabilitytech.png" alt="Hak-AbilityTech" />
+            <img className="init-block__logo" src="/logo-newhakabilitytech.png" style={{ width: 'fit-content', height: '250px' }} alt="Hak-AbilityTech" />
             <h3 className="init-block__heading">
               Empowering Accessibility Through A.I
             </h3>
