@@ -15,10 +15,11 @@ const otherInitiatives = [
     body: 'A dedicated scholarship program aimed at providing educational sponsorships for children and teens from marginalized communities across Africa.',
   },
   {
-    logo: '/logo-techhub.png',
+    logo: '/logo-newhakversity.png',
+    style: { width: '200px', height: '200px', marginTop: '-85px', marginBottom: '-50px', marginLeft: '-50px' },
     alt: 'HakVersity',
     title: 'HakVersity',
-    body: 'A network of physical tech hubs across at least 10 African countries, providing young Africans with quiet, durable workspaces to learn, collaborate, innovate, and grow.',
+    body: 'A network of hybrid tech university across at least 10 African countries, providing young Africans with quiet, durable workspaces to learn, collaborate, innovate, and grow.',
   },
 ]
 
@@ -34,7 +35,7 @@ function Initiatives() {
             <img src="/init-1.jpg" alt="A mentor and student smiling together" />
           </div>
           <div className="init-block__text">
-            <img className="init-block__logo" src="/logo-snat.png" alt="HakSNAT" />
+            <img className="init-block__logo" src="/logo-newhakabilitytech.png" alt="Hak-AbilityTech" />
             <h3 className="init-block__heading">
               Empowering Accessibility Through A.I
             </h3>
