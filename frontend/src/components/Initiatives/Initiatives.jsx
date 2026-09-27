@@ -16,7 +16,7 @@ const otherInitiatives = [
   },
   {
     logo: '/logo-newhakversity.png',
-    style: { width: 'fit-content', height: '250px', marginTop: '-110px',marginBottom: '-70px', marginLeft: '-70px' },
+    style: { width: 'fit-content', height: '200px', margin: '0',marginTop: '-80px', marginBottom: '-50px', marginLeft: '-50px' },
     alt: 'HakVersity',
     title: 'HakVersity',
     body: 'A network of hybrid tech university across at least 10 African countries, providing young Africans with quiet, durable workspaces to learn, collaborate, innovate, and grow.',
@@ -35,7 +35,7 @@ function Initiatives() {
             <img src="/init-1.jpg" alt="A mentor and student smiling together" />
           </div>
           <div className="init-block__text">
-            <img className="init-block__logo" src="/logo-newhakabilitytech.png" style={{ width: 'fit-content', height: '250px' }} alt="Hak-AbilityTech" />
+            <img className="init-block__logo" src="/logo-newhakabilitytech.png" style={{ width: 'fit-content', height: '150px', margin: '0', marginBottom: '-30px', marginLeft: '-20px' }} alt="Hak-AbilityTech" />
             <h3 className="init-block__heading">
               Empowering Accessibility Through A.I
             </h3>
@@ -107,7 +107,8 @@ function Initiatives() {
           <div className="other-init__grid">
             {otherInitiatives.map((item) => (
               <article className="other-card" key={item.title}>
-                <img className="other-card__logo" src={item.logo} alt={item.alt} />
+                <img className="other-card__logo" src={item.logo} alt={item.alt} style={item.style}
+/>
                 <h4 className="other-card__title">{item.title}</h4>
                 <p className="other-card__body">{item.body}</p>
               </article>
