@@ -1,7 +1,7 @@
 import CountUp from 'react-countup'
 
 const stats = [
-  { to: 300, suffix: '', label: 'Special needs Trained' },
+  { to: 300, suffix: '', label: 'PWDs Trained' },
   { to: 4, suffix: '', label: 'African countries' },
   { to: 150, suffix: '+', label: 'Internship placements' },
 ]
