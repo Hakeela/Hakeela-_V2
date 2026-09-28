@@ -43,7 +43,19 @@ function FellowshipForm() {
                 body: JSON.stringify(form),
             })
 
-            const result = await response.json()
+            const text = await response.text()
+            let result = {}
+            if (text) {
+                try {
+                    result = JSON.parse(text)
+                } catch {
+                    throw new Error(
+                        `Server returned a non-JSON response (status ${response.status}). The API route may be missing in this deployment.`
+                    )
+                }
+            } else if (!response.ok) {
+                throw new Error(`Server returned an empty response (status ${response.status}). The API route may be missing in this deployment.`)
+            }
             if (!response.ok) throw new Error(result.error || 'Unable to submit application.')
 
             setDone(true)
