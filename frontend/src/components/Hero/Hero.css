@@ -108,20 +108,31 @@
   color: rgba(255, 255, 255, 0.75);
 }
 
-/* Media collage */
+/* Single hero image (transparent PNG, sits directly on the blue backdrop) */
+.hero__media {
+  display: flex;
+  justify-content: center;
+}
+
 .hero__media img {
   width: 100%;
+  max-width: 520px;
   height: auto;
   display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.3));
   transition: transform 0.4s ease;
 }
 
 .hero__media:hover img {
-  transform: scale(1.04);
+  transform: scale(1.02);
 }
 
 /* Responsive */
 @media (max-width: 900px) {
+  .hero {
+    padding: 90px 20px 64px;
+  }
   .hero__inner {
     grid-template-columns: 1fr;
     gap: 40px;
@@ -129,9 +140,17 @@
   .hero__desc {
     max-width: none;
   }
+  .hero__media {
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+  }
 }
 
 @media (max-width: 480px) {
+  .hero {
+    padding: 72px 16px 52px;
+  }
   .hero__stats {
     gap: 20px;
     padding: 16px 20px;
