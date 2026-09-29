@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import ThemeToggle from '../ThemeToggle/ThemeToggle.jsx'
 import './Navbar.css'
@@ -10,26 +10,8 @@ const navLinks = [
   { label: 'Hak-AbilityTech', href: 'https://hakabilitytech.hakeela.org', external: true },
 ]
 
-const initiatives = [
-  { label: 'Hakeela Fund', href: '/#initiatives' },
-  { label: 'HakVersity', href: 'https://hakversity.hakeela.org', external: true },
-]
-
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [initiativesOpen, setInitiativesOpen] = useState(false)
-  const dropdownRef = useRef(null)
-
-  // Close the Initiatives dropdown when clicking outside of it
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setInitiativesOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
 
   return (
     <header className="navbar">
@@ -78,47 +60,14 @@ function Navbar() {
               </li>
             ))}
 
-            <li className="navbar__dropdown" ref={dropdownRef}>
-              <button
-                className="navbar__link navbar__dropdown-btn"
-                aria-haspopup="true"
-                aria-expanded={initiativesOpen}
-                onClick={() => setInitiativesOpen((open) => !open)}
+            <li>
+              <a
+                href="/#initiatives"
+                className="navbar__link"
+                onClick={() => setMenuOpen(false)}
               >
-                Initiatives
-                <svg
-                  className={`navbar__chevron ${initiativesOpen ? 'is-open' : ''}`}
-                  viewBox="0 0 24 24"
-                  width="16"
-                  height="16"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </button>
-              {initiativesOpen && (
-                <ul className="navbar__submenu">
-                  {initiatives.map((item) => (
-                    <li key={item.label}>
-                      <a
-                        href={item.href}
-                        className="navbar__submenu-link"
-                        {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                        onClick={() => {
-                          setInitiativesOpen(false)
-                          setMenuOpen(false)
-                        }}
-                      >
-                        {item.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
+                Hakeela Fund
+              </a>
             </li>
 
             <li>
