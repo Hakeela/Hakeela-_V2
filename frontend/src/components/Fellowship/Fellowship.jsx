@@ -5,7 +5,7 @@ function Fellowship() {
     <section className="fellowship">
       <div className="fellowship__inner">
         <p className="fellowship__text">
-          Join us provide assistive devices for young people with hearing impairment,
+          Join us in providing assistive devices for young people with hearing impairment,
           speech impairment, visual impairment and mobility impairment at our next
           Hak-AbilityTech Fellowship.
         </p>

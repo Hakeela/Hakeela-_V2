@@ -11,7 +11,7 @@ function Home() {
     <>
       <HeroAbility />
       <CTA
-        title="“Building a world where specially assisted individuals can learn tech skills, and be relevant in the socio-economic technological space”."
+        title="“Creating an all-inclusive, flexible, and adaptable environment that equips people with disabilities with the tech skills they need to thrive in the socio-economic technological space.”"
         buttonLabel="Learn more"
         href="https://hakeela.org/about"
       />
