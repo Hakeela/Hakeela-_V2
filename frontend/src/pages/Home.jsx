@@ -27,7 +27,7 @@ function Home() {
       <Gain />
       <Courses />
       <Banner
-        title="Invite a friend to be learn and earn on HakPortal"
+        title="Invite a friend to learn and earn on HakPortal"
         buttonLabel="Invite friends"
         href={INVITE_MAILTO}
       />
