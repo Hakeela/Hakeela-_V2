@@ -19,7 +19,7 @@ const otherInitiatives = [
     style: { width: 'fit-content', height: '200px', margin: '0',marginTop: '-80px', marginBottom: '-50px', marginLeft: '-50px' },
     alt: 'HakVersity',
     title: 'HakVersity',
-    body: 'A hybrid tech university across at least 10 African countries, providing young Africans with quiet, durable workspaces to learn, collaborate, innovate, and grow.',
+    body: 'A hybrid tech university spanning 10 African countries, currently providing access to quality tech skills development and quiet, durable hub spaces to learn, collaborate, innovate, and grow.',
   },
 ]
 
@@ -41,9 +41,8 @@ function Initiatives() {
             </h3>
             <p className="init-block__body">
               &ldquo;Through our Hak-AbilityTech Initiative, we are building a world
-              where the mobility impaired, speech impaired, hearing impaired among
-              others can learn tech skills, work in tech establishments, and we plan
-              to achieve this using A.I.&rdquo;
+              where the mobility impaired, speech impaired, hearing impaired, and
+              others can, through cutting-edge AI technology, learn tech skills and work in tech establishments. &rdquo;
               <br />- Victor Eyo
             </p>
             <a
@@ -88,7 +87,7 @@ function Initiatives() {
                   Where real learning happens!
                 </h4>
                 <p className="hakpilot__hero-body">
-                  Learn, Grow, Intern, Land Jobs, earn, track progress all in one place.
+                  Learn, Grow, Grab Internships, Land Jobs, Earn, Track progress all in one place.
                 </p>
               </div>
               <div className="hakpilot__hero-art">
