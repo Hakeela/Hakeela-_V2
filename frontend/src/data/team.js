@@ -25,13 +25,13 @@ export const teamMembers = [
     },
    },
 
-  { img: '/about-emma.png', name: 'Emmanuel Asuquo', role: 'Designer',
+   { img: '/about-laurenz.png', name: 'Lawrence Godwin', role: 'Community Director',
     socials: {
-      linkedin: 'https://www.linkedin.com/in/emmanuel-asuquo-27313b228',
-      instagram: 'https://www.instagram.com/thecreative_emmanuel',
+      linkedin: 'https://www.linkedin.com/in/lawrence-godwinn-b88377368',
+      x: 'https://x.com/Laumustgleam',
     },
    },
-
+   
   { img: '/about-harrison.png', name: 'Harrison Divine', role: 'Head of Media Marketing',
     socials: {
       linkedin: 'https://www.linkedin.com/in/divine-harrison-a87609302',
@@ -40,14 +40,6 @@ export const teamMembers = [
     },
    },
 
-  { img: '/about-laurenz.png', name: 'Lawrence Godwin', role: 'Community Director',
-    socials: {
-      linkedin: 'https://www.linkedin.com/in/lawrence-godwinn-b88377368',
-      x: 'https://x.com/Laumustgleam',
-    },
-   },
-
-  { img: '/about-comfort.png', name: 'Comfort Alphonsus', role: 'Chief Graphic Designer' },
   { img: '/about-edor.png', name: 'Emmanuel Edor', role: 'Chief Product Designer',
     socials: {
       linkedin: 'https://www.linkedin.com/in/emmanuel-edor',
